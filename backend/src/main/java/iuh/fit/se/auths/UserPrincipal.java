@@ -36,4 +36,16 @@ public class UserPrincipal implements UserDetails {
 	public boolean isCredentialsNonExpired() {
 		return true;
 	}
+
+	@Override
+	public String getPassword() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getUsername() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
