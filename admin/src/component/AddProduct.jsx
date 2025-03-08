@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -10,7 +10,6 @@ import {
   Button,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
-import { addProduct, updateProduct } from "../services/ProductService";
 
 const AddProduct = () => {
   const [errors, setErrors] = useState({});
@@ -20,164 +19,17 @@ const AddProduct = () => {
     name: "",
     brand: "",
     url: "",
-    // quantity: "",
-    // purchasePrice: "1",
-    // salePrice: "1",
-    // //phone
-    // chip: "",
-    // os: "",
-    // ram: "",
-    // rom: "",
-    // screenSize: "",
-    // //power_bank
-    // capacity: "",
-    // fastCharging: "",
-    // input: "",
-    // output: "",
-    // // earphone
-    // connectionType: "",
-    // batteryLife: "",
-    // //charging_cable
-    // cableType: "",
-    // length: "",
   });
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (location.state && location.state.productData) {
-      setProduct(location.state.productData);
-    }
-  }, [location.state]);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    // if (name === "screenSize" && value > 3.2) {
-    //   alert("Kích thước màn hình không thể lớn hơn 3.2 inch");
-    //   return;
-    // }
 
     setProduct({
       ...product,
       [name]: value,
     });
-  };
-
-  const validate = () => {
-    const error = {};
-
-    if (!product.category) {
-      error.category = "Loại sản phẩm là bắt buộc.";
-    }
-
-    if (!product.name.trim()) {
-      error.name = "Tên sản phẩm không được để trống.";
-    }
-
-    if (!product.brand) {
-      error.brand = "Thương hiệu là bắt buộc.";
-    }
-
-    if (!product.url.trim()) {
-      error.url = "URL không được để trống.";
-    }
-
-    if (product.category === "PHONE") {
-      if (!product.chip.trim()) {
-        error.chip = "Chip không được để trống.";
-      }
-
-      if (!product.os) {
-        error.os = "Hệ điều hành là bắt buộc.";
-      }
-
-      if (!product.ram) {
-        error.ram = "RAM là bắt buộc.";
-      }
-
-      if (!product.rom) {
-        error.rom = "ROM là bắt buộc.";
-      }
-      if (!product.screenSize) {
-        error.screenSize = "Kích thước màn hình là bắt buộc.";
-      } else if (product.screenSize <= 0 || product.screenSize > 100) {
-        error.screenSize =
-          "Kích thước màn hình phải lớn hơn 0 và nhỏ hơn 100 inch.";
-      }
-    }
-    if (product.category === "POWER_BANK") {
-      if (!product.capacity) {
-        error.capacity = "Dung lượng là bắt buộc.";
-      } else if (product.capacity <= 0) {
-        error.capacity = "Dung lượng phải lớn hơn 0.";
-      }
-
-      if (!product.connectionType) {
-        error.connectionType = "Loại kết nối là bắt buộc.";
-      }
-
-      if (!product.fastCharging) {
-        error.fastCharging = "Sạc nhanh là bắt buộc.";
-      } else if (product.fastCharging <= 0) {
-        error.fastCharging = "Sạc nhanh phải lớn hơn 0.";
-      }
-
-      if (!product.input.trim()) {
-        error.input = "Cổng đầu vào không được để trống.";
-      }
-
-      if (!product.output.trim()) {
-        error.output = "Cổng đầu ra không được để trống.";
-      }
-    }
-
-    if (product.category === "EARPHONE") {
-      if (!product.batteryLife) {
-        error.batteryLife = "Thời gian sử dụng là bắt buộc.";
-      } else if (product.batteryLife <= 0) {
-        error.batteryLife = "Thời gian sử dụng phải lớn hơn 0.";
-      }
-
-      if (!product.connectionType) {
-        error.connectionType = "Loại kết nối là bắt buộc.";
-      }
-    }
-
-    if (product.category === "CHARGING_CABLE") {
-      if (!product.cableType) {
-        error.cableType = "Loại cáp là bắt buộc.";
-      }
-
-      if (!product.length) {
-        error.length = "Chiều dài là bắt buộc.";
-      } else if (product.length <= 0) {
-        error.length = "Chiều dài phải lớn hơn 0.";
-      }
-    }
-
-    setErrors(error);
-    return Object.keys(error).length === 0;
-  };
-
-  const handleSubmit = async () => {
-    if (!validate()) return;
-    try {
-      let response;
-      if (product.id) {
-        response = await updateProduct(product.id, product);
-        console.log("Product updated:", response.data);
-      } else {
-        response = await addProduct(product);
-        console.log("Product added:", response.data);
-      }
-      navigate("/DanhSachSanPham");
-    } catch (error) {
-      console.error(
-        "Error occurred:",
-        error.response ? error.response.data : error.message
-      );
-    }
   };
 
   return (
@@ -575,12 +427,7 @@ const AddProduct = () => {
         )}
 
         {/* Submit Button */}
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSubmit}
-          sx={{ mt: 2, ml: 50 }}
-        >
+        <Button variant="contained" color="primary" sx={{ mt: 2, ml: 50 }}>
           {product.id ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
         </Button>
       </form>
