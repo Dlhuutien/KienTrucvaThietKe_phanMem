@@ -6,6 +6,8 @@ import lombok.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.security.core.GrantedAuthority;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,4 +29,9 @@ public class User extends BaseEntity {
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
 	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
+
+	public Iterable<GrantedAuthority> getRoles() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
