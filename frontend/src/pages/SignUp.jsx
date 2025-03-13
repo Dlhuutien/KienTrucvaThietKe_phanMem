@@ -57,6 +57,10 @@ const SignUp = () => {
       });
   };
 
+  const handleLogin = () => {
+    navigate("/Login");
+  };
+
   const renderInputField = (
     label,
     placeholder,
@@ -110,7 +114,7 @@ const SignUp = () => {
 
   return (
     <Box sx={{ textAlign: "center", marginTop: 5 }}>
-      <Typography variant="h4">ĐĂNG KÝ TÀI KHOẢN</Typography>
+      <Typography sx={{ fontWeight: "bold", mb: 2 }} variant="h4">ĐĂNG KÝ TÀI KHOẢN</Typography>
       <Box
         sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
       >
@@ -162,15 +166,31 @@ const SignUp = () => {
           passwordError
         )}
 
-        <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+        <Box sx={{ display: "flex", alignItems: "center", mb: 2, justifyContent: "flex-start", width: "48%" }}>
           <Checkbox
             checked={isChecked}
             onChange={handleCheckboxChange}
             color="primary"
           />
-          <Typography sx={{ fontSize: 14 }}>
+          <Typography sx={{ fontSize: 14, ml: 1 }}>
             Tôi đồng ý với điều khoản sử dụng
           </Typography>
+        </Box>
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "flex-start", width: "48%" }}>
+          <Typography sx={{ fontSize: 14 }}>
+            Đã có tài khoản?
+          </Typography>
+          <Button
+            onClick={handleLogin}
+            sx={{
+              ml: 1,
+              color: "#F60000",
+              fontWeight: "bold",
+              fontSize: 14,
+            }}
+          >
+            Đăng nhập ngay
+          </Button>
         </Box>
         <Button
           disabled={!isChecked}

@@ -13,7 +13,6 @@ import { useNavigate } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { login } from "../services/ProductService";
-import shop_logo from "../assets/Shop_logo.png";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -140,13 +139,8 @@ const Login = () => {
         alignItems: "center",
       }}
     >
-      <img
-        src={shop_logo}
-        alt="Logo"
-        style={{ marginBottom: "20px", width: "150px", height: "150px" }}
-      />
       <Box sx={{ width: "100%" }}>
-        <Typography variant="h4" sx={{ mb: 2 }}>
+        <Typography variant="h4" sx={{ mb: 12, fontWeight: "bold" }}>
           ĐĂNG NHẬP
         </Typography>
         <Box
@@ -200,7 +194,7 @@ const Login = () => {
               }
             />
           </Box>
-          <Box sx={{ mb: 3, display: "flex", justifyContent: "center" }}>
+          <Box sx={{ mb: 3, display: "flex", justifyContent: "flex-end", width: "45%" }}>
             <Typography sx={{ fontWeight: "bold", fontSize: 14 }}>
               Chưa có tài khoản
             </Typography>

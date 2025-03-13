@@ -25,11 +25,12 @@ const Navbar = () => {
       <Box
         onClick={handleHomeClick}
         sx={{
-          width: "150px",
-          height: "50px",
+          width: "170px",
+          height: "60px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          mr: 5,
           "&:hover": {
             backgroundColor: "#fff",
             "& .text": {
@@ -53,16 +54,18 @@ const Navbar = () => {
       <Box
         onClick={handleCategoryClick}
         sx={{
-          width: "150px",
-          height: "50px",
+          width: "170px",
+          height: "60px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          mr: 5,
           "&:hover": {
             backgroundColor: "#fff",
             "& .text": {
               color: "black",
             },
+            cursor: "pointer",
           },
         }}
       >
@@ -79,8 +82,67 @@ const Navbar = () => {
       </Box>
       <Box
         sx={{
-          width: "150px",
-          height: "50px",
+          width: "170px",
+          height: "60px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          mr: 5,
+          px: 2,
+          "&:hover": {
+            backgroundColor: "#fff",
+            "& .text": {
+              color: "black",
+            },
+            cursor: "pointer",
+          },
+        }}
+      >
+        <Typography
+          className="text"
+          variant="h5"
+          sx={{
+            color: "#fff",
+            fontWeight: "bold",
+          }}
+        >
+          Khuyến Mãi
+        </Typography>
+      </Box>
+      <Box
+        sx={{
+          width: "170px",
+          height: "60px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          mr: 5,
+          "&:hover": {
+            backgroundColor: "#fff",
+            "& .text": {
+              color: "black",
+            },
+            cursor: "pointer",
+          },
+        }}
+      >
+        <Typography
+          component={Link}
+          className="text"
+          variant="h5"
+          sx={{
+            color: "#fff",
+            fontWeight: "bold",
+            textDecoration: 'none'
+          }}
+        >
+          Giới Thiệu
+        </Typography>
+      </Box>
+      <Box
+        sx={{
+          width: "170px",
+          height: "60px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -102,7 +164,7 @@ const Navbar = () => {
             textDecoration: 'none'
           }}
         >
-          Giới Thiệu
+          Liên hệ
         </Typography>
       </Box>
     </Box>
