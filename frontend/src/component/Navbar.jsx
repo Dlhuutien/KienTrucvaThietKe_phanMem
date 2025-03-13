@@ -4,19 +4,26 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 const Navbar = () => {
   const navigate = useNavigate();
+  const handleHomeClick = () => {
+    navigate("/");
+  };
+  const handleCategoryClick = () => {
+    navigate("/category");
+  };
   return (
     <Box
       sx={{
         display: "flex",
         justifyContent: "space-between",
         paddingX: 40,
-        backgroundColor: "#3E81FF",
+        backgroundColor: "#FF6F00",
         height: "90px",
         mt: 2,
         alignItems: "center",
       }}
     >
       <Box
+        onClick={handleHomeClick}
         sx={{
           width: "150px",
           height: "50px",
@@ -44,6 +51,7 @@ const Navbar = () => {
         </Typography>
       </Box>
       <Box
+        onClick={handleCategoryClick}
         sx={{
           width: "150px",
           height: "50px",

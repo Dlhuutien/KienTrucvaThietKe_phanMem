@@ -35,7 +35,7 @@ const Header = () => {
       >
         <img src={shop_logo} alt="" style={{ width: 100, height: 100 }} />
         <Typography variant="h4" fontWeight={700}>
-          PhoneGO
+          Dang lam logo voi dat ten lai
         </Typography>
       </Box>
       <Box
@@ -46,7 +46,7 @@ const Header = () => {
           width: "600px",
           pl: 2,
           borderRadius: 20,
-          borderColor: "#3E81FF",
+          borderColor: "#FF6F00",
         }}
       >
         <InputBase
