@@ -21,7 +21,7 @@ const Footer = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "#3E81FF",
+        backgroundColor: "#FF6F00",
         p: 4,
         display: "flex",
         flexDirection: "column",
