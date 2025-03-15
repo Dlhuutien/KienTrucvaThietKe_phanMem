@@ -18,7 +18,7 @@ import org.springframework.security.core.GrantedAuthority;
 @Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = "user_name"),
 		@UniqueConstraint(columnNames = "email") })
 public class User extends BaseEntity {
-	@Id
+	@Id 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String userName;

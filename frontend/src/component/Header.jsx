@@ -17,6 +17,9 @@ const Header = () => {
   const handleLoginClick = () => {
     navigate("/login");
   }
+  const handleShoppingCartShoppingCartClick = () => {
+    navigate("/cart");
+  }
 
   return (
     <Box
@@ -110,6 +113,7 @@ const Header = () => {
           <Button sx={{ top: -5, right: 10 }} variant="body1">Tài khoản</Button>
         </Box>
         <Box
+          onClick={handleShoppingCartShoppingCartClick}
           sx={{
             display: "flex",
             mr: 3,
