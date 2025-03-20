@@ -16,6 +16,9 @@ const Admin = () => {
   return (
     <div>
       <Routes>
+        {/* Mặc định hiển thị ProductList */}
+        <Route index element={<ProductList />} />
+
         {/* Product Routes */}
         <Route path="/DanhSachSanPham" element={<ProductList />} />
         <Route path="/ThemSanPham" element={<AddProduct />} />

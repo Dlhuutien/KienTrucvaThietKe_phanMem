@@ -15,6 +15,7 @@ import HailIcon from "@mui/icons-material/Hail";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import DiscountIcon from "@mui/icons-material/Discount";
+import shop_logo from "../assets/logo.png";
 const MenuList = () => {
   const [openSanPham, setOpenSanPham] = useState(false);
   const [openKhachHang, setOpenKhachHang] = useState(false);
@@ -44,24 +45,18 @@ const MenuList = () => {
         component={Link}
         to={"/"}
         sx={{
-          backgroundColor: "#FF6F00",
+          backgroundColor: "#F5F5F5",
           height: "100px",
+          justifyContent: "center", alignContent:'center',
           "&:hover": {
-            backgroundColor: "#FF6F00",
+            backgroundColor: "#4a5395",
+            boxShadow: "0px 4px 10px #6495ED",
           },
         }}
       >
-        <ListItemText
-          primary="PhoneGO"
-          primaryTypographyProps={{
-            sx: {
-              textAlign: "center",
-              fontWeight: "bold",
-              color: "#fff",
-              fontSize: "20px",
-            },
-          }}
-        />
+        <ListItemIcon>
+          <img src={shop_logo} alt="Logo" style={{ width: 100, height: 100}} />
+        </ListItemIcon>
       </ListItem>
       <ListItem
         button
@@ -69,7 +64,8 @@ const MenuList = () => {
         sx={{
           backgroundColor: "#D2E2FF",
           "&:hover": {
-            backgroundColor: "#FF6F00",
+            backgroundColor: "#4a5395",
+            boxShadow: "0px 6px 15px #00008B",
             "& .text": {
               color: "#fff",
             },
@@ -94,7 +90,8 @@ const MenuList = () => {
               textDecoration: "none",
               color: "black",
               "&:hover": {
-                backgroundColor: "#FF6F00",
+                backgroundColor: "#4a5395",
+                boxShadow: "0px 6px 15px #00008B",
                 "& .text": {
                   color: "#fff",
                 },
@@ -116,7 +113,8 @@ const MenuList = () => {
               textDecoration: "none",
               color: "black",
               "&:hover": {
-                backgroundColor: "#FF6F00",
+                backgroundColor: "#4a5395",
+                boxShadow: "0px 6px 15px #00008B",
                 "& .text": {
                   color: "#fff",
                 },
@@ -137,7 +135,8 @@ const MenuList = () => {
         sx={{
           backgroundColor: "#D2E2FF",
           "&:hover": {
-            backgroundColor: "#FF6F00",
+            backgroundColor: "#4a5395",
+            boxShadow: "0px 6px 15px #00008B",
             "& .text": {
               color: "#fff",
             },
@@ -162,7 +161,8 @@ const MenuList = () => {
               textDecoration: "none",
               color: "black",
               "&:hover": {
-                backgroundColor: "#FF6F00",
+                backgroundColor: "#4a5395",
+                boxShadow: "0px 6px 15px #00008B",
                 "& .text": {
                   color: "#fff",
                 },
@@ -184,7 +184,8 @@ const MenuList = () => {
               textDecoration: "none",
               color: "black",
               "&:hover": {
-                backgroundColor: "#FF6F00",
+                backgroundColor: "#4a5395",
+                boxShadow: "0px 6px 15px #00008B",
                 "& .text": {
                   color: "#fff",
                 },
@@ -205,7 +206,8 @@ const MenuList = () => {
         sx={{
           backgroundColor: "#D2E2FF",
           "&:hover": {
-            backgroundColor: "#FF6F00",
+            backgroundColor: "#4a5395",
+            boxShadow: "0px 6px 15px #00008B",
             "& .text": {
               color: "#fff",
             },
@@ -230,7 +232,8 @@ const MenuList = () => {
               textDecoration: "none",
               color: "black",
               "&:hover": {
-                backgroundColor: "#FF6F00",
+                backgroundColor: "#4a5395",
+                boxShadow: "0px 6px 15px #00008B",
                 "& .text": {
                   color: "#fff",
                 },
@@ -252,7 +255,8 @@ const MenuList = () => {
               textDecoration: "none",
               color: "black",
               "&:hover": {
-                backgroundColor: "#FF6F00",
+                backgroundColor: "#4a5395",
+                boxShadow: "0px 6px 15px #00008B",
                 "& .text": {
                   color: "#fff",
                 },
@@ -273,7 +277,8 @@ const MenuList = () => {
         sx={{
           backgroundColor: "#D2E2FF",
           "&:hover": {
-            backgroundColor: "#FF6F00",
+            backgroundColor: "#4a5395",
+            boxShadow: "0px 6px 15px #00008B",
             "& .text": {
               color: "#fff",
             },
@@ -298,7 +303,8 @@ const MenuList = () => {
               textDecoration: "none",
               color: "black",
               "&:hover": {
-                backgroundColor: "#FF6F00",
+                backgroundColor: "#4a5395",
+                boxShadow: "0px 6px 15px #00008B",
                 "& .text": {
                   color: "#fff",
                 },
@@ -320,7 +326,8 @@ const MenuList = () => {
               textDecoration: "none",
               color: "black",
               "&:hover": {
-                backgroundColor: "#FF6F00",
+                backgroundColor: "#4a5395",
+                boxShadow: "0px 6px 15px #00008B",
                 "& .text": {
                   color: "#fff",
                 },

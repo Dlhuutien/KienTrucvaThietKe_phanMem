@@ -3,7 +3,7 @@ import { Box, Typography, ListItemText, InputBase, Button, List, ListItem, ListI
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SearchIcon from "@mui/icons-material/Search";
-import shop_logo from "../assets/Shop_logo.png";
+import shop_logo from "../assets/logo-title.png";
 import { useNavigate } from "react-router-dom";
 import { searchProduct } from "../services/ProductService";
 import { Link } from "react-router-dom";
@@ -28,6 +28,7 @@ const Header = () => {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
+        backgroundColor: "#F5F5F5",
       }}
     >
       <Box
@@ -36,10 +37,10 @@ const Header = () => {
           alignItems: "center",
         }}
       >
-        <img src={shop_logo} alt="" style={{ width: 100, height: 100 }} />
-        <Typography variant="h4" fontWeight={700}>
+        <img src={shop_logo} alt="" style={{ width: 300, height: 200 }} />
+        {/* <Typography variant="h4" fontWeight={700}>
           Dang lam logo voi dat ten lai
-        </Typography>
+        </Typography> */}
       </Box>
       <Box
         sx={{
@@ -49,7 +50,7 @@ const Header = () => {
           width: "600px",
           pl: 2,
           borderRadius: 20,
-          borderColor: "#FF6F00",
+          borderColor: "#4a5395",
         }}
       >
         <InputBase
