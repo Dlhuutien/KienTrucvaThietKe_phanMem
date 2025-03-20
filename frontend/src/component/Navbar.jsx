@@ -16,7 +16,7 @@ const Navbar = () => {
         display: "flex",
         justifyContent: "space-between",
         paddingX: 40,
-        backgroundColor: "#FF6F00",
+        backgroundColor: "#4a5395",
         height: "90px",
         mt: 2,
         alignItems: "center",
@@ -32,7 +32,10 @@ const Navbar = () => {
           justifyContent: "center",
           mr: 5,
           "&:hover": {
-            backgroundColor: "#fff",
+            backgroundColor: "#6495ED",
+            borderRadius: 2,
+            boxShadow: "0px 6px 15px white",
+            p:1,
             "& .text": {
               color: "black",
             },
@@ -61,7 +64,10 @@ const Navbar = () => {
           justifyContent: "center",
           mr: 5,
           "&:hover": {
-            backgroundColor: "#fff",
+            backgroundColor: "#6495ED",
+            borderRadius: 2,
+            boxShadow: "0px 6px 15px white",
+            p:1,
             "& .text": {
               color: "black",
             },
@@ -90,7 +96,10 @@ const Navbar = () => {
           mr: 5,
           px: 2,
           "&:hover": {
-            backgroundColor: "#fff",
+            backgroundColor: "#6495ED",
+            borderRadius: 2,
+            boxShadow: "0px 6px 15px white",
+            p:1,
             "& .text": {
               color: "black",
             },
@@ -118,7 +127,10 @@ const Navbar = () => {
           justifyContent: "center",
           mr: 5,
           "&:hover": {
-            backgroundColor: "#fff",
+            backgroundColor: "#6495ED",
+            borderRadius: 2,
+            boxShadow: "0px 6px 15px white",
+            p:1,
             "& .text": {
               color: "black",
             },
@@ -147,7 +159,10 @@ const Navbar = () => {
           alignItems: "center",
           justifyContent: "center",
           "&:hover": {
-            backgroundColor: "#fff",
+            backgroundColor: "#6495ED",
+            borderRadius: 2,
+            boxShadow: "0px 6px 15px white",
+            p:1,
             "& .text": {
               color: "black",
             },

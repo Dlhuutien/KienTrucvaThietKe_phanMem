@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
@@ -11,7 +11,7 @@ const Header = () => {
       justifyContent={"flex-end"}
       p={5}
       sx={{
-        backgroundColor: "#fff",
+        backgroundColor: "#4a5395",
         borderRadius: 3,
       }}
     >
@@ -19,7 +19,11 @@ const Header = () => {
         <Box
           sx={{
             display: "flex",
-            cursor: "pointer", // Make it visually clear that it's clickable
+            cursor: "pointer",
+            backgroundColor: "#D2E2FF",
+            p:2,
+            borderRadius: 3,
+            boxShadow: "0px 4px 10px #6495ED",
           }}
         >
           <AccountCircleIcon />
