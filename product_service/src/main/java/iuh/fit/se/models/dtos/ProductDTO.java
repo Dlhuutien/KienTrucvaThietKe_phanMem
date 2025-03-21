@@ -12,8 +12,8 @@ import lombok.*;
 public class ProductDTO {
 	// dto attribute
 	// Giảm giá
-	private BigDecimal discountedPrice;
-	private int percentDiscount;
+//	private BigDecimal discountedPrice;
+//	private int percentDiscount;
 
 	// product attribute
 	private int id;
