@@ -12,17 +12,16 @@ import lombok.*;
 @Table(name = "phone")
 @NoArgsConstructor
 @AllArgsConstructor
-
-public class Phone extends Product{
+public class Phone extends Product {
 	@Enumerated(EnumType.STRING)
-    private OS os;
+	private OS os;
 	@Enumerated(EnumType.STRING)
-    private RAM ram;
+	private RAM ram;
 	@Enumerated(EnumType.STRING)
-    private ROM rom;
-    @Column(columnDefinition = "varchar(50)")
-    private String chip;
-    @Column(name = "screen_size", columnDefinition = "Decimal(3,2)")
-    private float screenSize;
+	private ROM rom;
+	@Column(columnDefinition = "varchar(50)")
+	private String chip;
+	@Column(name = "screen_size", columnDefinition = "Decimal(3,2)")
+	private float screenSize;
 
 }

@@ -1,7 +1,6 @@
 package iuh.fit.se.models.entities;
 
 import java.math.BigDecimal;
-import java.util.Set;
 
 import iuh.fit.se.models.enums.Brand;
 import iuh.fit.se.models.enums.Category;
@@ -15,7 +14,6 @@ import lombok.*;
 @Table(name = "product")
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Product {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,11 +29,11 @@ public class Product {
 	@Enumerated(EnumType.STRING)
 	protected Category category;
 	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
-	protected Set<Comment> comments;
+//	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
+//	protected Set<Comment> comments;
 	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
-	protected  Set<ProductDiscount> productDiscounts;
+//	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
+//	protected  Set<ProductDiscount> productDiscounts;
 	
 	protected int quantity;
 	@Column(name = "sale_price", columnDefinition = "Decimal(19,0)")
@@ -47,5 +45,6 @@ public class Product {
 		salePrice = BigDecimal.ONE;
 		purchasePrice = BigDecimal.ONE;
 	}
+
 
 }

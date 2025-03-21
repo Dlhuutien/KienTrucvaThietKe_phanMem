@@ -10,7 +10,6 @@ import lombok.*;
 @Table(name = "charging_cable")
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class ChargingCable extends Product {
 	@Enumerated(EnumType.STRING)
 	private CableType cableType;
