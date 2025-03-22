@@ -1,6 +1,7 @@
 package iuh.fit.se.controllers;
 
 
+import iuh.fit.se.models.dtos.PurchaseDetailDTO;
 import iuh.fit.se.models.entities.PurchaseDetail;
 import iuh.fit.se.services.PurchaseDetailService;
 import jakarta.validation.Valid;
@@ -36,9 +37,9 @@ public class PurchaseDetailController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> savePurchaseDetail(@Valid @RequestBody PurchaseDetail purchaseDetail, BindingResult bindingResult){
+    public ResponseEntity<Map<String, Object>> savePurchaseDetail(@Valid @RequestBody PurchaseDetailDTO purchaseDetailDTO, BindingResult bindingResult){
         Map<String, Object> response = new LinkedHashMap<>();
-        System.out.println("ProductDTO nhận được: " + purchaseDetail);
+        System.out.println("ProductDTO nhận được: " + purchaseDetailDTO);
         if (bindingResult.hasErrors()) {
             Map<String, Object> errors = new LinkedHashMap<>();
             bindingResult.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
@@ -47,15 +48,15 @@ public class PurchaseDetailController {
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }
         response.put("status", HttpStatus.CREATED.value());
-        response.put("data", purchaseDetailService.save(purchaseDetail));
+        response.put("data", purchaseDetailService.save(purchaseDetailDTO));
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> updatePurchaseDetail(@PathVariable int id, @Valid @RequestBody PurchaseDetail purchaseDetail, BindingResult bindingResult){
+    public ResponseEntity<Map<String, Object>> updatePurchaseDetail(@PathVariable int id, @Valid @RequestBody PurchaseDetailDTO purchaseDetailDTO, BindingResult bindingResult){
         Map<String, Object> response = new LinkedHashMap<>();
-        System.out.println("ProductDTO nhận được: " + purchaseDetail);
+        System.out.println("ProductDTO nhận được: " + purchaseDetailDTO);
         if (bindingResult.hasErrors()) {
             Map<String, Object> errors = new LinkedHashMap<>();
             bindingResult.getFieldErrors().forEach(result -> errors.put(result.getField(), result.getDefaultMessage()));
@@ -64,7 +65,7 @@ public class PurchaseDetailController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
         response.put("status", HttpStatus.OK.value());
-        response.put("data", purchaseDetailService.update(id, purchaseDetail));
+        response.put("data", purchaseDetailService.update(id, purchaseDetailDTO));
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
