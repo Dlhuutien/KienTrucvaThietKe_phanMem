@@ -55,11 +55,11 @@ public class ProviderServiceImpl implements ProviderService{
 		return modelMapper.map(providerDTO, Provider.class);
 	}
 
-//	@Transactional
-//	@Override
-//	public ProviderDTO save(ProviderDTO providerDTO) {
-//		Provider provider = convertToEntity(providerDTO);
-//		Provider savedProvider = providerRepository.save(provider);
-//		return convertToDTO(savedProvider);
-//	}
+	@Transactional
+	@Override
+	public ProviderDTO save(ProviderDTO providerDTO) {
+		Provider provider = convertToEntity(providerDTO);
+		Provider savedProvider = providerRepository.save(provider);
+		return convertToDTO(savedProvider);
+	}
 }
