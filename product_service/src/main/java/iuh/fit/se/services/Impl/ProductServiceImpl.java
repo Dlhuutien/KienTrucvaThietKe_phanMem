@@ -104,10 +104,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO saveProductDTO(ProductDTO productDTO) {
         Product product = this.convertToEntity(productDTO);
-        product = productRepository.save(product);
+        // product = productRepository.save(product);
         if (productDTO.getCategory() == Category.PHONE) {
             Phone phone = this.convertToPhoneEntity(productDTO);
-            phone.setId(product.getId()); // Sử dụng ID từ product
+            // phone.setId(product.getId()); // Sử dụng ID từ product
             System.out.println("Product ID: " + product.getId());
             System.out.println("Phone ID: " + phone.getId());
             phoneRepository.save(phone);

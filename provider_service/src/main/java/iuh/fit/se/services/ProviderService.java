@@ -14,5 +14,5 @@ public interface ProviderService {
 	ProviderDTO findById(int id);
 
 	List<ProviderDTO> search(String searchTerm);
-//	ProviderDTO save(ProviderDTO provider);
+	ProviderDTO save(ProviderDTO provider);
 }

@@ -46,20 +46,20 @@ public class ProviderController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
     
-//    @PostMapping
-//    public ResponseEntity<Map<String, Object>> saveProvider(@Valid @RequestBody ProviderDTO provider, BindingResult bindingResult) {
-//        Map<String, Object> response = new LinkedHashMap<>();
-//
-//        if (bindingResult.hasErrors()) {
-//            Map<String, Object> errors = new LinkedHashMap<>();
-//            bindingResult.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-//            response.put("status", HttpStatus.BAD_REQUEST.value());
-//            response.put("errors", errors);
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-//        }
-//
-//        response.put("status", HttpStatus.CREATED.value());
-//        response.put("data", providerService.save(provider));
-//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-//    }
+   @PostMapping
+   public ResponseEntity<Map<String, Object>> saveProvider(@Valid @RequestBody ProviderDTO provider, BindingResult bindingResult) {
+       Map<String, Object> response = new LinkedHashMap<>();
+
+       if (bindingResult.hasErrors()) {
+           Map<String, Object> errors = new LinkedHashMap<>();
+           bindingResult.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+           response.put("status", HttpStatus.BAD_REQUEST.value());
+           response.put("errors", errors);
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+       }
+
+       response.put("status", HttpStatus.CREATED.value());
+       response.put("data", providerService.save(provider));
+       return ResponseEntity.status(HttpStatus.CREATED).body(response);
+   }
 }
