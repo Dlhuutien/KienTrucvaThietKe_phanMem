@@ -70,28 +70,35 @@ public class PurchaseDetailServiceImpl implements PurchaseDetailService {
 
     @Transactional
     @Override
-    public PurchaseDetail save(PurchaseDetail newDetail) {
-    	ProductDTO product = restTemplate.getForObject(
-                apiGatewayUrl + "/api/products/" + newDetail.getProductId(), ProductDTO.class);
+    public PurchaseDetailDTO save(PurchaseDetailDTO purchaseDetailDTO) {
+        PurchaseDetail purchaseDetail = convertToEntity(purchaseDetailDTO);
+        
+        ProductDTO product = restTemplate.getForObject(
+                apiGatewayUrl + "/api/products/" + purchaseDetail.getProductId(), ProductDTO.class);
         ProviderDTO provider = restTemplate.getForObject(
-                apiGatewayUrl + "/providers/" + newDetail.getProviderId(), ProviderDTO.class);
+                apiGatewayUrl + "/providers/" + purchaseDetail.getProviderId(), ProviderDTO.class);
 
         if (product != null && provider != null) {
-            return purchaseDetailRepository.save(newDetail);
+            PurchaseDetail savedPurchaseDetail = purchaseDetailRepository.save(purchaseDetail);            
+            return convertToDTO(savedPurchaseDetail);
         }
         throw new RuntimeException("Product or Provider not found");
     }
 
     @Transactional
     @Override
-    public PurchaseDetail update(int id, PurchaseDetail updatedDetail) {
-    	Optional<PurchaseDetail> existing = purchaseDetailRepository.findById(id);
+    public PurchaseDetailDTO update(int id, PurchaseDetailDTO updatedDetailDTO) {
+        Optional<PurchaseDetail> existing = purchaseDetailRepository.findById(id);
         if (existing.isPresent()) {
-            updatedDetail.setId(id);
-            return purchaseDetailRepository.save(updatedDetail);
+            PurchaseDetail updatedDetail = convertToEntity(updatedDetailDTO);
+            updatedDetail.setId(id);      
+            PurchaseDetail savedUpdatedDetail = purchaseDetailRepository.save(updatedDetail);
+            
+            return convertToDTO(savedUpdatedDetail);
         }
         throw new RuntimeException("PurchaseDetail not found");
     }
+
 
     @Transactional
     @Override
