@@ -19,5 +19,7 @@ public interface ProductService {
 
 	ProductDTO saveProductDTO(ProductDTO productDTO);
 	
+	ProductDTO updateProductDTO(int id, ProductDTO productDTO);
+	
 	boolean delete(int id);
 }
