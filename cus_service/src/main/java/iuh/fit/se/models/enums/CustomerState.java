@@ -1,0 +1,19 @@
+package iuh.fit.se.models.enums;
+
+public enum CustomerState {
+    ACTIVE("Active"),
+    INACTIVE("Inactive"),
+    BANNED("Banned");
+
+    private String state;
+
+    // Constructor để khởi tạo giá trị cho enum
+    CustomerState(String state) {
+        this.state = state;
+    }
+
+    // Phương thức để trả về giá trị String của trạng thái
+    public String getState() {
+        return this.state;
+    }
+}
