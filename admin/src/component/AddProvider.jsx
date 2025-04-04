@@ -8,11 +8,15 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  FormHelperText,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
+import { addProvider, updateProvider, checkEmailUnique } from "../services/ProviderService";
 
 const AddProvider = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
   const [provider, setProvider] = useState({
     id: "",
     name: "",
@@ -20,7 +24,8 @@ const AddProvider = () => {
     email: "",
     origin: "",
   });
-  const navigate = useNavigate();
+
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (location.state && location.state.providerData) {
@@ -28,8 +33,71 @@ const AddProvider = () => {
     }
   }, [location.state]);
 
+  const originOptions = [
+    "CHINA",
+    "SOUTH_KOREA",
+    "USA",
+    "JAPAN",
+    "TAIWAN",
+    "INDIA",
+    "VIETNAM",
+    "GERMANY",
+    "SWEDEN",
+    "FINLAND",
+  ];
+
+  const validate = (fieldName) => {
+    let tempErrors = { ...errors };
+
+    if (!fieldName || fieldName === "name") {
+      if (!provider.name.trim()) {
+        tempErrors.name = "Tên nhà cung cấp không được để trống.";
+      } else if (provider.name.length > 100) {
+        tempErrors.name = "Tên nhà cung cấp không được vượt quá 100 ký tự.";
+      } else {
+        delete tempErrors.name;
+      }
+    }
+
+    if (!fieldName || fieldName === "email") {
+      if (!provider.email.trim()) {
+        tempErrors.email = "Email không được để trống.";
+      } else if (!/\S+@\S+\.\S+/.test(provider.email)) {
+        tempErrors.email = "Định dạng email không hợp lệ.";
+      } else if (provider.email.length > 100) {
+        tempErrors.email = "Email không được vượt quá 100 ký tự.";
+      } else {
+        delete tempErrors.email;
+      }
+    }
+
+    if (!fieldName || fieldName === "address") {
+      if (!provider.address.trim()) {
+        tempErrors.address = "Địa chỉ không được để trống.";
+      } else if (provider.address.length > 200) {
+        tempErrors.address = "Địa chỉ không được vượt quá 200 ký tự.";
+      } else {
+        delete tempErrors.address;
+      }
+    }
+
+    if (!fieldName || fieldName === "origin") {
+      if (!provider.origin) {
+        tempErrors.origin = "Xuất xứ không được để trống.";
+      } else if (!originOptions.includes(provider.origin)) {
+        tempErrors.origin = "Xuất xứ không hợp lệ.";
+      } else {
+        delete tempErrors.origin;
+      }
+    }
+
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     if (name === "name") {
       const capital = value
         .split(" ")
@@ -43,9 +111,63 @@ const AddProvider = () => {
     }
   };
 
+  const handleBlur = async (e) => {
+    const { name } = e.target;
+    validate(name);
+
+    if (name === "email" && provider.email) {
+      try {
+        await checkEmailUnique(provider.email, provider.id);
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.email;
+          return newErrors;
+        });
+      } catch (error) {
+        if (error.response && error.response.status === 400) {
+          setErrors((prev) => ({
+            ...prev,
+            email: "Email này đã tồn tại.",
+          }));
+        } else {
+          setErrors((prev) => ({
+            ...prev,
+            email: "Lỗi khi kiểm tra email. Vui lòng thử lại sau.",
+          }));
+        }
+      }
+    }
+  };
+
   const handleSubmit = async () => {
-    console.log("Provider data submitted:", provider);
-    navigate("/NhaCungCap");
+    if (!validate()) return;
+
+    if (provider.email) {
+      try {
+        await checkEmailUnique(provider.email, provider.id);
+      } catch (error) {
+        if (error.response && error.response.status === 400) {
+          setErrors((prev) => ({
+            ...prev,
+            email: "Email này đã tồn tại.",
+          }));
+          return;
+        }
+      }
+    }
+
+    try {
+      if (provider.id) {
+        await updateProvider(provider.id, provider);
+      } else {
+        await addProvider(provider);
+      }
+      navigate("/NhaCungCap");
+    } catch (err) {
+      if (err.response && err.response.data) {
+        setErrors(err.response.data);
+      }
+    }
   };
 
   return (
@@ -70,8 +192,11 @@ const AddProvider = () => {
           name="name"
           value={provider.name}
           onChange={handleChange}
+          onBlur={handleBlur}
           fullWidth
           sx={{ mb: 2 }}
+          error={!!errors.name}
+          helperText={errors.name ? `* ${errors.name}` : ""}
         />
 
         <TextField
@@ -79,8 +204,11 @@ const AddProvider = () => {
           name="address"
           value={provider.address}
           onChange={handleChange}
+          onBlur={handleBlur}
           fullWidth
           sx={{ mb: 2 }}
+          error={!!errors.address}
+          helperText={errors.address ? `* ${errors.address}` : ""}
         />
 
         <TextField
@@ -88,11 +216,14 @@ const AddProvider = () => {
           name="email"
           value={provider.email}
           onChange={handleChange}
+          onBlur={handleBlur}
           fullWidth
           sx={{ mb: 2 }}
+          error={!!errors.email}
+          helperText={errors.email ? `* ${errors.email}` : ""}
         />
 
-        <FormControl fullWidth>
+        <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.origin}>
           <InputLabel id="select">Xuất xứ</InputLabel>
           <Select
             id="select"
@@ -100,18 +231,15 @@ const AddProvider = () => {
             label="Xuất xứ"
             value={provider.origin}
             onChange={handleChange}
+            onBlur={handleBlur}
           >
-            <MenuItem value="CHINA">CHINA</MenuItem>
-            <MenuItem value="SOUTH_KOREA">SOUTH_KOREA</MenuItem>
-            <MenuItem value="USA">USA</MenuItem>
-            <MenuItem value="JAPAN">JAPAN</MenuItem>
-            <MenuItem value="TAIWAN">TAIWAN</MenuItem>
-            <MenuItem value="INDIA">INDIA</MenuItem>
-            <MenuItem value="VIETNAM">VIETNAM</MenuItem>
-            <MenuItem value="GERMANY">GERMANY</MenuItem>
-            <MenuItem value="SWEDEN">SWEDEN</MenuItem>
-            <MenuItem value="FINLAND">FINLAND</MenuItem>
+            {originOptions.map((origin) => (
+              <MenuItem key={origin} value={origin}>
+                {origin}
+              </MenuItem>
+            ))}
           </Select>
+          <FormHelperText>{errors.origin ? `* ${errors.origin}` : ""}</FormHelperText>
         </FormControl>
 
         <Button
