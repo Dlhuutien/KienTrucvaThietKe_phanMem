@@ -7,8 +7,4 @@ import iuh.fit.se.models.entities.Product;
 
 public interface DiscountService {
 	BigDecimal calculateDiscountedPrice(Product product);
-	Discount findById(int id);
-	Discount save(Discount discount);
-	Discount update(int id, Discount discount);
-	boolean delete(int id);
 }

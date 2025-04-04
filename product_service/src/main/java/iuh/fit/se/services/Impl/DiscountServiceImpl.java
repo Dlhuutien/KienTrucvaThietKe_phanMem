@@ -16,32 +16,20 @@ public class DiscountServiceImpl implements DiscountService{
 
 	@Override
 	public BigDecimal calculateDiscountedPrice(Product product) {
-		// TODO Auto-generated method stub
-		return null;
+	    BigDecimal salePrice = product.getSalePrice();
+
+	    if (salePrice == null || salePrice.compareTo(BigDecimal.ZERO) <= 0) {
+	        // Nếu giá bán không hợp lệ, trả về giá bán gốc hoặc 0
+	        return BigDecimal.ZERO;
+	    }
+
+	    // Tỷ lệ giảm giá cố định (10%)
+	    BigDecimal discountRate = BigDecimal.valueOf(0.1);
+
+	    BigDecimal discountedPrice = salePrice.subtract(salePrice.multiply(discountRate));
+
+	    return discountedPrice;
 	}
 
-	@Override
-	public Discount findById(int id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Discount save(Discount discount) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Discount update(int id, Discount discount) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean delete(int id) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 }

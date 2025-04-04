@@ -16,9 +16,9 @@ public interface PurchaseDetailService {
 	
 	List<PurchaseDetail> getPurchaseDetailByProductIdAndProviderId(int productId, int providerId);
 
-	PurchaseDetail save(PurchaseDetail newDetail);
+	PurchaseDetailDTO save(PurchaseDetailDTO newDetail);
 
-	PurchaseDetail update(int id, PurchaseDetail updatedDetail);
+	PurchaseDetailDTO update(int id, PurchaseDetailDTO updatedDetail);
 
 	boolean delete(int id);
 }

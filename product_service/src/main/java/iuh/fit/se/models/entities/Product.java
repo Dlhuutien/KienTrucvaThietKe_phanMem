@@ -40,11 +40,17 @@ public class Product {
 	protected BigDecimal salePrice;
 	@Column(name = "purchase_price", columnDefinition = "Decimal(19,0)")
 	protected BigDecimal purchasePrice;
+	
 	@PrePersist
 	protected void onCreate() {
-		salePrice = BigDecimal.ONE;
-		purchasePrice = BigDecimal.ONE;
+	    if (salePrice == null) {
+	        salePrice = BigDecimal.ONE;
+	    }
+	    if (purchasePrice == null) {
+	        purchasePrice = BigDecimal.ONE;
+	    }
 	}
+
 
 
 }
