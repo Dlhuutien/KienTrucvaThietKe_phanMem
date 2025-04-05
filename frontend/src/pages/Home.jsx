@@ -37,8 +37,8 @@ const fakeData = {
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  //   const [dataTest, setDataTest] = useState([]);
-  const [dataTest, setDataTest] = useState(fakeData);
+    const [dataTest, setDataTest] = useState([]);
+  // const [dataTest, setDataTest] = useState(fakeData);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedOption, setSelectedOption] = useState('');

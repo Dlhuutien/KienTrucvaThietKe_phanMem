@@ -103,7 +103,7 @@ const AddProduct = () => {
     if (!product.url.trim()) {
       error.url = "URL không được để trống.";
     } else if (
-      !/^data:image\/(jpeg|jpg|png|gif);base64,.+$/.test(product.url)
+      !/^data:image\/(jpeg|jpg|png|gif|webp);base64,.+$/.test(product.url)
     ) {
       error.url =
         "URL ảnh phải có định dạng .jpg, .jpeg, .png hoặc .gif dưới dạng base64.";
