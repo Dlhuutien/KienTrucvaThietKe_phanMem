@@ -17,5 +17,3 @@ export const updateProduct = (id, product) => {
 export const deleteProduct = (id) => {
     return axios.delete(`${REST_API_BASE_URL}/products/${id}`)
 }
-
-

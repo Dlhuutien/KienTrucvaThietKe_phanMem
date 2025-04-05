@@ -17,6 +17,7 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import { updateUser, saveUser } from "../services/UserService";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+
 const AddCustomer = () => {
   const location = useLocation();
   const [customer, setCustomer] = useState({

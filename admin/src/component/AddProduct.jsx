@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { addProduct, updateProduct } from "../services/ProductService";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const AddProduct = () => {
   const [errors, setErrors] = useState({});
@@ -20,6 +21,26 @@ const AddProduct = () => {
     name: "",
     brand: "",
     url: "",
+    // quantity: "",
+    // purchasePrice: "1",
+    // salePrice: "1",
+    //phone
+    chip: "",
+    os: null,
+    ram: null,
+    rom: null,
+    screenSize: "",
+    //power_bank
+    capacity: "",
+    fastCharging: "",
+    input: "",
+    output: "",
+    // earphone
+    connectionType: null,
+    batteryLife: "",
+    //charging_cable
+    cableType: null,
+    length: "",
   });
 
   const navigate = useNavigate();
@@ -30,6 +51,22 @@ const AddProduct = () => {
     }
   }, [location.state]);
 
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setProduct({ ...product, url: reader.result });
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -37,18 +74,6 @@ const AddProduct = () => {
     //   alert("Kích thước màn hình không thể lớn hơn 3.2 inch");
     //   return;
     // }
-
-    const handleImageChange = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          setProduct({ ...product, url: reader.result });
-        };
-
-        reader.readAsDataURL(file);
-      }
-    };
 
     setProduct({
       ...product,
@@ -59,22 +84,32 @@ const AddProduct = () => {
   const validate = () => {
     const error = {};
 
+    // Kiểm tra category, name, và brand
     if (!product.category) {
       error.category = "Loại sản phẩm là bắt buộc.";
     }
 
     if (!product.name.trim()) {
       error.name = "Tên sản phẩm không được để trống.";
+    } else if (!/^[a-zA-Z0-9\s]+$/.test(product.name)) {
+      error.name = "Tên sản phẩm không được chứa ký tự đặc biệt.";
     }
 
     if (!product.brand) {
       error.brand = "Thương hiệu là bắt buộc.";
     }
 
+    // Kiểm tra URL (base64)
     if (!product.url.trim()) {
       error.url = "URL không được để trống.";
+    } else if (
+      !/^data:image\/(jpeg|jpg|png|gif|webp);base64,.+$/.test(product.url)
+    ) {
+      error.url =
+        "URL ảnh phải có định dạng .jpg, .jpeg, .png hoặc .gif dưới dạng base64.";
     }
 
+    // Kiểm tra các trường theo category
     if (product.category === "PHONE") {
       if (!product.chip.trim()) {
         error.chip = "Chip không được để trống.";
@@ -91,6 +126,7 @@ const AddProduct = () => {
       if (!product.rom) {
         error.rom = "ROM là bắt buộc.";
       }
+
       if (!product.screenSize) {
         error.screenSize = "Kích thước màn hình là bắt buộc.";
       } else if (product.screenSize <= 0 || product.screenSize > 100) {
@@ -98,6 +134,7 @@ const AddProduct = () => {
           "Kích thước màn hình phải lớn hơn 0 và nhỏ hơn 100 inch.";
       }
     }
+
     if (product.category === "POWER_BANK") {
       if (!product.capacity) {
         error.capacity = "Dung lượng là bắt buộc.";
@@ -145,6 +182,14 @@ const AddProduct = () => {
         error.length = "Chiều dài là bắt buộc.";
       } else if (product.length <= 0) {
         error.length = "Chiều dài phải lớn hơn 0.";
+      }
+    }
+
+    // Loại bỏ lỗi khi trường hợp nhập đúng
+    for (const key in error) {
+      if (error[key] === "") {
+        // Nếu không có lỗi, xóa khỏi object error
+        delete error[key];
       }
     }
 
@@ -249,7 +294,39 @@ const AddProduct = () => {
           )}
         </FormControl>
 
-        {/* URL */}
+        {/* Số lượng */}
+        {/* <TextField
+          label="Số lượng"
+          name="quantity"
+          value={product.quantity}
+          onChange={handleChange}
+          fullWidth
+          sx={{ mb: 2 }}
+          type="number"
+        /> */}
+
+        {/* Giá nhập */}
+        {/* <TextField
+          label="Giá nhập"
+          name="purchasePrice"
+          value={product.purchasePrice}
+          onChange={handleChange}
+          fullWidth
+          sx={{ mb: 2 }}
+          type="number"
+        /> */}
+
+        {/* Giá bán */}
+        {/* <TextField
+          label="Giá bán"
+          name="salePrice"
+          value={product.salePrice}
+          onChange={handleChange}
+          fullWidth
+          sx={{ mb: 2 }}
+          type="number"
+        /> */}
+
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           {product.url && (
             <Box
@@ -281,6 +358,11 @@ const AddProduct = () => {
               onChange={(e) => handleImageChange(e)}
             />
           </Button>
+          {errors.url && (
+            <Typography color="error" sx={{ mt: 1, fontSize: "12px" }}>
+              {errors.url}
+            </Typography>
+          )}
         </Box>
 
         {/* Các trường thuộc loại sản phẩm */}

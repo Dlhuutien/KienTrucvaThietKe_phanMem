@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Button, Divider, Menu, MenuItem, IconButton } from "@mui/material";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
-import iphone from '../assets/iphone.png'
-import huawei from '../assets/huawei.png'
-import realme from '../assets/Realme.png'
-import samsung from '../assets/samsung.png'
-import macbook from '../assets/macbook.png'
+import iphone from '../assets/iphone16e.webp'
+import xiaomi from '../assets/xiaomi15.webp'
+import sale from '../assets/sale.webp'
+import galaxyS25 from '../assets/galaxys25.webp'
+import galaxyA56 from '../assets/galaxya56.webp'
 import Item from "../component/Item";
 import { listProduct } from "../services/ProductService";
 
 import hinhanh from '../assets/iphone15.jpeg'
 
-const banners = [iphone, samsung, macbook, realme, huawei];
+const banners = [iphone, xiaomi, sale, galaxyS25, galaxyA56];
 
 const fakeData = {
   data: [
@@ -37,8 +37,8 @@ const fakeData = {
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  //   const [dataTest, setDataTest] = useState([]);
-  const [dataTest, setDataTest] = useState(fakeData);
+    const [dataTest, setDataTest] = useState([]);
+  // const [dataTest, setDataTest] = useState(fakeData);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedOption, setSelectedOption] = useState('');
@@ -82,7 +82,7 @@ const Home = () => {
       <Box
         sx={{
           position: 'relative',
-          width: '50%',
+          width: '80%',
           margin: 'auto',
           overflow: 'hidden',
           padding: '20px',

@@ -10,45 +10,75 @@ import {
   Button,
   Typography,
   Box,
+  Snackbar,
+  Alert,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-
-const mockProviders = [
-  {
-    id: 1,
-    name: "Nhà cung cấp A",
-    address: "Hà Nội",
-    email: "a@example.com",
-    origin: "Việt Nam",
-  },
-  {
-    id: 2,
-    name: "Nhà cung cấp B",
-    address: "TP. Hồ Chí Minh",
-    email: "b@example.com",
-    origin: "Việt Nam",
-  },
-  {
-    id: 3,
-    name: "Nhà cung cấp C",
-    address: "Đà Nẵng",
-    email: "c@example.com",
-    origin: "Việt Nam",
-  },
-];
+import { listProvider, deleteProvider } from '../services/ProviderService';
 
 const ProviderList = () => {
   const [providers, setProviders] = useState([]);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const [dialog, setDialog] = useState({ open: false, id: null });
 
   useEffect(() => {
-    setProviders(mockProviders);
+    fetchProvider();
   }, []);
+
+  const fetchProvider = async () => {
+    try {
+      const response = await listProvider();
+      setProviders(response.data.data);
+    } catch (error) {
+      console.error("fetchProvider -> error", error);
+    }
+  }
+
+  const handleDelete = async () => {
+    try {
+      await deleteProvider(dialog.id);
+      fetchProvider();
+      setSnackbar({ open: true, message: "Xóa nhà cung cấp thành công!", severity: 'success' });
+    } catch (error) {
+      console.error("handleDelete -> error", error);
+      setSnackbar({ open: true, message: "Xóa nhà cung cấp thất bại!", severity: 'error' });
+    } finally {
+      setDialog({ open: false, id: null });
+    }
+  }
+
+  const handleOpenDialog = (id) => {
+    setDialog({ open: true, id });
+  }
+
+  const handleCloseDialog = () => {
+    setDialog({ open: false, id: null });
+  }
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  }
 
   return (
     <Box sx={{ p: 2, backgroundColor: "#fff", borderRadius: 2 }}>
       <Typography variant="h4" fontWeight={700} mb={2}>
         Danh Sách Nhà Cung Cấp
       </Typography>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
       <TableContainer component={Paper} style={{ maxHeight: 650 }}>
         <Table stickyHeader>
           <TableHead>
@@ -85,7 +115,7 @@ const ProviderList = () => {
                     variant="contained"
                     color="error"
                     size="small"
-                    onClick={() => handleDelete(provider.id)}
+                    onClick={() => handleOpenDialog(provider.id)}
                   >
                     Xóa
                   </Button>
@@ -95,6 +125,44 @@ const ProviderList = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Dialog
+        open={dialog.open}
+        onClose={handleCloseDialog}
+        PaperProps={{
+          style: {
+            borderRadius: 15,
+            padding: '20px',
+            backgroundColor: '#f8f9fa',
+          },
+        }}
+      >
+        <DialogTitle sx={{ textAlign: 'center', color: '#d32f2f' }}>
+          Xác nhận xóa
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ textAlign: 'center', fontSize: '1.2rem', color: '#333' }}>
+            Bạn có chắc chắn muốn xóa nhà cung cấp này không?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: 'center' }}>
+          <Button
+            onClick={handleCloseDialog}
+            variant="contained"
+            color="primary"
+            sx={{ borderRadius: 5 }}
+          >
+            Hủy
+          </Button>
+          <Button
+            onClick={handleDelete}
+            variant="contained"
+            color="error"
+            sx={{ borderRadius: 5 }}
+          >
+            Xóa
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
