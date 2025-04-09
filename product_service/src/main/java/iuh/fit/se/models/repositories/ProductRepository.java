@@ -8,11 +8,13 @@ import java.util.List;
 import iuh.fit.se.models.entities.Product;
 
 @RepositoryRestResource(collectionResourceRel = "products", path = "products")
-public interface ProductRepository extends JpaRepository<Product, Integer>{
+public interface ProductRepository extends JpaRepository<Product, Integer> {
     // Tìm kiếm mà không có phân trang và sắp xếp
-    @Query("SELECT p FROM Product p WHERE " + 
-           "(LOWER(p.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-           "OR LOWER(p.category) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-           "OR LOWER(p.brand) LIKE LOWER(CONCAT('%', :searchTerm, '%'))) ")
+    @Query("SELECT p FROM Product p WHERE " +
+            "(LOWER(p.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
+            "OR LOWER(p.category) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
+            "OR LOWER(p.brand) LIKE LOWER(CONCAT('%', :searchTerm, '%'))) ")
     List<Product> findProductBySearchTerm(@Param("searchTerm") String searchTerm);
+
+    List<Product> findByNameContainingIgnoreCase(String name);
 }

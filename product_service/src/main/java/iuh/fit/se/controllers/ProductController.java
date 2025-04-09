@@ -8,13 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import iuh.fit.se.models.dtos.ProductDTO;
 import iuh.fit.se.services.ProductService;
@@ -92,22 +85,23 @@ public class ProductController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 		}
 	}
-	
-	 //update  
-    @PutMapping("/products/{id}")
-    public ResponseEntity<Map<String, Object>> updateProduct(@PathVariable int id, @Valid @RequestBody ProductDTO productDTO, BindingResult bindingResult) {
-        Map<String, Object> response = new LinkedHashMap<>();
-        if (bindingResult.hasErrors()) {
-            Map<String, Object> errors = new LinkedHashMap<>();
-            bindingResult.getFieldErrors().forEach(result -> errors.put(result.getField(), result.getDefaultMessage()));
-            response.put("status", HttpStatus.BAD_REQUEST.value());
-            response.put("errors", errors);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
-        response.put("status", HttpStatus.OK.value());
-        response.put("data", productService.updateProductDTO(id, productDTO));
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
+
+	// update
+	@PutMapping("/products/{id}")
+	public ResponseEntity<Map<String, Object>> updateProduct(@PathVariable int id,
+			@Valid @RequestBody ProductDTO productDTO, BindingResult bindingResult) {
+		Map<String, Object> response = new LinkedHashMap<>();
+		if (bindingResult.hasErrors()) {
+			Map<String, Object> errors = new LinkedHashMap<>();
+			bindingResult.getFieldErrors().forEach(result -> errors.put(result.getField(), result.getDefaultMessage()));
+			response.put("status", HttpStatus.BAD_REQUEST.value());
+			response.put("errors", errors);
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+		}
+		response.put("status", HttpStatus.OK.value());
+		response.put("data", productService.updateProductDTO(id, productDTO));
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
 
 	@DeleteMapping("/products/{id}")
 	public ResponseEntity<Map<String, Object>> deleteProduct(@PathVariable int id) {
@@ -131,4 +125,18 @@ public class ProductController {
 		}
 	}
 
+	@GetMapping("/products/search/findByName")
+	public ResponseEntity<List<ProductDTO>> findProductByName(@RequestParam String name) {
+		List<ProductDTO> products = productService.findProductsByName(name);
+		if (products.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(products);
+	}
+
+	@GetMapping("/products/names")
+	public ResponseEntity<List<String>> getAllProductNames() {
+		List<String> productNames = productService.getAllProductNames();
+		return ResponseEntity.ok(productNames);
+	}
 }
