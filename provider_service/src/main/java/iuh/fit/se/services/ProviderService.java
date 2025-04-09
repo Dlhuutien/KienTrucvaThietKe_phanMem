@@ -12,6 +12,8 @@ public interface ProviderService {
 
 	ProviderDTO findById(int id);
 
+	List<ProviderDTO> findProvidersByName(String name);
+
 	List<ProviderDTO> search(String searchTerm);
 
 	ProviderDTO save(ProviderDTO provider);
@@ -21,6 +23,8 @@ public interface ProviderService {
 	boolean delete(int id);
 
 	boolean isEmailUnique(String email);
+
+	List<String> getAllProviderNames();
 
 	boolean isEmailUniqueForUpdate(String email, int id);
 }

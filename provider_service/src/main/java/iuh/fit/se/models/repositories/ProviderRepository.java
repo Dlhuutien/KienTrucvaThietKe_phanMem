@@ -19,4 +19,6 @@ public interface ProviderRepository extends JpaRepository<Provider, Integer> {
 	boolean existsByEmail(String email);
 
 	Provider findByEmail(String email);
+
+	List<Provider> findByNameContainingIgnoreCase(String name);
 }
