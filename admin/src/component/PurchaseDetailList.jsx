@@ -13,39 +13,47 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
-
-// Dữ liệu cứng thay thế API
-const mockData = [
-  {
-    id: 1,
-    createdTime: "2024-03-10T10:30:00Z",
-    purchasePrice: 100000,
-    quantity: 5,
-    salePrice: 120000,
-    product: { name: "Laptop ASUS" },
-    provider: { name: "Nhà cung cấp A" },
-  },
-  {
-    id: 2,
-    createdTime: "2024-03-11T12:45:00Z",
-    purchasePrice: 50000,
-    quantity: 10,
-    salePrice: 65000,
-    product: { name: "Chuột Logitech" },
-    provider: { name: "Nhà cung cấp B" },
-  },
-];
+import { listPurchaseDetail, updatePurchaseDetail, deletePurchaseDetail } from "../services/PurchaseDetailService";
 
 const PurchaseDetailList = () => {
   const [purchaseDetails, setPurchaseDetails] = useState([]);
 
+  const fetchPurchaseDetails = async () => {
+    try {
+      const response = await listPurchaseDetail();
+      setPurchaseDetails(response.data.data);
+    } catch (error) {
+      console.error("Error fetching purchase details:", error);
+    }
+  }
+
   useEffect(() => {
-    setPurchaseDetails(mockData);
+    fetchPurchaseDetails();
   }, []);
 
-  const handleDelete = (id) => {
-    const updatedList = purchaseDetails.filter((detail) => detail.id !== id);
-    setPurchaseDetails(updatedList);
+  const handleDelete = async (id) => {
+    if (!window.confirm("Bạn có chắc chắn muốn xóa chi tiết mua hàng này?")) {
+      return;
+    }
+
+    try {
+      const response = await deletePurchaseDetail(id);
+      if (response.status === 200) {
+        setSnackbar({
+          open: true,
+          message: "Xóa chi tiết mua hàng thành công!",
+          severity: "success",
+        });
+        fetchPurchaseDetails();
+      }
+    } catch (error) {
+      console.error("Error deleting purchase detail:", error);
+      setSnackbar({
+        open: true,
+        message: "Không thể xóa chi tiết mua hàng. Vui lòng thử lại.",
+        severity: "error",
+      });
+    }
   };
 
   return (
@@ -75,21 +83,22 @@ const PurchaseDetailList = () => {
                   {dayjs(detail.createdTime).format("YYYY-MM-DD HH:mm:ss")}
                 </TableCell>
                 <TableCell>
-                  {detail.purchasePrice.toLocaleString()} VND
+                  {(detail.purchasePrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                 </TableCell>
                 <TableCell>{detail.quantity}</TableCell>
-                <TableCell>{detail.salePrice.toLocaleString()} VND</TableCell>
-                <TableCell>{detail.product.name}</TableCell>
-                <TableCell>{detail.provider.name}</TableCell>
+                <TableCell>
+                  {(detail.salePrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                </TableCell>
+                <TableCell>{detail.productName}</TableCell>
+                <TableCell>{detail.providerName}</TableCell>
+
                 <TableCell>
                   <Button
-                    component={Link}
-                    to={`/CapNhatNhapHang?id=${detail.id}`}
-                    state={{ purchaseDetailData: detail }}
                     variant="contained"
                     color="primary"
                     size="small"
                     sx={{ mr: 1 }}
+                    onClick={() => navigate(`/CapNhatNhapHang?id=${detail.id}`)}
                   >
                     Cập nhật
                   </Button>
