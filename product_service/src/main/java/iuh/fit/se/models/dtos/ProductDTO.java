@@ -30,7 +30,7 @@ public class ProductDTO {
 	private String name;
 
 	@NotBlank(message = "URL ảnh không được để trống")
-	@Pattern(regexp = "^data:image/(jpeg|jpg|png|gif);base64,.+$", message = "URL ảnh phải có định dạng .jpg, .jpeg, .png hoặc .gif dưới dạng base64")
+	@Pattern(regexp = "^data:image/(jpeg|jpg|png|gif|webp);base64,.+$", message = "URL ảnh phải có định dạng .jpg, .jpeg, .png hoặc .gif dưới dạng base64")
 	private String url;
 	
 	@NotNull(message = "Thương hiệu không được để trống")

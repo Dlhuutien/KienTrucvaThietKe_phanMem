@@ -33,7 +33,13 @@ public class PurchaseDetail {
 	private LocalDateTime createdTime;
 	@Column(name = "purchase_price", columnDefinition = "Decimal(19,0)")
 	private BigDecimal purchasePrice;
+	@Column(name = "sale_price", columnDefinition = "Decimal(19,0)")
+	private BigDecimal salePrice;
 	private int quantity;
+	@Column(name = "product_name")
+	private String productName;
+	@Column(name = "provider_name")
+	private String providerName;
 
 	@PrePersist
 	protected void onCreate() {
