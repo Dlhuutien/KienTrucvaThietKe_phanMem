@@ -1,8 +1,6 @@
 package iuh.fit.se.controllers;
 
-
 import iuh.fit.se.models.dtos.PurchaseDetailDTO;
-import iuh.fit.se.models.entities.PurchaseDetail;
 import iuh.fit.se.services.PurchaseDetailService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -15,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/purchaseDetail")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
 public class PurchaseDetailController {
     @Autowired
     private PurchaseDetailService purchaseDetailService;
@@ -30,31 +28,34 @@ public class PurchaseDetailController {
         response.put("status", HttpStatus.OK.value());
         if (searchTerm == null || searchTerm.isEmpty()) {
             response.put("data", purchaseDetailService.findAll());
-        } else{
+        } else {
             response.put("data", purchaseDetailService.search(searchTerm));
         }
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> savePurchaseDetail(@Valid @RequestBody PurchaseDetailDTO purchaseDetailDTO, BindingResult bindingResult){
+    public ResponseEntity<Map<String, Object>> savePurchaseDetail(
+            @Valid @RequestBody PurchaseDetailDTO purchaseDetailDTO, BindingResult bindingResult) {
+        System.out.println("PurchaseDetailDTO nhận được: " + purchaseDetailDTO);
         Map<String, Object> response = new LinkedHashMap<>();
-        System.out.println("ProductDTO nhận được: " + purchaseDetailDTO);
         if (bindingResult.hasErrors()) {
             Map<String, Object> errors = new LinkedHashMap<>();
             bindingResult.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
             response.put("status", HttpStatus.BAD_REQUEST.value());
             response.put("errors", errors);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } else {
+            PurchaseDetailDTO savedPurchaseDetail = purchaseDetailService.save(purchaseDetailDTO);
+            response.put("status", HttpStatus.CREATED.value());
+            response.put("data", savedPurchaseDetail);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }
-        response.put("status", HttpStatus.CREATED.value());
-        response.put("data", purchaseDetailService.save(purchaseDetailDTO));
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> updatePurchaseDetail(@PathVariable int id, @Valid @RequestBody PurchaseDetailDTO purchaseDetailDTO, BindingResult bindingResult){
+    public ResponseEntity<Map<String, Object>> updatePurchaseDetail(@PathVariable int id,
+            @Valid @RequestBody PurchaseDetailDTO purchaseDetailDTO, BindingResult bindingResult) {
         Map<String, Object> response = new LinkedHashMap<>();
         System.out.println("ProductDTO nhận được: " + purchaseDetailDTO);
         if (bindingResult.hasErrors()) {
@@ -91,4 +92,33 @@ public class PurchaseDetailController {
         }
     }
 
+    @GetMapping("/productNames")
+    public ResponseEntity<Map<String, Object>> getProductNames() {
+        try {
+            Map<String, Object> response = new LinkedHashMap<>();
+            response.put("status", HttpStatus.OK.value());
+            response.put("data", purchaseDetailService.getProductNames());
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new LinkedHashMap<>();
+            response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.put("message", "Error occurred while fetching product names");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @GetMapping("/providerNames")
+    public ResponseEntity<Map<String, Object>> getProviderNames() {
+        try {
+            Map<String, Object> response = new LinkedHashMap<>();
+            response.put("status", HttpStatus.OK.value());
+            response.put("data", purchaseDetailService.getProviderNames());
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new LinkedHashMap<>();
+            response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.put("message", "Error occurred while fetching provider names");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 }
