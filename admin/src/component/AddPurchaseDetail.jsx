@@ -12,10 +12,11 @@ import {
   Alert
 } from "@mui/material";
 import dayjs from "dayjs";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { getListProductNames, getListProviderNames, addPurchaseDetail, updatePurchaseDetail } from '../services/PurchaseDetailService'
 
 const AddPurchaseDetail = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const [productNames, setProductNames] = useState([]);
   const [providerNames, setProviderNames] = useState([]);
@@ -74,6 +75,12 @@ const AddPurchaseDetail = () => {
     productName: "",
     providerName: "",
   });
+
+  useEffect(() => {
+    if (location.state && location.state.purchaseDetail) {
+      setPurchaseDetail(location.state.purchaseDetail);
+    }
+  }, [location.state]);
 
   const validate = (fieldName) => {
     let tempErrors = { ...errors };
@@ -199,9 +206,21 @@ const AddPurchaseDetail = () => {
       return;
     }
 
-    setIsSubmitting(true);
     try {
-      const response = await updatePurchaseDetail(purchaseDetail.id, purchaseDetail);
+      const selectedProduct = productNames.find(
+        (product) => product.name === purchaseDetail.productName
+      );
+      const selectedProvider = providerNames.find(
+        (provider) => provider.name === purchaseDetail.providerName
+      );
+
+      const updatedDetail = {
+        ...purchaseDetail,
+        productId: selectedProduct ? selectedProduct.id : purchaseDetail.productId,
+        providerId: selectedProvider ? selectedProvider.id : purchaseDetail.providerId,
+      };
+
+      const response = await updatePurchaseDetail(purchaseDetail.id, updatedDetail);
       if (response.status === 200) {
         setSnackbar({
           open: true,
@@ -217,8 +236,6 @@ const AddPurchaseDetail = () => {
         message: "Không thể cập nhật chi tiết mua hàng. Vui lòng thử lại.",
         severity: "error",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 

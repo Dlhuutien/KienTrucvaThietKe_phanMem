@@ -1,7 +1,7 @@
 package iuh.fit.se.services.Impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -71,95 +71,42 @@ public class PurchaseDetailServiceImpl implements PurchaseDetailService {
         return purchaseDetailRepository.findByProductIdAndProviderId(productId, providerId);
     }
 
-    // @Transactional
-    // @Override
-    // public PurchaseDetailDTO save(PurchaseDetailDTO purchaseDetailDTO) {
-    // List<ProviderDTO> providers = restTemplate.exchange(
-    // apiGatewayUrl + "/providers/search/findByName?name=" +
-    // purchaseDetailDTO.getProviderName(),
-    // HttpMethod.GET, null, new ParameterizedTypeReference<List<ProviderDTO>>() {
-    // }).getBody();
-    // System.out.println("Providers found: " + providers);
-
-    // if (providers != null && !providers.isEmpty()) {
-    // ProviderDTO provider = providers.get(0);
-
-    // List<ProductDTO> products = restTemplate.exchange(
-    // apiGatewayUrl + "/api/products/search/findByName?name=" +
-    // purchaseDetailDTO.getProductName(),
-    // HttpMethod.GET, null, new ParameterizedTypeReference<List<ProductDTO>>() {
-    // }).getBody();
-    // System.out.println("Products found: " + products);
-
-    // if (products != null && !products.isEmpty()) {
-    // ProductDTO product = products.get(0);
-
-    // PurchaseDetail purchaseDetail = convertToEntity(purchaseDetailDTO);
-    // purchaseDetail.setProductId(product.getId());
-    // purchaseDetail.setProviderId(provider.getId());
-    // purchaseDetail.setPurchasePrice(purchaseDetailDTO.getPurchasePrice());
-    // purchaseDetail.setSalePrice(purchaseDetailDTO.getSalePrice());
-
-    // System.out.println("Saving PurchaseDetail: " + purchaseDetail);
-    // PurchaseDetail savedPurchaseDetail =
-    // purchaseDetailRepository.save(purchaseDetail);
-    // return convertToDTO(savedPurchaseDetail);
-    // }
-    // throw new RuntimeException("Product not found by name");
-    // }
-    // throw new RuntimeException("Provider not found by name");
-    // }
-
     @Transactional
     @Override
-    public PurchaseDetailDTO save(PurchaseDetailDTO dto) {
-        // Lấy thông tin Product
-        ResponseEntity<Map<String, Object>> productResponse = restTemplate.exchange(
-                apiGatewayUrl + "/api/products/" + dto.getProductId(),
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<Map<String, Object>>() {
-                });
+    public PurchaseDetailDTO save(PurchaseDetailDTO purchaseDetailDTO) {
+        List<ProviderDTO> providers = restTemplate.exchange(
+                apiGatewayUrl + "/providers/search/findByName?name=" +
+                        purchaseDetailDTO.getProviderName(),
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<ProviderDTO>>() {
+                }).getBody();
+        System.out.println("Providers found: " + providers);
 
-        Map<String, Object> productMap = productResponse.getBody();
-        Map<String, Object> productData = (Map<String, Object>) productMap.get("data");
-        ProductDTO product = modelMapper.map(productData, ProductDTO.class);
+        if (providers != null && !providers.isEmpty()) {
+            ProviderDTO provider = providers.get(0);
 
-        // Lấy thông tin Provider
-        ResponseEntity<Map<String, Object>> providerResponse = restTemplate.exchange(
-                apiGatewayUrl + "/providers/" + dto.getProviderId(),
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<Map<String, Object>>() {
-                });
+            List<ProductDTO> products = restTemplate.exchange(
+                    apiGatewayUrl + "/api/products/search/findByName?name=" +
+                            purchaseDetailDTO.getProductName(),
+                    HttpMethod.GET, null, new ParameterizedTypeReference<List<ProductDTO>>() {
+                    }).getBody();
+            System.out.println("Products found: " + products);
 
-        Map<String, Object> providerMap = providerResponse.getBody();
-        Map<String, Object> providerData = (Map<String, Object>) providerMap.get("data");
-        ProviderDTO provider = modelMapper.map(providerData, ProviderDTO.class);
+            if (products != null && !products.isEmpty()) {
+                ProductDTO product = products.get(0);
 
-        // Kiểm tra null
-        if (product == null) {
-            throw new RuntimeException("Không tìm thấy sản phẩm với ID: " + dto.getProductId());
+                PurchaseDetail purchaseDetail = convertToEntity(purchaseDetailDTO);
+                purchaseDetail.setProductId(product.getId());
+                purchaseDetail.setProviderId(provider.getId());
+                purchaseDetail.setPurchasePrice(purchaseDetailDTO.getPurchasePrice());
+                purchaseDetail.setSalePrice(purchaseDetailDTO.getSalePrice());
+
+                System.out.println("Saving PurchaseDetail: " + purchaseDetail);
+                PurchaseDetail savedPurchaseDetail = purchaseDetailRepository.save(purchaseDetail);
+                return convertToDTO(savedPurchaseDetail);
+            }
+            throw new RuntimeException("Product not found by name");
         }
-
-        if (provider == null) {
-            throw new RuntimeException("Không tìm thấy nhà cung cấp với ID: " + dto.getProviderId());
-        }
-
-        PurchaseDetail purchaseDetail = convertToEntity(dto);
-        purchaseDetail.setProductId(product.getId());
-        purchaseDetail.setProviderId(provider.getId());
-        purchaseDetail.setProductName(product.getName());
-        purchaseDetail.setProviderName(provider.getName());
-
-        PurchaseDetail saved = purchaseDetailRepository.save(purchaseDetail);
-
-        // Mapping lại sang DTO
-        PurchaseDetailDTO result = convertToDTO(saved);
-        result.setProductName(product.getName());
-        result.setProviderName(provider.getName());
-
-        return result;
+        throw new RuntimeException("Provider not found by name");
     }
 
     @Transactional
@@ -167,8 +114,41 @@ public class PurchaseDetailServiceImpl implements PurchaseDetailService {
     public PurchaseDetailDTO update(int id, PurchaseDetailDTO updatedDetailDTO) {
         Optional<PurchaseDetail> existing = purchaseDetailRepository.findById(id);
         if (existing.isPresent()) {
-            PurchaseDetail updatedDetail = convertToEntity(updatedDetailDTO);
-            updatedDetail.setId(id);
+            PurchaseDetail updatedDetail = existing.get();
+
+            List<ProviderDTO> providers = restTemplate.exchange(
+                    apiGatewayUrl + "/providers/search/findByName?name=" +
+                            updatedDetailDTO.getProviderName(),
+                    HttpMethod.GET, null, new ParameterizedTypeReference<List<ProviderDTO>>() {
+                    }).getBody();
+
+            if (providers == null || providers.isEmpty()) {
+                throw new RuntimeException("Provider not found by name: " + updatedDetailDTO.getProviderName());
+            }
+            ProviderDTO provider = providers.get(0);
+
+            List<ProductDTO> products = restTemplate.exchange(
+                    apiGatewayUrl + "/api/products/search/findByName?name=" +
+                            updatedDetailDTO.getProductName(),
+                    HttpMethod.GET, null, new ParameterizedTypeReference<List<ProductDTO>>() {
+                    }).getBody();
+
+            if (products == null || products.isEmpty()) {
+                throw new RuntimeException("Product not found by name: " + updatedDetailDTO.getProductName());
+            }
+            ProductDTO product = products.get(0);
+
+            updatedDetail.setQuantity(updatedDetailDTO.getQuantity());
+            updatedDetail.setPurchasePrice(updatedDetailDTO.getPurchasePrice());
+            updatedDetail.setSalePrice(updatedDetailDTO.getSalePrice());
+
+            updatedDetail.setProductId(product.getId());
+            updatedDetail.setProviderId(provider.getId());
+            updatedDetail.setProductName(product.getName());
+            updatedDetail.setProviderName(provider.getName());
+
+            updatedDetail.setCreatedTime(LocalDateTime.now());
+
             PurchaseDetail savedUpdatedDetail = purchaseDetailRepository.save(updatedDetail);
 
             return convertToDTO(savedUpdatedDetail);

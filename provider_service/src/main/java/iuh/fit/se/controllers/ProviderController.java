@@ -25,9 +25,16 @@ public class ProviderController {
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getProviderById(@PathVariable int id) {
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("status", HttpStatus.OK.value());
-        response.put("data", providerService.findById(id));
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        try {
+            ProviderDTO providerDTO = providerService.findById(id);
+            response.put("status", HttpStatus.OK.value());
+            response.put("data", providerDTO);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.NOT_FOUND.value());
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
     }
 
     // http://localhost:8081/providers

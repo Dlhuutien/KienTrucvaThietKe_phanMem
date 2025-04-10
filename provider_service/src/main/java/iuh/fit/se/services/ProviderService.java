@@ -4,12 +4,14 @@ import java.util.List;
 
 import iuh.fit.se.models.dtos.ProviderDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.transaction.annotation.Transactional;
 
 import iuh.fit.se.models.entities.Provider;
 
 public interface ProviderService {
 	List<ProviderDTO> findAll();
 
+	@Transactional(readOnly = true)
 	ProviderDTO findById(int id);
 
 	List<ProviderDTO> findProvidersByName(String name);
