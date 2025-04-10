@@ -4,6 +4,9 @@ import java.util.List;
 import iuh.fit.se.models.dtos.UserProfileDTO;
 
 public interface UserProfileService {
-    List<UserProfileDTO> findAll();
-    UserProfileDTO findById(int id);
+	List<UserProfileDTO> findAll();
+
+	UserProfileDTO findById(int id);
+
+	UserProfileDTO save(UserProfileDTO userProfileDTO);
 }
