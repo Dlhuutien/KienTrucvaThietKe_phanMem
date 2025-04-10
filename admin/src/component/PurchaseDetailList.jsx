@@ -9,14 +9,19 @@ import {
   Paper,
   Button,
   Typography,
+  Snackbar,
   Box,
+  Alert,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
-import { listPurchaseDetail, updatePurchaseDetail, deletePurchaseDetail } from "../services/PurchaseDetailService";
+import { useNavigate } from "react-router-dom";
+import { listPurchaseDetail, deletePurchaseDetail } from "../services/PurchaseDetailService";
 
 const PurchaseDetailList = () => {
+  const navigate = useNavigate();
   const [purchaseDetails, setPurchaseDetails] = useState([]);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
   const fetchPurchaseDetails = async () => {
     try {
@@ -54,6 +59,10 @@ const PurchaseDetailList = () => {
         severity: "error",
       });
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -94,11 +103,13 @@ const PurchaseDetailList = () => {
 
                 <TableCell>
                   <Button
+                    component={Link}
+                    to={`/CapNhatNhapHang?id=${detail.id}`}
+                    state={{ purchaseDetail: detail }}
                     variant="contained"
                     color="primary"
                     size="small"
-                    sx={{ mr: 1 }}
-                    onClick={() => navigate(`/CapNhatNhapHang?id=${detail.id}`)}
+                    sx={{ mr: 2 }}
                   >
                     Cập nhật
                   </Button>
@@ -116,6 +127,21 @@ const PurchaseDetailList = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

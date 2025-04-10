@@ -1,22 +1,22 @@
-2025-04-03T13:57:36.931+07:00  INFO 18260 --- [product_service] [restartedMain] iuh.fit.se.ProductServiceApplication     : Starting ProductServiceApplication using Java 22.0.2 with PID 18260 (C:\Users\AD MIN\OneDrive\Documents\GitHub\KienTrucvaThietKe_phanMem\product_service\target\classes started by AD MIN in C:\Users\AD MIN\OneDrive\Documents\GitHub\KienTrucvaThietKe_phanMem\product_service)
-2025-04-03T13:57:36.978+07:00  INFO 18260 --- [product_service] [restartedMain] iuh.fit.se.ProductServiceApplication     : No active profile set, falling back to 1 default profile: "default"
-2025-04-03T13:57:37.178+07:00  INFO 18260 --- [product_service] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
-2025-04-03T13:57:37.180+07:00  INFO 18260 --- [product_service] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
-2025-04-03T13:57:44.237+07:00  INFO 18260 --- [product_service] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-04-03T13:57:44.555+07:00  INFO 18260 --- [product_service] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 286 ms. Found 6 JPA repository interfaces.
-2025-04-03T13:57:48.765+07:00  INFO 18260 --- [product_service] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 5000 (http)
-2025-04-03T13:57:48.827+07:00  INFO 18260 --- [product_service] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2025-04-03T13:57:48.828+07:00  INFO 18260 --- [product_service] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.36]
-2025-04-03T13:57:49.133+07:00  INFO 18260 --- [product_service] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2025-04-03T13:57:49.138+07:00  INFO 18260 --- [product_service] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 11957 ms
-2025-04-03T13:57:50.426+07:00  INFO 18260 --- [product_service] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2025-04-03T13:57:50.638+07:00  INFO 18260 --- [product_service] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.8.Final
-2025-04-03T13:57:50.755+07:00  INFO 18260 --- [product_service] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2025-04-03T13:57:51.626+07:00  INFO 18260 --- [product_service] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2025-04-03T13:57:51.729+07:00  INFO 18260 --- [product_service] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2025-04-03T13:57:52.132+07:00  INFO 18260 --- [product_service] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.mariadb.jdbc.Connection@51371dd8
-2025-04-03T13:57:52.137+07:00  INFO 18260 --- [product_service] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2025-04-03T13:57:52.312+07:00  INFO 18260 --- [product_service] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+2025-04-08T16:52:24.059+07:00  INFO 1528 --- [product_service] [restartedMain] iuh.fit.se.ProductServiceApplication     : Starting ProductServiceApplication using Java 17.0.11 with PID 1528 (D:\Study\Kien Truc Va Thiet Ke Phan Mem\KienTrucvaThietKe_phanMem\product_service\target\classes started by zozot in D:\Study\Kien Truc Va Thiet Ke Phan Mem\KienTrucvaThietKe_phanMem\product_service)
+2025-04-08T16:52:24.077+07:00  INFO 1528 --- [product_service] [restartedMain] iuh.fit.se.ProductServiceApplication     : No active profile set, falling back to 1 default profile: "default"
+2025-04-08T16:52:24.202+07:00  INFO 1528 --- [product_service] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-04-08T16:52:24.203+07:00  INFO 1528 --- [product_service] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-04-08T16:52:26.455+07:00  INFO 1528 --- [product_service] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-08T16:52:26.712+07:00  INFO 1528 --- [product_service] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 230 ms. Found 6 JPA repository interfaces.
+2025-04-08T16:52:28.652+07:00  INFO 1528 --- [product_service] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 5000 (http)
+2025-04-08T16:52:28.689+07:00  INFO 1528 --- [product_service] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-08T16:52:28.690+07:00  INFO 1528 --- [product_service] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-04-08T16:52:28.876+07:00  INFO 1528 --- [product_service] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-04-08T16:52:28.877+07:00  INFO 1528 --- [product_service] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 4665 ms
+2025-04-08T16:52:29.431+07:00  INFO 1528 --- [product_service] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-08T16:52:29.513+07:00  INFO 1528 --- [product_service] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-04-08T16:52:29.561+07:00  INFO 1528 --- [product_service] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-04-08T16:52:30.065+07:00  INFO 1528 --- [product_service] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-04-08T16:52:30.114+07:00  INFO 1528 --- [product_service] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-04-08T16:52:30.360+07:00  INFO 1528 --- [product_service] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.mariadb.jdbc.Connection@2270f31e
+2025-04-08T16:52:30.363+07:00  INFO 1528 --- [product_service] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-04-08T16:52:30.495+07:00  INFO 1528 --- [product_service] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
 	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
 	Database driver: undefined/unknown
 	Database version: 11.3.2
@@ -24,6 +24,19 @@
 	Isolation level: undefined/unknown
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
+<<<<<<< HEAD
+2025-04-08T16:52:32.868+07:00  INFO 1528 --- [product_service] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-04-08T16:52:33.294+07:00  INFO 1528 --- [product_service] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-08T16:52:33.809+07:00  INFO 1528 --- [product_service] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-04-08T16:52:37.484+07:00  WARN 1528 --- [product_service] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-04-08T16:52:39.241+07:00  INFO 1528 --- [product_service] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-04-08T16:52:39.255+07:00  INFO 1528 --- [product_service] [restartedMain] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2025-04-08T16:52:39.401+07:00  INFO 1528 --- [product_service] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 5000 (http) with context path '/'
+2025-04-08T16:52:39.445+07:00  INFO 1528 --- [product_service] [restartedMain] iuh.fit.se.ProductServiceApplication     : Started ProductServiceApplication in 16.611 seconds (process running for 17.872)
+2025-04-08T16:59:17.511+07:00  INFO 1528 --- [product_service] [http-nio-5000-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-04-08T16:59:17.532+07:00  INFO 1528 --- [product_service] [http-nio-5000-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-04-08T16:59:17.771+07:00  INFO 1528 --- [product_service] [http-nio-5000-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 237 ms
+=======
 2025-04-03T13:57:55.483+07:00  INFO 18260 --- [product_service] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
 2025-04-03T13:57:56.239+07:00  INFO 18260 --- [product_service] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
 2025-04-03T13:57:57.057+07:00  INFO 18260 --- [product_service] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
@@ -3473,3 +3486,4 @@ Caused by: java.lang.Error: Unresolved compilation problems:
 2025-04-05T11:31:01.816+07:00  INFO 16628 --- [product_service] [RMI TCP Connection(71)-127.0.0.1] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-04-05T11:31:01.861+07:00  INFO 16628 --- [product_service] [RMI TCP Connection(71)-127.0.0.1] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown initiated...
 2025-04-05T11:31:01.870+07:00  INFO 16628 --- [product_service] [RMI TCP Connection(71)-127.0.0.1] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown completed.
+>>>>>>> main

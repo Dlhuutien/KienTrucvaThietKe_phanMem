@@ -11,12 +11,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import iuh.fit.se.models.entities.Provider;
+import iuh.fit.se.models.repositories.ProviderRepository;
 import iuh.fit.se.services.ProviderService;
 
 @Service
 public class ProviderServiceImpl implements ProviderService {
 	@Autowired
-	private iuh.fit.se.models.repositories.ProviderRepository providerRepository;
+	private ProviderRepository providerRepository;
 
 	@Autowired
 	private ModelMapper modelMapper;
@@ -92,5 +93,20 @@ public class ProviderServiceImpl implements ProviderService {
 				.orElseThrow(() -> new ItemNotFoundException("Provider id = " + id + " is not found"));
 		providerRepository.delete(provider);
 		return true;
+	}
+
+	@Override
+	public List<ProviderDTO> findProvidersByName(String name) {
+		List<Provider> providers = providerRepository.findByNameContainingIgnoreCase(name);
+		return providers.stream()
+				.map(this::convertToDTO)
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<String> getAllProviderNames() {
+		return providerRepository.findAll().stream()
+				.map(Provider::getName)
+				.collect(Collectors.toList());
 	}
 }

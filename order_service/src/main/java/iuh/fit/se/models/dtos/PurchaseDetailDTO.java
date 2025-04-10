@@ -33,7 +33,7 @@ public class PurchaseDetailDTO {
     @Positive(message = "Giá bán phải là số dương")
     @Min(value = 1, message = "Giá bán phải lớn hơn 0")
     private BigDecimal salePrice;
-    
+
     private int providerId;
     private int productId;
     // @NotNull(message = "Sản phẩm không được để trống")

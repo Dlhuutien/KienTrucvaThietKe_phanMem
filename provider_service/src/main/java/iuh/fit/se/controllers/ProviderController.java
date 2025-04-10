@@ -1,6 +1,7 @@
 package iuh.fit.se.controllers;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import iuh.fit.se.models.dtos.ProviderDTO;
@@ -24,9 +25,16 @@ public class ProviderController {
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getProviderById(@PathVariable int id) {
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("status", HttpStatus.OK.value());
-        response.put("data", providerService.findById(id));
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        try {
+            ProviderDTO providerDTO = providerService.findById(id);
+            response.put("status", HttpStatus.OK.value());
+            response.put("data", providerDTO);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.NOT_FOUND.value());
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
     }
 
     // http://localhost:8081/providers
@@ -123,5 +131,20 @@ public class ProviderController {
         response.put("status", HttpStatus.OK.value());
         response.put("message", "Provider deleted successfully.");
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/search/findByName")
+    public ResponseEntity<List<ProviderDTO>> findProviderByName(@RequestParam String name) {
+        List<ProviderDTO> providers = providerService.findProvidersByName(name);
+        if (providers.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(providers);
+    }
+
+    @GetMapping("/names")
+    public ResponseEntity<List<String>> getAllProviderNames() {
+        List<String> providerNames = providerService.getAllProviderNames();
+        return ResponseEntity.ok(providerNames);
     }
 }
