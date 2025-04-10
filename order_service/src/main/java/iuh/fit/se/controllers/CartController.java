@@ -5,42 +5,62 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import iuh.fit.se.exceptions.ItemNotFoundException;
-import iuh.fit.se.models.dtos.UserProfileDTO;
-import iuh.fit.se.services.UserProfileService;
+import iuh.fit.se.models.dtos.CartDTO;
+import iuh.fit.se.services.CartService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/userProfiles")
 @CrossOrigin(origins = { "http://localhost:3000", "http://localhost:5173" })
-public class UserProfileController {
+@RequestMapping("/cart")
+public class CartController {
 
 	@Autowired
-	UserProfileService userProfileService;
+	CartService cartService;
 
 	@GetMapping
-	public ResponseEntity<Map<String, Object>> getAllUsers() {
+	public ResponseEntity<Map<String, Object>> getProducts(@RequestParam(required = false) String searchTerm) {
 		Map<String, Object> response = new LinkedHashMap<>();
 		response.put("status", HttpStatus.OK.value());
-		List<UserProfileDTO> userProfileDTOs = userProfileService.findAll();
-		response.put("data", userProfileDTOs);
+		List<CartDTO> cartDTOs = cartService.findAll();
+		response.put("data", cartDTOs);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
+	@DeleteMapping("/cart-detail/{id}")
+	public ResponseEntity<Map<String, Object>> deleteCartDetail(@PathVariable int id) {
+		Map<String, Object> response = new LinkedHashMap<>();
+		boolean deleted = cartService.deleteCartDetailById(id);
+
+		if (deleted) {
+			response.put("status", HttpStatus.OK.value());
+			response.put("message", "CartDetail deleted successfully.");
+			return ResponseEntity.ok(response);
+		} else {
+			response.put("status", HttpStatus.NOT_FOUND.value());
+			response.put("message", "CartDetail not found.");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+		}
+	}
+
 	@PostMapping
-	public ResponseEntity<Map<String, Object>> saveUser(@Valid @RequestBody UserProfileDTO userProfileDTO,
+	public ResponseEntity<Map<String, Object>> saveCart(@Valid @RequestBody CartDTO cartDTO,
 			BindingResult bindingResult) {
+
+		System.out.println("CartDTO nhận được: " + cartDTO);
 		Map<String, Object> response = new LinkedHashMap<>();
 
 		if (bindingResult.hasErrors()) {
@@ -49,25 +69,11 @@ public class UserProfileController {
 			response.put("status", HttpStatus.BAD_REQUEST.value());
 			response.put("errors", errors);
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-		}
-
-		response.put("status", HttpStatus.CREATED.value());
-		response.put("data", userProfileService.save(userProfileDTO));
-		return ResponseEntity.status(HttpStatus.CREATED).body(response);
-	}
-	
-	@GetMapping("/{id}")
-	public ResponseEntity<Map<String, Object>> getProductById(@PathVariable int id) {
-		Map<String, Object> response = new LinkedHashMap<>();
-		try {
-			UserProfileDTO userProfileDTO = userProfileService.findById(id);
-			response.put("status", HttpStatus.OK.value());
-			response.put("data", userProfileDTO);
-			return ResponseEntity.status(HttpStatus.OK).body(response);
-		} catch (ItemNotFoundException e) {
-			response.put("status", HttpStatus.NOT_FOUND.value());
-			response.put("message", e.getMessage());
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+		} else {
+			CartDTO savedCart = cartService.save(cartDTO);
+			response.put("status", HttpStatus.CREATED.value());
+			response.put("data", savedCart);
+			return ResponseEntity.status(HttpStatus.CREATED).body(response);
 		}
 	}
 
