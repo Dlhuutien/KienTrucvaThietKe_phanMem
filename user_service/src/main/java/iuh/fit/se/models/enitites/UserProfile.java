@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 
 
 import iuh.fit.se.models.enums.Gender;
-import iuh.fit.se.models.enums.Role;
 import iuh.fit.se.models.enums.UserState;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,11 +38,6 @@ public class UserProfile {
     private String phoneNumber;
     @Column(columnDefinition = "nvarchar(200)")
     private String address;
-    @Column(columnDefinition = "nvarchar(100)")
-    private String password;
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
 
     @Enumerated(EnumType.STRING)
     private UserState userState;
@@ -56,6 +50,7 @@ public class UserProfile {
     @PrePersist
     public void onCreate() {
         createdTime = LocalDateTime.now();
+        setUserState(userState.ACTIVE);
     }
 
 }
