@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CartDetailDTO {
+	private int id;
 	private int productId;
 	private int quantity;
 	private BigDecimal priceAtTransaction;

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -65,187 +66,10 @@ public class CartServiceImpl implements CartService {
 		return cartRepository.findAll().stream().map(this::convertToCartDTO).collect(Collectors.toList());
 	}
 	
-//	@Transactional
-//	@Override
-//	public CartDTO save(CartDTO cartDTO) {
-//	    // Kiểm tra sự tồn tại của User
-//	    ResponseEntity<Map<String, Object>> userResponse = restTemplate.exchange(
-//	            apiGatewayUrl + "/userProfiles/" + cartDTO.getUserId(),
-//	            HttpMethod.GET,
-//	            null,
-//	            new ParameterizedTypeReference<Map<String, Object>>() {}
-//	    );
-//
-//	    if (!userResponse.getStatusCode().is2xxSuccessful() || userResponse.getBody() == null) {
-//	        throw new RuntimeException("Không thể kết nối tới user service hoặc dữ liệu rỗng");
-//	    }
-//
-//	    Map<String, Object> userMap = userResponse.getBody();
-//	    Map<String, Object> userData = (Map<String, Object>) userMap.get("data");
-//	    if (userData == null) {
-//	        throw new RuntimeException("Không tìm thấy người dùng với ID: " + cartDTO.getUserId());
-//	    }
-//
-//	    // Kiểm tra xem user đã có cart ở trạng thái PENDING chưa
-//	    Cart existingCart = cartRepository.findByUserIdAndState(cartDTO.getUserId(), State.PENDING);
-//	    if (existingCart != null) {
-//	        throw new RuntimeException("Người dùng đã có cart ở trạng thái PENDING.");
-//	    }
-//
-//	    // Tạo cart mới
-//	    Cart cart = convertToCartEntity(cartDTO);
-//
-//	    // Xử lý cartDetails
-//	    List<CartDetail> cartDetails = new ArrayList<>();
-//	    for (CartDetailDTO detailDTO : cartDTO.getCartDetails()) {
-//	        // Kiểm tra sản phẩm
-//	        ResponseEntity<Map<String, Object>> productResponse = restTemplate.exchange(
-//	                apiGatewayUrl + "/api/products/" + detailDTO.getProductId(),
-//	                HttpMethod.GET,
-//	                null,
-//	                new ParameterizedTypeReference<Map<String, Object>>() {}
-//	        );
-//
-//	        if (!productResponse.getStatusCode().is2xxSuccessful() || productResponse.getBody() == null) {
-//	            throw new RuntimeException("Không thể kết nối tới product service hoặc dữ liệu rỗng");
-//	        }
-//
-//	        Map<String, Object> productMap = productResponse.getBody();
-//	        Map<String, Object> productData = (Map<String, Object>) productMap.get("data");
-//	        if (productData == null) {
-//	            throw new RuntimeException("Không tìm thấy sản phẩm với ID: " + detailDTO.getProductId());
-//	        }
-//
-//	        // Tạo CartDetail entity
-//	        CartDetail detail = convertToCartDetailEntity(detailDTO);
-//	        detail.setCart(cart);
-//
-//	        if (productData.get("salePrice") != null) {
-//	            BigDecimal salePrice = new BigDecimal(productData.get("salePrice").toString());
-//	            detail.setPriceAtTransaction(salePrice);
-//	        }
-//
-//	        cartDetails.add(detail);
-//	    }
-//
-//	    cart.setCartDetails(cartDetails);
-//
-//	    // Tính tổng tiền
-//	    BigDecimal total = cartDetails.stream()
-//	            .map(d -> d.getPriceAtTransaction().multiply(BigDecimal.valueOf(d.getQuantity())))
-//	            .reduce(BigDecimal.ZERO, BigDecimal::add);
-//	    cart.setTotalDue(total);
-//
-//	    // Lưu cart
-//	    Cart savedCart = cartRepository.save(cart);
-//
-//	    // Trả về DTO
-//	    CartDTO resultDTO = convertToCartDTO(savedCart);
-//	    List<CartDetailDTO> detailDTOs = savedCart.getCartDetails().stream()
-//	            .map(this::convertToCartDetailDTO)
-//	            .collect(Collectors.toList());
-//	    resultDTO.setCartDetails(detailDTOs);
-//
-//	    return resultDTO;
-//	}
-	
-//	@Transactional(rollbackFor = Exception.class)
-//	@Override
-//	public CartDTO save(CartDTO cartDTO) {
-//	    // Kiểm tra sự tồn tại của User
-//	    ResponseEntity<Map<String, Object>> userResponse = restTemplate.exchange(
-//	            apiGatewayUrl + "/userProfiles/" + cartDTO.getUserId(),
-//	            HttpMethod.GET,
-//	            null,
-//	            new ParameterizedTypeReference<Map<String, Object>>() {}
-//	    );
-//
-//	    if (!userResponse.getStatusCode().is2xxSuccessful() || userResponse.getBody() == null) {
-//	        throw new RuntimeException("Không thể kết nối tới user service hoặc dữ liệu rỗng");
-//	    }
-//
-//	    Map<String, Object> userMap = userResponse.getBody();
-//	    Map<String, Object> userData = (Map<String, Object>) userMap.get("data");
-//	    if (userData == null) {
-//	        throw new RuntimeException("Không tìm thấy người dùng với ID: " + cartDTO.getUserId());
-//	    }
-//
-//	    Cart cart = cartRepository.findByUserIdAndState(cartDTO.getUserId(), State.PENDING);
-//
-////	    boolean isNewCart = false;
-////	    if (cart == null) {
-////	        // Chưa có thì tạo mới
-////	        cart = convertToCartEntity(cartDTO);
-////	        isNewCart = true;
-////	    } else {
-////	        // Đã có cart PENDING → xóa cartDetails cũ
-////	        cart.getCartDetails().clear(); // xóa danh sách cũ
-////	    }
-//	    if (cart == null) {
-//	        cart = convertToCartEntity(cartDTO);
-//	        cart.setState(State.PENDING); // set nếu cần
-//	        cart = cartRepository.save(cart); // Save cart trước khi thêm cartDetails
-//	    }
-//	    System.out.println("Đã lưu Cart: " + cart);
-//
-////	    // Xử lý cartDetails
-//	    List<CartDetail> cartDetails = new ArrayList<>();
-//	    for (CartDetailDTO detailDTO : cartDTO.getCartDetails()) {
-//	        // Kiểm tra sản phẩm
-//	        ResponseEntity<Map<String, Object>> productResponse = restTemplate.exchange(
-//	                apiGatewayUrl + "/api/products/" + detailDTO.getProductId(),
-//	                HttpMethod.GET,
-//	                null,
-//	                new ParameterizedTypeReference<Map<String, Object>>() {}
-//	        );
-//
-//	        if (!productResponse.getStatusCode().is2xxSuccessful() || productResponse.getBody() == null) {
-//	            throw new RuntimeException("Không thể kết nối tới product service hoặc dữ liệu rỗng");
-//	        }
-//
-//	        Map<String, Object> productMap = productResponse.getBody();
-//	        Map<String, Object> productData = (Map<String, Object>) productMap.get("data");
-//	        if (productData == null) {
-//	            throw new RuntimeException("Không tìm thấy sản phẩm với ID: " + detailDTO.getProductId());
-//	        }
-//
-//	        // Tạo CartDetail entity
-//	        CartDetail detail = convertToCartDetailEntity(detailDTO);
-//	        detail.setCart(cart);
-//	        
-//
-//	        if (productData.get("salePrice") != null) {
-//	            BigDecimal salePrice = new BigDecimal(productData.get("salePrice").toString());
-//	            detail.setPriceAtTransaction(salePrice);
-//	        }
-//
-//	        cartDetails.add(detail);
-//	    }
-//
-//	    cart.setCartDetails(cartDetails);
-//
-//	    // Tính tổng tiền
-//	    BigDecimal total = cartDetails.stream()
-//	            .map(d -> d.getPriceAtTransaction().multiply(BigDecimal.valueOf(d.getQuantity())))
-//	            .reduce(BigDecimal.ZERO, BigDecimal::add);
-//	    cart.setTotalDue(total);
-//
-//	    // Lưu cart
-//	    Cart savedCart = cartRepository.save(cart);
-//	    
-//	    // Trả về DTO
-//	    CartDTO resultDTO = convertToCartDTO(savedCart);
-//	    List<CartDetailDTO> detailDTOs = savedCart.getCartDetails().stream()
-//	            .map(this::convertToCartDetailDTO)
-//	            .collect(Collectors.toList());
-//	    resultDTO.setCartDetails(detailDTOs);
-//
-//	    return resultDTO;
-//	}
-	@Transactional(rollbackFor = Exception.class)
+	@Transactional
 	@Override
 	public CartDTO save(CartDTO cartDTO) {
-	    // Kiểm tra sự tồn tại của User
+	    //Kiểm tra id User
 	    ResponseEntity<Map<String, Object>> userResponse = restTemplate.exchange(
 	            apiGatewayUrl + "/userProfiles/" + cartDTO.getUserId(),
 	            HttpMethod.GET,
@@ -263,20 +87,19 @@ public class CartServiceImpl implements CartService {
 	        throw new RuntimeException("Không tìm thấy người dùng với ID: " + cartDTO.getUserId());
 	    }
 
-	    // Tìm cart theo userId và state PENDING
+	    //Kiểm tra user đã có cart trạng thái PENDING
 	    Cart cart = cartRepository.findByUserIdAndState(cartDTO.getUserId(), State.PENDING);
+
 	    if (cart == null) {
+	        // Nếu chưa, tạo cart
 	        cart = convertToCartEntity(cartDTO);
-	        cart.setState(State.PENDING); // nếu cần
-	    } else {
-	        // Nếu đã có cart PENDING → clear cartDetails cũ
-	        cart.getCartDetails().clear();
+	        cart.setCartDetails(new ArrayList<>());
 	    }
 
-	    // Chuẩn bị danh sách cartDetails
-	    List<CartDetail> cartDetails = new ArrayList<>();
+	    //Xử lý cartDetails
+	    List<CartDetail> newCartDetails = new ArrayList<>();
 	    for (CartDetailDTO detailDTO : cartDTO.getCartDetails()) {
-	        // Kiểm tra sản phẩm từ product service
+	        // Kiểm tra sản phẩm
 	        ResponseEntity<Map<String, Object>> productResponse = restTemplate.exchange(
 	                apiGatewayUrl + "/api/products/" + detailDTO.getProductId(),
 	                HttpMethod.GET,
@@ -302,20 +125,25 @@ public class CartServiceImpl implements CartService {
 	            detail.setPriceAtTransaction(salePrice);
 	        }
 
-	        cartDetails.add(detail);
+	        newCartDetails.add(detail);
 	    }
 
-	    cart.setCartDetails(cartDetails); // gán cartDetails sau khi đã tạo đầy đủ và gán cart
-	    // Tính tổng tiền
-	    BigDecimal total = cartDetails.stream()
+	    //Gộp cartDetails mới vào cart hiện tại
+	    if (cart.getCartDetails() == null) {
+	        cart.setCartDetails(new ArrayList<>());
+	    }
+	    cart.getCartDetails().addAll(newCartDetails);
+
+	    //Tính lại tổng tiền
+	    BigDecimal total = cart.getCartDetails().stream()
 	            .map(d -> d.getPriceAtTransaction().multiply(BigDecimal.valueOf(d.getQuantity())))
 	            .reduce(BigDecimal.ZERO, BigDecimal::add);
 	    cart.setTotalDue(total);
 
-	    // ✅ Chỉ save cart một lần duy nhất sau khi gán đầy đủ cartDetails
+	    //Lưu cart (có cascade sẽ lưu cả cartDetails mới)
 	    Cart savedCart = cartRepository.save(cart);
 
-	    // Trả về DTO
+	    //Trả về DTO
 	    CartDTO resultDTO = convertToCartDTO(savedCart);
 	    List<CartDetailDTO> detailDTOs = savedCart.getCartDetails().stream()
 	            .map(this::convertToCartDetailDTO)
@@ -325,17 +153,44 @@ public class CartServiceImpl implements CartService {
 	    return resultDTO;
 	}
 
-
-
-
+//	@Override
+//	@Transactional
+//	public boolean deleteCartDetailById(int id) {
+//		if (cartDetailRepository.existsById(id)) {
+//			cartDetailRepository.deleteCartDetailByIdDirect(id);
+//			return true;
+//		}
+//		return false;
+//	}
 	@Override
 	@Transactional
 	public boolean deleteCartDetailById(int id) {
-		if (cartDetailRepository.existsById(id)) {
-			cartDetailRepository.deleteCartDetailByIdDirect(id);
-			return true;
-		}
-		return false;
+	    Optional<CartDetail> optionalDetail = cartDetailRepository.findById(id);
+	    if (optionalDetail.isPresent()) {
+	        CartDetail cartDetail = optionalDetail.get();
+	        Cart cart = cartDetail.getCart();
+
+	        // Xoá khỏi cart.getCartDetails() trước
+	        cart.getCartDetails().remove(cartDetail);
+
+	        // Xoá khỏi DB
+	        cartDetailRepository.delete(cartDetail);
+
+	        // Tính lại tổng tiền
+	        BigDecimal newTotal = cart.getCartDetails().stream()
+	                .map(cd -> cd.getPriceAtTransaction().multiply(BigDecimal.valueOf(cd.getQuantity())))
+	                .reduce(BigDecimal.ZERO, BigDecimal::add);
+	        cart.setTotalDue(newTotal);
+
+	        // Cập nhật cart
+	        cartRepository.save(cart);
+
+	        return true;
+	    }
+	    return false;
 	}
+
+
+
 
 }
