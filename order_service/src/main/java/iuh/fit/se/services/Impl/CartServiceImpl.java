@@ -190,6 +190,77 @@ public class CartServiceImpl implements CartService {
 	    return false;
 	}
 
+//	@Override
+//	@Transactional
+//	public boolean updateCartDetailQuantity(int cartDetailId, int newQuantity) {
+//	    Optional<CartDetail> optionalDetail = cartDetailRepository.findById(cartDetailId);
+//
+//	    if (optionalDetail.isEmpty()) return false;
+//
+//	    CartDetail existingDetail = optionalDetail.get();
+//	    Cart cart = existingDetail.getCart();
+//
+//	    // Xóa cartDetail cũ
+//	    cart.getCartDetails().remove(existingDetail);
+//	    cartDetailRepository.delete(existingDetail);
+//
+//	    // Nếu quantity mới > 0, thêm mới lại cartDetail
+//	    if (newQuantity > 0) {
+//	        CartDetail newDetail = CartDetail.builder()
+//	                .productId(existingDetail.getProductId())
+//	                .priceAtTransaction(existingDetail.getPriceAtTransaction())
+//	                .quantity(newQuantity)
+//	                .cart(cart)
+//	                .build();
+//
+//	        cart.getCartDetails().add(newDetail); 
+//	        // thêm lại vào cart
+//	    }
+//
+//	    // Cập nhật lại totalDue
+//	    BigDecimal newTotal = cart.getCartDetails().stream()
+//	            .map(d -> d.getPriceAtTransaction().multiply(BigDecimal.valueOf(d.getQuantity())))
+//	            .reduce(BigDecimal.ZERO, BigDecimal::add);
+//
+//	    cart.setTotalDue(newTotal);
+//
+//	    // Lưu cart
+//	    cartRepository.save(cart);
+//
+//	    return true;
+//	}
+	@Override
+	@Transactional
+	public boolean updateCartDetailQuantity(int cartDetailId, int newQuantity) {
+	    Optional<CartDetail> optionalDetail = cartDetailRepository.findById(cartDetailId);
+
+	    if (optionalDetail.isEmpty()) return false;
+
+	    CartDetail detail = optionalDetail.get();
+	    Cart cart = detail.getCart();
+
+	    if (newQuantity <= 0) {
+	        //Nếu quantity <= 0 thì xóa cart detail
+	        cart.getCartDetails().remove(detail);
+	        cartDetailRepository.delete(detail);
+	    } else {
+	        // Nếu quantity > 0 thì chỉ cập nhật số lượng
+	        detail.setQuantity(newQuantity);
+	    }
+
+	    // Tính lại tổng tiền
+	    BigDecimal newTotal = cart.getCartDetails().stream()
+	            .map(d -> d.getPriceAtTransaction().multiply(BigDecimal.valueOf(d.getQuantity())))
+	            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+	    cart.setTotalDue(newTotal);
+
+	    // Lưu cart
+	    cartRepository.save(cart);
+
+	    return true;
+	}
+
 
 
 
