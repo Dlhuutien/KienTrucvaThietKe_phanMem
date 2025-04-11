@@ -11,4 +11,6 @@ public interface CartService {
 	CartDTO save(CartDTO cartDTO);
 	
 	boolean deleteCartDetailById(int id);
+	
+	public boolean updateCartDetailQuantity(int cartDetailId, int newQuantity);
 }

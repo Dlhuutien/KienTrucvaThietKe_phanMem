@@ -76,5 +76,25 @@ public class CartController {
 			return ResponseEntity.status(HttpStatus.CREATED).body(response);
 		}
 	}
+	
+	@PostMapping("/cart-detail/{id}/update-quantity")
+	public ResponseEntity<Map<String, Object>> updateCartDetailQuantity(
+	        @PathVariable int id,
+	        @RequestParam int quantity) {
+
+	    Map<String, Object> response = new LinkedHashMap<>();
+	    boolean updated = cartService.updateCartDetailQuantity(id, quantity);
+
+	    if (updated) {
+	        response.put("status", HttpStatus.OK.value());
+	        response.put("message", "Cập nhật số lượng thành công.");
+	        return ResponseEntity.ok(response);
+	    } else {
+	        response.put("status", HttpStatus.NOT_FOUND.value());
+	        response.put("message", "Không tìm thấy CartDetail.");
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+	    }
+	}
+
 
 }
