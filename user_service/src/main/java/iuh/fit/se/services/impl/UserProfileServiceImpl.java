@@ -51,4 +51,22 @@ public class UserProfileServiceImpl implements UserProfileService {
 	        return convertToDTO(savedUser);
 	}
 
+	@Override
+	public List<UserProfileDTO> findByState(UserState userState) {
+    	// Tìm người dùng theo trạng thái trong repository
+   	 	return userProfileRepository.findByUserState(userState).stream()
+        	.map(this::convertToDTO)  // Chuyển đổi thành DTO
+        	.collect(Collectors.toList());
+	}
+
+	@Override
+	public UserProfileDTO updateUserState(int id, UserState newState) {
+    UserProfile user = userProfileRepository.findById(id)
+        .orElseThrow(() -> new ItemNotFoundException("User with id " + id + " not found"));
+
+   	 	// Cập nhật trạng thái người dùng
+    	user.setUserState(newState);
+    	return convertToDTO(userProfileRepository.save(user));  // Lưu và trả về DTO đã cập nhật
+}
+
 }
