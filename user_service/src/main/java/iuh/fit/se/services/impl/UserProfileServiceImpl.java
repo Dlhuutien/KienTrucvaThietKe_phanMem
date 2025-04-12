@@ -11,6 +11,7 @@ import iuh.fit.se.UserServiceApplication;
 import iuh.fit.se.exceptions.ItemNotFoundException;
 import iuh.fit.se.models.dtos.UserProfileDTO;
 import iuh.fit.se.models.enitites.UserProfile;
+import iuh.fit.se.models.enums.UserState;
 import iuh.fit.se.models.repositories.UserProfileRepository;
 import iuh.fit.se.services.UserProfileService;
 
