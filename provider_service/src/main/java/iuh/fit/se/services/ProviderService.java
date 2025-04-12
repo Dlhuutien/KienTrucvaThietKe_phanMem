@@ -18,8 +18,6 @@ public interface ProviderService {
 
 	ProviderDTO update(int id, ProviderDTO providerDTO);
 
-	boolean delete(int id);
-
 	boolean isEmailUnique(String email);
 
 	boolean isEmailUniqueForUpdate(String email, int id);

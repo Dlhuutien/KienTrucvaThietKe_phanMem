@@ -85,12 +85,4 @@ public class ProviderServiceImpl implements ProviderService {
 		Provider existingProvider = providerRepository.findByEmail(email);
 		return existingProvider == null || existingProvider.getId() == id;
 	}
-
-	@Override
-	public boolean delete(int id) {
-		Provider provider = providerRepository.findById(id)
-				.orElseThrow(() -> new ItemNotFoundException("Provider id = " + id + " is not found"));
-		providerRepository.delete(provider);
-		return true;
-	}
 }

@@ -115,13 +115,4 @@ public class ProviderController {
         response.put("data", providerService.update(id, providerDTO));
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> deleteProvider(@PathVariable int id) {
-        Map<String, Object> response = new LinkedHashMap<>();
-        providerService.delete(id);
-        response.put("status", HttpStatus.OK.value());
-        response.put("message", "Provider deleted successfully.");
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
 }
