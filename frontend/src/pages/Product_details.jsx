@@ -24,16 +24,6 @@ import { getProductById } from "../services/ProductService";
 import { message } from "antd";
 import { createCart } from "../services/AddCartDetailService";
 
-// Helper functions for cart handling
-const getCartFromLocalStorage = () => {
-  const cart = localStorage.getItem("cart");
-  return cart ? JSON.parse(cart) : [];
-};
-
-const saveCartToLocalStorage = (cart) => {
-  localStorage.setItem("cart", JSON.stringify(cart));
-};
-
 const Product_detail = () => {
   const { productId } = useParams();
   const [product, setProduct] = useState({
@@ -111,23 +101,6 @@ const Product_detail = () => {
         : value;
   const formatCurrency = (value) =>
     value ? new Intl.NumberFormat("vi-VN").format(value) + " VND" : "0 VND";
-
-  // Function to add product to the cart
-  // const handleAddToCart = () => {
-  //   const cart = getCartFromLocalStorage();
-  //   const existingProductIndex = cart.findIndex(
-  //     (item) => item.id === product.id
-  //   );
-
-  //   if (existingProductIndex !== -1) {
-  //     cart[existingProductIndex].quantity += quantity; // Increase quantity if the product already exists
-  //   } else {
-  //     cart.push({ ...product, quantity });
-  //   }
-
-  //   saveCartToLocalStorage(cart);
-  //   message.success("Sản phẩm đã được thêm vào giỏ hàng!");
-  // };
   
 const handleAddToCart = async () => {
   try {
