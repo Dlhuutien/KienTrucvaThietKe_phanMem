@@ -21,3 +21,4 @@ public class UserProfileDTO {
     private LocalDateTime createdTime;
     private UserState userState;
 }
+}

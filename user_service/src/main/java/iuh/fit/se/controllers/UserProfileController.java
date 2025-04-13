@@ -8,11 +8,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import iuh.fit.se.exceptions.ItemNotFoundException;
+import iuh.fit.se.models.dtos.UserProfileDTO;
 import org.springframework.web.bind.annotation.*;
 
 import iuh.fit.se.exceptions.ItemNotFoundException;
 import iuh.fit.se.models.dtos.UserProfileDTO;
 import iuh.fit.se.models.enums.UserState;
+
 import iuh.fit.se.services.UserProfileService;
 import jakarta.validation.Valid;
 
@@ -22,6 +35,8 @@ import jakarta.validation.Valid;
 public class UserProfileController {
 
 	@Autowired
+	UserProfileService userProfileService;
+
 	private UserProfileService userProfileService;
 
 	// 1. GET all users
@@ -52,6 +67,8 @@ public class UserProfileController {
 		response.put("data", userProfileService.save(userProfileDTO));
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
+	@GetMapping("/{id}")
+	public ResponseEntity<Map<String, Object>> getProductById(@PathVariable int id) {
 
 	// 3. GET user by id
 	@GetMapping("/{id}")
@@ -68,6 +85,36 @@ public class UserProfileController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 		}
 	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<Map<String, Object>> updateUser(@PathVariable int id, @Valid @RequestBody UserProfileDTO userProfileDTO, BindingResult bindingResult) {
+		Map<String, Object> response = new LinkedHashMap<>();
+
+		if (bindingResult.hasErrors()) {
+			Map<String, Object> errors = new LinkedHashMap<>();
+			bindingResult.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+			response.put("status", HttpStatus.BAD_REQUEST.value());
+			response.put("errors", errors);
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+		}
+
+		response.put("status", HttpStatus.OK.value());
+		response.put("data", userProfileService.update(id, userProfileDTO));
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Map<String, Object>> deleteUser(@PathVariable int id) {
+		Map<String, Object> response = new LinkedHashMap<>();
+		try {
+			userProfileService.delete(id);
+			response.put("status", HttpStatus.OK.value());
+			response.put("message", "User deleted successfully.");
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		} catch (ItemNotFoundException e) {
+			response.put("status", HttpStatus.NOT_FOUND.value());
+			response.put("message", e.getMessage());
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 
 	// 4. GET users by UserState (optional feature)
 	@GetMapping("/filter/{state}")
