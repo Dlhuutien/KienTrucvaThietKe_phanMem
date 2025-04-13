@@ -1,4 +1,5 @@
 package iuh.fit.se.services;
+
 import java.util.List;
 
 import iuh.fit.se.models.dtos.PurchaseDetailDTO;
@@ -13,7 +14,7 @@ public interface PurchaseDetailService {
 	List<PurchaseDetail> findAllByCreatedTimeDecs();
 
 	PurchaseDetail findById(int id);
-	
+
 	List<PurchaseDetail> getPurchaseDetailByProductIdAndProviderId(int productId, int providerId);
 
 	PurchaseDetailDTO save(PurchaseDetailDTO newDetail);
@@ -21,4 +22,8 @@ public interface PurchaseDetailService {
 	PurchaseDetailDTO update(int id, PurchaseDetailDTO updatedDetail);
 
 	boolean delete(int id);
+
+	List<String> getProductNames();
+
+	List<String> getProviderNames();
 }

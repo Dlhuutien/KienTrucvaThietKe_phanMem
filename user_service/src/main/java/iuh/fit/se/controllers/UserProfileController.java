@@ -20,6 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import iuh.fit.se.exceptions.ItemNotFoundException;
 import iuh.fit.se.models.dtos.UserProfileDTO;
+import org.springframework.web.bind.annotation.*;
+
+import iuh.fit.se.exceptions.ItemNotFoundException;
+import iuh.fit.se.models.dtos.UserProfileDTO;
+import iuh.fit.se.models.enums.UserState;
+
 import iuh.fit.se.services.UserProfileService;
 import jakarta.validation.Valid;
 
@@ -31,6 +37,9 @@ public class UserProfileController {
 	@Autowired
 	UserProfileService userProfileService;
 
+	private UserProfileService userProfileService;
+
+	// 1. GET all users
 	@GetMapping
 	public ResponseEntity<Map<String, Object>> getAllUsers() {
 		Map<String, Object> response = new LinkedHashMap<>();
@@ -40,6 +49,7 @@ public class UserProfileController {
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
+	// 2. POST create new user
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> saveUser(@Valid @RequestBody UserProfileDTO userProfileDTO,
 			BindingResult bindingResult) {
@@ -57,9 +67,12 @@ public class UserProfileController {
 		response.put("data", userProfileService.save(userProfileDTO));
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
-	
 	@GetMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> getProductById(@PathVariable int id) {
+
+	// 3. GET user by id
+	@GetMapping("/{id}")
+	public ResponseEntity<Map<String, Object>> getUserById(@PathVariable int id) {
 		Map<String, Object> response = new LinkedHashMap<>();
 		try {
 			UserProfileDTO userProfileDTO = userProfileService.findById(id);
@@ -72,7 +85,7 @@ public class UserProfileController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 		}
 	}
-	
+
 	@PutMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> updateUser(@PathVariable int id, @Valid @RequestBody UserProfileDTO userProfileDTO, BindingResult bindingResult) {
 		Map<String, Object> response = new LinkedHashMap<>();
@@ -102,6 +115,43 @@ public class UserProfileController {
 			response.put("status", HttpStatus.NOT_FOUND.value());
 			response.put("message", e.getMessage());
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+
+	// 4. GET users by UserState (optional feature)
+	@GetMapping("/filter/{state}")
+	public ResponseEntity<Map<String, Object>> getUsersByState(@PathVariable String state) {
+		Map<String, Object> response = new LinkedHashMap<>();
+		try {
+			// Tạo đối tượng UserState từ tham số 'state'
+			UserState userState = UserState.valueOf(state.toUpperCase());
+			// Lấy danh sách người dùng theo trạng thái
+			List<UserProfileDTO> users = userProfileService.findByState(userState);
+			response.put("status", HttpStatus.OK.value());
+			response.put("data", users);
+			return ResponseEntity.ok(response);
+		} catch (IllegalArgumentException e) {
+			response.put("status", HttpStatus.BAD_REQUEST.value());
+			response.put("message", "Invalid state: " + state); // Thông báo nếu trạng thái không hợp lệ
+			return ResponseEntity.badRequest().body(response);
+		}
+	}
+
+	// 5. POST update user state
+	@PostMapping("/{id}/state")
+	public ResponseEntity<Map<String, Object>> updateUserState(@PathVariable int id,
+			@RequestBody Map<String, String> requestBody) {
+		Map<String, Object> response = new LinkedHashMap<>();
+		try {
+			// Lấy giá trị trạng thái từ requestBody
+			UserState newState = UserState.valueOf(requestBody.get("userState").toUpperCase());
+			// Cập nhật trạng thái người dùng
+			UserProfileDTO updatedUserProfile = userProfileService.updateUserState(id, newState);
+			response.put("status", HttpStatus.OK.value());
+			response.put("data", updatedUserProfile);
+			return ResponseEntity.ok(response);
+		} catch (IllegalArgumentException e) {
+			response.put("status", HttpStatus.BAD_REQUEST.value());
+			response.put("message", "Invalid state provided");
+			return ResponseEntity.badRequest().body(response);
 		}
 	}
 }

@@ -16,6 +16,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+
+import iuh.fit.se.models.enums.Gender;
+import iuh.fit.se.models.enums.UserState;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Data
@@ -28,18 +33,24 @@ public class UserProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+  
     @Column(columnDefinition = "nvarchar(100)")
     private String fullName;
+  
     @Column(columnDefinition = "varchar(100)")
     private String email;
+  
     @Enumerated(EnumType.STRING)
     private Gender gender;
+  
     @Column(columnDefinition = "nvarchar(15)")
     private String phoneNumber;
+  
     @Column(columnDefinition = "nvarchar(200)")
     private String address;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private UserState userState;
 
     @Lob
@@ -51,5 +62,8 @@ public class UserProfile {
     public void onCreate() {
         createdTime = LocalDateTime.now();
         setUserState(userState.ACTIVE);
+        if (userState == null) {
+            userState = UserState.ACTIVE;
+        }
     }
 }

@@ -70,31 +70,31 @@ public class ProductServiceImpl implements ProductService {
 		return earphone;
 	}
 
-//	private ProductDTO convertToDTO(Product product) {
-//		ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
-////        productDTO.setDiscountedPrice(discountService.calculateDiscountedPrice(product));
-////        productDTO.setPercentDiscount(calculateDiscountedPercent(productDTO.getSalePrice(), productDTO.getDiscountedPrice()));
-//		return productDTO;
-//	}
-	
+	// private ProductDTO convertToDTO(Product product) {
+	// ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
+	//// productDTO.setDiscountedPrice(discountService.calculateDiscountedPrice(product));
+	//// productDTO.setPercentDiscount(calculateDiscountedPercent(productDTO.getSalePrice(),
+	// productDTO.getDiscountedPrice()));
+	// return productDTO;
+	// }
+
 	private ProductDTO convertToDTO(Product product) {
-	    ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
+		ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
 
-	    // Tính giá giảm giá từ discountService
-	    productDTO.setDiscountedPrice(discountService.calculateDiscountedPrice(product)); 
+		// Tính giá giảm giá từ discountService
+		productDTO.setDiscountedPrice(discountService.calculateDiscountedPrice(product));
 
-	    BigDecimal salePrice = productDTO.getSalePrice();
-	    BigDecimal discountedPrice = productDTO.getDiscountedPrice();
-	    if (salePrice != null && discountedPrice != null && salePrice.compareTo(BigDecimal.ZERO) > 0) {
-	        int percentDiscount = calculateDiscountedPercent(salePrice, discountedPrice);
-	        productDTO.setPercentDiscount(percentDiscount);
-	    } else {
-	        productDTO.setPercentDiscount(0);
-	    }
+		BigDecimal salePrice = productDTO.getSalePrice();
+		BigDecimal discountedPrice = productDTO.getDiscountedPrice();
+		if (salePrice != null && discountedPrice != null && salePrice.compareTo(BigDecimal.ZERO) > 0) {
+			int percentDiscount = calculateDiscountedPercent(salePrice, discountedPrice);
+			productDTO.setPercentDiscount(percentDiscount);
+		} else {
+			productDTO.setPercentDiscount(0);
+		}
 
-	    return productDTO;
+		return productDTO;
 	}
-
 
 	private int calculateDiscountedPercent(BigDecimal salePrice, BigDecimal discountedPrice) {
 		BigDecimal discountPercent = salePrice.subtract(discountedPrice).divide(salePrice, 2, BigDecimal.ROUND_HALF_UP)
@@ -129,21 +129,21 @@ public class ProductServiceImpl implements ProductService {
 		}
 		if (productDTO.getCategory() == Category.CHARGING_CABLE) {
 			ChargingCable chargingCable = this.convertToChargingEntity(productDTO);
-//            chargingCable.setId(product.getId());
+			// chargingCable.setId(product.getId());
 			System.out.println("Product ID: " + product.getId());
 			System.out.println("Charging_cable ID: " + chargingCable.getId());
 			chargingCableRepository.save(chargingCable);
 		}
 		if (productDTO.getCategory() == Category.POWER_BANK) {
 			PowerBank powerBank = this.convertToPowerBankEntity(productDTO);
-//            powerBank.setId(product.getId());
+			// powerBank.setId(product.getId());
 			System.out.println("Product ID: " + product.getId());
 			System.out.println("PowerBank ID: " + powerBank.getId());
 			powerBankRepository.save(powerBank);
 		}
 		if (productDTO.getCategory() == Category.EARPHONE) {
 			Earphone earphone = this.convertToEarphoneEntity(productDTO);
-//            earphone.setId(product.getId());
+			// earphone.setId(product.getId());
 			System.out.println("Product ID: " + product.getId());
 			System.out.println("Earphone ID: " + earphone.getId());
 			earphoneRepository.save(earphone);
@@ -229,5 +229,20 @@ public class ProductServiceImpl implements ProductService {
 	public Product findProductById(int id) {
 		return productRepository.findById(id)
 				.orElseThrow(() -> new ItemNotFoundException("Product id = " + id + " is not found"));
+	}
+
+	@Override
+	public List<ProductDTO> findProductsByName(String name) {
+		List<Product> products = productRepository.findByNameContainingIgnoreCase(name);
+		return products.stream()
+				.map(this::convertToDTO)
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<String> getAllProductNames() {
+		return productRepository.findAll().stream()
+				.map(Product::getName)
+				.collect(Collectors.toList());
 	}
 }
