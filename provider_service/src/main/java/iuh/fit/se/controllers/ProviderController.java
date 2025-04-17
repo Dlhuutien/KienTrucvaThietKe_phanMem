@@ -123,7 +123,6 @@ public class ProviderController {
         response.put("data", providerService.update(id, providerDTO));
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-}
 
 
     @DeleteMapping("/{id}")

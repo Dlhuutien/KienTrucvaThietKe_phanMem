@@ -37,8 +37,6 @@ public class UserProfileController {
 	@Autowired
 	UserProfileService userProfileService;
 
-	private UserProfileService userProfileService;
-
 	// 1. GET all users
 	// @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('PERMISSION_READ')")
 	@GetMapping
@@ -68,8 +66,6 @@ public class UserProfileController {
 		response.put("data", userProfileService.save(userProfileDTO));
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
-	@GetMapping("/{id}")
-	public ResponseEntity<Map<String, Object>> getProductById(@PathVariable int id) {
 
 	// 3. GET user by id
 	@GetMapping("/{id}")
@@ -87,35 +83,36 @@ public class UserProfileController {
 		}
 	}
 
-	@PutMapping("/{id}")
-	public ResponseEntity<Map<String, Object>> updateUser(@PathVariable int id, @Valid @RequestBody UserProfileDTO userProfileDTO, BindingResult bindingResult) {
-		Map<String, Object> response = new LinkedHashMap<>();
-
-		if (bindingResult.hasErrors()) {
-			Map<String, Object> errors = new LinkedHashMap<>();
-			bindingResult.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-			response.put("status", HttpStatus.BAD_REQUEST.value());
-			response.put("errors", errors);
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-		}
-
-		response.put("status", HttpStatus.OK.value());
-		response.put("data", userProfileService.update(id, userProfileDTO));
-		return ResponseEntity.status(HttpStatus.OK).body(response);
-	}
+//	@PutMapping("/{id}")
+//	public ResponseEntity<Map<String, Object>> updateUser(@PathVariable int id, @Valid @RequestBody UserProfileDTO userProfileDTO, BindingResult bindingResult) {
+//		Map<String, Object> response = new LinkedHashMap<>();
+//
+//		if (bindingResult.hasErrors()) {
+//			Map<String, Object> errors = new LinkedHashMap<>();
+//			bindingResult.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+//			response.put("status", HttpStatus.BAD_REQUEST.value());
+//			response.put("errors", errors);
+//			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+//		}
+//
+//		response.put("status", HttpStatus.OK.value());
+//		response.put("data", userProfileService.update(id, userProfileDTO));
+//		return ResponseEntity.status(HttpStatus.OK).body(response);
+//	}
 	
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Map<String, Object>> deleteUser(@PathVariable int id) {
-		Map<String, Object> response = new LinkedHashMap<>();
-		try {
-			userProfileService.delete(id);
-			response.put("status", HttpStatus.OK.value());
-			response.put("message", "User deleted successfully.");
-			return ResponseEntity.status(HttpStatus.OK).body(response);
-		} catch (ItemNotFoundException e) {
-			response.put("status", HttpStatus.NOT_FOUND.value());
-			response.put("message", e.getMessage());
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+//	@DeleteMapping("/{id}")
+//	public ResponseEntity<Map<String, Object>> deleteUser(@PathVariable int id) {
+//		Map<String, Object> response = new LinkedHashMap<>();
+//		try {
+//			userProfileService.delete(id);
+//			response.put("status", HttpStatus.OK.value());
+//			response.put("message", "User deleted successfully.");
+//			return ResponseEntity.status(HttpStatus.OK).body(response);
+//		} catch (ItemNotFoundException e) {
+//			response.put("status", HttpStatus.NOT_FOUND.value());
+//			response.put("message", e.getMessage());
+//			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+//	}
 
 	// 4. GET users by UserState (optional feature)
 	@GetMapping("/filter/{state}")
