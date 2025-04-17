@@ -11,6 +11,7 @@ import {
   Typography,
   Divider,
   IconButton,
+  Modal,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -20,6 +21,7 @@ import {
   updateCartDetailQuantity,
   deleteCartDetail,
 } from "../services/AddCartDetailService";
+import { useNavigate } from "react-router-dom";
 
 const formatCurrency = (value) => {
   return new Intl.NumberFormat("vi-VN", {
@@ -29,14 +31,23 @@ const formatCurrency = (value) => {
 };
 
 const ShoppingCart = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     loadCart();
   }, []);
 
   const loadCart = () => {
-    getCartByUserId(1)
+    const userId = localStorage.getItem("userId");
+    if (userId == null) {
+      console.log("userId", userId);
+      setOpenModal(true);
+      return;
+    }
+
+    getCartByUserId(userId)
       .then((data) => setProducts(data))
       .catch((err) => {
         console.error("Lỗi khi tải giỏ hàng:", err);
@@ -78,7 +89,6 @@ const ShoppingCart = () => {
       <Typography variant="h5" align="center" sx={{ marginBottom: 2 }}>
         GIỎ HÀNG
       </Typography>
-
       <TableContainer>
         <Table>
           <TableHead sx={{ backgroundColor: "#1976d2", color: "white" }}>
@@ -98,7 +108,11 @@ const ShoppingCart = () => {
                   <img
                     src={product.url}
                     alt={product.name}
-                    style={{ width: "50px", height: "50px", borderRadius: "6px" }}
+                    style={{
+                      width: "50px",
+                      height: "50px",
+                      borderRadius: "6px",
+                    }}
                   />
                 </TableCell>
                 <TableCell>{product.name}</TableCell>
@@ -111,7 +125,9 @@ const ShoppingCart = () => {
                     >
                       <RemoveIcon />
                     </IconButton>
-                    <Typography sx={{ marginX: 1 }}>{product.quantity}</Typography>
+                    <Typography sx={{ marginX: 1 }}>
+                      {product.quantity}
+                    </Typography>
                     <IconButton
                       size="small"
                       color="primary"
@@ -124,7 +140,10 @@ const ShoppingCart = () => {
                 <TableCell>{formatCurrency(product.salePrice)}</TableCell>
                 <TableCell>{formatCurrency(product.totalPrice)}</TableCell>
                 <TableCell>
-                  <Button color="error" onClick={() => handleRemoveProduct(index)}>
+                  <Button
+                    color="error"
+                    onClick={() => handleRemoveProduct(index)}
+                  >
                     X
                   </Button>
                 </TableCell>
@@ -133,25 +152,69 @@ const ShoppingCart = () => {
           </TableBody>
         </Table>
       </TableContainer>
-
       <Divider sx={{ marginY: 2 }} />
-
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <Box>
           <Typography>
-            Tổng: {formatCurrency(products.reduce((total, p) => total + p.totalPrice, 0))}
+            Tổng:{" "}
+            {formatCurrency(
+              products.reduce((total, p) => total + p.totalPrice, 0)
+            )}
           </Typography>
           <Typography>Thuế: 0</Typography>
           <Typography>Giảm: 0</Typography>
           <Typography variant="h6">
-            Tổng thanh toán: {formatCurrency(products.reduce((total, p) => total + p.totalPrice, 0))}
+            Tổng thanh toán:{" "}
+            {formatCurrency(
+              products.reduce((total, p) => total + p.totalPrice, 0)
+            )}
           </Typography>
         </Box>
       </Box>
-
       <Button variant="contained" color="primary" sx={{ marginTop: 2 }}>
         Thanh toán
       </Button>
+      <Modal open={openModal} onClose={() => setOpenModal(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            borderRadius: 2,
+            boxShadow: 24,
+            p: 4,
+            textAlign: "center",
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Vui lòng đăng nhập!
+          </Typography>
+          <Typography sx={{ mb: 2 }}>
+            Bạn cần đăng nhập để vào giỏ hàng.
+          </Typography>
+          <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+            <Button
+              variant="contained"
+              onClick={() => {
+                setOpenModal(false);
+                navigate("/login");
+              }}
+            >
+              Đăng nhập ngay
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+      ;
     </Box>
   );
 };

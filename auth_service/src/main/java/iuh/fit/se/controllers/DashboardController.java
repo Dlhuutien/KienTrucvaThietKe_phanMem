@@ -3,6 +3,7 @@ package iuh.fit.se.controllers;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.security.Principal;
 
 @RestController
+// @CrossOrigin(origins = { "http://localhost:3000", "http://localhost:5173" })
 @RequestMapping("/api")
 public class DashboardController {
 	@PreAuthorize("hasAnyRole('SCOPE_ROLE_USER','SCOPE_ROLE_ADMIN','SCOPE_ROLE_SUPER_ADMIN')")

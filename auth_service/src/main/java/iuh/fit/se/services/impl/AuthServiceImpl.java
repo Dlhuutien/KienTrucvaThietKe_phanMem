@@ -5,9 +5,12 @@ import iuh.fit.se.dtos.ApiResponse;
 import iuh.fit.se.dtos.SignInRequest;
 import iuh.fit.se.dtos.SignInResponse;
 import iuh.fit.se.dtos.SignUpRequest;
+import iuh.fit.se.dtos.UserProfileDTO;
 import iuh.fit.se.entities.Role;
 import iuh.fit.se.entities.Token;
 import iuh.fit.se.entities.User;
+import iuh.fit.se.enums.Gender;
+import iuh.fit.se.enums.UserState;
 import iuh.fit.se.exceptions.UserAlreadyExistsException;
 import iuh.fit.se.services.AuthService;
 import iuh.fit.se.services.RoleService;
@@ -15,7 +18,10 @@ import iuh.fit.se.services.TokenService;
 import iuh.fit.se.services.UserService;
 import iuh.fit.se.utils.JwtTokenUtil;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,12 +31,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Slf4j
 @Service
 public class AuthServiceImpl implements AuthService {
+
+	@Autowired
+	private RestTemplate restTemplate;
+	@Value("${user-service.url}") // http://api-gateway:8000/userProfiles
+	private String userServiceUrl;
 
 	private UserService userService;
 	private RoleService roleService;
@@ -65,8 +78,16 @@ public class AuthServiceImpl implements AuthService {
 
 		User user = createUser(signUpRequest);
 		userService.saveUser(user);
-		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.builder().status(String.valueOf("SUCCESS"))
-				.message("User account has been successfully created!").build());
+		// return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.builder().status(String.valueOf("SUCCESS"))
+		// 		.message("User account has been successfully created!").build());
+		
+		// 🟢 Gửi API sang user-service
+		createUserProfile(signUpRequest);
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.builder()
+				.status("SUCCESS")
+				.message("User account has been successfully created!")
+				.build());
 	}
 
 	private User createUser(SignUpRequest signUpRequest) {
@@ -112,4 +133,23 @@ public class AuthServiceImpl implements AuthService {
 		return ResponseEntity.ok(ApiResponse.builder().status("SUCCESS").message("Sign in successfull!")
 				.response(signInResponse).build());
 	}
+
+	private void createUserProfile(SignUpRequest req) {
+		UserProfileDTO profileDTO = UserProfileDTO.builder()
+				.fullName(req.getUserName())      // dùng userName làm fullName ban đầu
+				.email(req.getEmail())
+				.phoneNumber("")                  // để rỗng lúc đầu
+				.address("")
+				.gender(Gender.MALE)              // hoặc cho phép người dùng nhập ở frontend
+				.userState(UserState.ACTIVE)
+				.url("")
+				.build();
+	
+		try {
+			restTemplate.postForEntity(userServiceUrl, profileDTO, Void.class);
+		} catch (Exception ex) {
+			log.error("Không thể tạo UserProfile: {}", ex.getMessage());
+		}
+	}
+	
 }

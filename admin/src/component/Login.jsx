@@ -28,9 +28,13 @@ const Login = () => {
   // Khi component được render lần đầu, kiểm tra trạng thái đăng nhập từ localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("loggedInUser");
+    const storedEmail = localStorage.getItem("email");
+    const storedRoles = JSON.parse(localStorage.getItem("roles") || "[]");
+
     if (storedUser) {
       setIsLoggedIn(true);
-      setUserName(storedUser); // Lấy tên người dùng từ localStorage
+      setUserName(storedUser);
+      setUserRole(storedRoles.map((r) => r.authority).join(", "));
     }
   }, []);
 
@@ -41,6 +45,7 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       const userData = await login(userName, password); // Gọi hàm login từ dịch vụ
+      setUserRole(userData.roles.map((r) => r.authority).join(", "));
       setSnackbarType("success");
       setSnackbarMessage("Đăng nhập thành công");
       setOpenSnackbar(true);
@@ -79,18 +84,9 @@ const Login = () => {
           flexDirection: "column",
           alignItems: "center",
           width: "100%",
+          bgcolor: "#f9f9f9",
         }}
       >
-        <img
-          src="https://via.placeholder.com/150"
-          alt="Profile"
-          style={{
-            borderRadius: "50%",
-            width: "150px",
-            height: "150px",
-            marginBottom: "20px",
-          }}
-        />
         <Typography variant="h4" sx={{ fontWeight: "bold", mb: 3 }}>
           Hồ sơ của bạn
         </Typography>
@@ -108,7 +104,10 @@ const Login = () => {
             Tên người dùng: {userName}
           </Typography>
           <Typography variant="h6" sx={{ mb: 2 }}>
-            Email: user@example.com
+            Email: {localStorage.getItem("email")}
+          </Typography>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Vai trò: {userRole}
           </Typography>
           <Button
             sx={{
@@ -137,11 +136,6 @@ const Login = () => {
         alignItems: "center",
       }}
     >
-      <img
-        src="https://via.placeholder.com/200x100"
-        alt="Logo"
-        style={{ marginBottom: "20px" }}
-      />
       <Box sx={{ width: "100%" }}>
         <Typography variant="h4" sx={{ mb: 2 }}>
           ĐĂNG NHẬP
@@ -156,7 +150,7 @@ const Login = () => {
         >
           <Box sx={{ width: "45%", mb: 3 }}>
             <InputBase
-              placeholder="Vui lòng nhập số điện thoại"
+              placeholder="Vui lòng nhập tên đăng nhập"
               size="small"
               sx={{
                 width: "100%",
@@ -178,6 +172,7 @@ const Login = () => {
                 width: "100%",
                 height: 45,
                 paddingLeft: 2,
+                paddingRight: 3,
                 borderRadius: 20,
                 border: "1px solid #3E81FF",
               }}

@@ -9,15 +9,15 @@ import AddProvider from "../component/AddProvider";
 import PurchaseDetailList from "../component/PurchaseDetailList";
 import AddPurchaseDetail from "../component/AddPurchaseDetail";
 import CustomerDetail from "../component/CustomerDetail";
-import SignUp from "../component/Signup";
 import Login from "../component/Login";
+import SignUp from "../component/SignUp";
 
 const Admin = () => {
   return (
     <div>
       <Routes>
         {/* Mặc định hiển thị ProductList */}
-        <Route index element={<ProductList />} />
+        <Route index element={<Login />} />
 
         {/* Product Routes */}
         <Route path="/DanhSachSanPham" element={<ProductList />} />
