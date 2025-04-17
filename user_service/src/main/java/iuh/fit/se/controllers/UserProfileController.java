@@ -18,13 +18,14 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/userProfiles")
-@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:5173" })
+// @CrossOrigin(origins = { "http://localhost:3000", "http://localhost:5173" })
 public class UserProfileController {
 
 	@Autowired
 	private UserProfileService userProfileService;
 
 	// 1. GET all users
+	// @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('PERMISSION_READ')")
 	@GetMapping
 	public ResponseEntity<Map<String, Object>> getAllUsers() {
 		Map<String, Object> response = new LinkedHashMap<>();
