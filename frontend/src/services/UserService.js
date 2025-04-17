@@ -50,9 +50,10 @@ export const login = async (username = "", password = "") => {
       password,
     });
 
-    const { token, username: userNameResp, email, roles } = response.data.response;
-
+    const { token, id, username: userNameResp, email, roles } = response.data.response;
+    
     // Lưu vào localStorage
+    localStorage.setItem("userId", id);
     localStorage.setItem("token", token);
     localStorage.setItem("loggedInUser", userNameResp);
     localStorage.setItem("email", email);

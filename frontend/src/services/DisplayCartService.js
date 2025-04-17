@@ -1,15 +1,15 @@
 import axios from "axios";
 
-const CART_API_URL = "http://localhost:8082/cart";
-const PRODUCT_API_URL = "http://localhost:5000/api/products";
+const CART_API_URL = "http://localhost:8000/cart";
+const PRODUCT_API_URL = "http://localhost:8000/api/products";
 
 // Lấy cart
 export const getCartByUserId = async (userId) => {
   const response = await axios.get(CART_API_URL);
   const carts = response.data.data;
 
-  // Tìm cart có userId = 1 và trạng thái PENDING (giả sử chỉ có 1)
-  const userCart = carts.find((cart) => cart.userId === userId && cart.state === "PENDING");
+  // Tìm cart có userId và trạng thái PENDING
+  const userCart = carts.find((cart) => cart.userId === parseInt(userId) && cart.state === "PENDING");
 
   if (!userCart) return [];
 

@@ -27,4 +27,6 @@ public interface ProviderService {
 	List<String> getAllProviderNames();
 
 	boolean isEmailUniqueForUpdate(String email, int id);
+
+	boolean delete(int id);
 }

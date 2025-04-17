@@ -1,9 +1,9 @@
-package iuh.fit.se.models.dtos;
+package iuh.fit.se.dtos;
 
 import java.time.LocalDateTime;
 
-import iuh.fit.se.models.enums.Gender;
-import iuh.fit.se.models.enums.UserState;
+import iuh.fit.se.enums.Gender;
+import iuh.fit.se.enums.UserState;
 import lombok.*;
 
 @Data
@@ -21,4 +21,3 @@ public class UserProfileDTO {
     private LocalDateTime createdTime;
     private UserState userState;
 }
-

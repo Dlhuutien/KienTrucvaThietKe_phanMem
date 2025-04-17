@@ -1,3 +1,4 @@
+
 package iuh.fit.se.services.impl;
 
 import java.time.LocalDateTime;
@@ -11,9 +12,7 @@ import iuh.fit.se.UserServiceApplication;
 import iuh.fit.se.exceptions.ItemNotFoundException;
 import iuh.fit.se.models.dtos.UserProfileDTO;
 import iuh.fit.se.models.enitites.UserProfile;
-
 import iuh.fit.se.models.enums.UserState;
-
 import iuh.fit.se.models.repositories.UserProfileRepository;
 import iuh.fit.se.services.UserProfileService;
 
@@ -55,30 +54,6 @@ public class UserProfileServiceImpl implements UserProfileService {
 	}
 
 	@Override
-
-	public UserProfileDTO update(int id, UserProfileDTO userProfileDTO) {
-		UserProfile userProfile = userProfileRepository.findById(id)
-				.orElseThrow(() -> new ItemNotFoundException("User id = " + id + " is not found"));
-		userProfile.setFullName(userProfileDTO.getFullName());
-		userProfile.setEmail(userProfileDTO.getEmail());
-		userProfile.setGender(userProfileDTO.getGender());
-		userProfile.setPhoneNumber(userProfileDTO.getPhoneNumber());
-		userProfile.setAddress(userProfileDTO.getAddress());
-		userProfile.setUrl(userProfileDTO.getUrl());
-		userProfile.setCreatedTime(LocalDateTime.now());
-		UserProfile updatedUser = userProfileRepository.save(userProfile);
-		return convertToDTO(updatedUser);
-	}
-
-	@Override
-	public boolean delete(int id) {
-		UserProfile userProfile = userProfileRepository.findById(id)
-                .orElseThrow(() -> new ItemNotFoundException("User id = " + id + " is not found"));
-        userProfileRepository.delete(userProfile);
-        return true;
-	}
-}
-
 	public List<UserProfileDTO> findByState(UserState userState) {
     	// Tìm người dùng theo trạng thái trong repository
    	 	return userProfileRepository.findByUserState(userState).stream()
@@ -92,7 +67,8 @@ public class UserProfileServiceImpl implements UserProfileService {
         .orElseThrow(() -> new ItemNotFoundException("User with id " + id + " not found"));
 
    	 	// Cập nhật trạng thái người dùng
-    	user.setUserState(newState);
+    	// user.setUserState(newState);
+		user.setUserState(newState);
     	return convertToDTO(userProfileRepository.save(user));  // Lưu và trả về DTO đã cập nhật
 }
 

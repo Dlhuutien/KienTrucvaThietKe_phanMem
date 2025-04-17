@@ -24,7 +24,7 @@ import iuh.fit.se.services.CartService;
 import jakarta.validation.Valid;
 
 @RestController
-@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:5173" })
+// @CrossOrigin(origins = { "http://localhost:3000", "http://localhost:5173" })
 @RequestMapping("/cart")
 public class CartController {
 

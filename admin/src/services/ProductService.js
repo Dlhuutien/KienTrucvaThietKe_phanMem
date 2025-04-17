@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Cập nhật đúng REST API URL
-const REST_API_BASE_URL = "http://localhost:5000/api"; // sửa URL ở đây
+const REST_API_BASE_URL = "http://localhost:8000/api"; // sửa URL ở đây
 
 export const listProduct = () => {
   return axios.get(`${REST_API_BASE_URL}/products`);

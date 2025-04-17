@@ -7,22 +7,24 @@ import {
   IconButton,
   InputAdornment,
   Snackbar,
-  Alert,
+  Alert, 
 } from "@mui/material";
 import React, { useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useNavigate } from "react-router-dom";
-import { registerUser } from "../services/ProductService";
+import { registerUser, createUserProfile, login } from "../services/UserService";
 
 const SignUp = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordAgain, setShowPasswordAgain] = useState(false);
 
+  const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
   const [address, setAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [gender, setGender] = useState("MALE");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
@@ -36,30 +38,58 @@ const SignUp = () => {
 
   const handleCheckboxChange = (event) => setIsChecked(event.target.checked);
 
-  const handleSignup = () => {
+  const handleSignup = async (event) => {
+    event.preventDefault();
     if (password !== passwordAgain) {
       setPasswordError("Mật khẩu không khớp. Vui lòng kiểm tra lại.");
       return;
     }
-
-    setPasswordError(""); // Clear error
-    registerUser(fullName, address, phoneNumber, email, password, "USER")
-      .then(() => {
-        setSnackbarType("success");
-        setSnackbarMessage("Đăng ký thành công! Chào mừng bạn.");
-        setOpenSnackbar(true);
-        setTimeout(() => navigate("/Login"), 2000);
-      })
-      .catch(() => {
-        setSnackbarType("error");
-        setSnackbarMessage("Đăng ký thất bại. Vui lòng thử lại.");
-        setOpenSnackbar(true);
-      });
+  
+    setPasswordError("");
+  
+    try {
+      // 1. Đăng ký tài khoản (auth-service)
+      await registerUser(
+        username,
+        fullName,
+        address,
+        phoneNumber,
+        email,
+        password,
+        "ROLE_ADMIN");
+  
+      // 2. Đăng nhập để lấy token
+      const loginResponse = await login(username, password);
+      const token = loginResponse.token; //
+  
+      if (!token) throw new Error("Không lấy được token sau khi đăng nhập!");
+  
+      // 3. Tạo user profile
+      const userProfile = {
+        fullName,
+        address,
+        phoneNumber,
+        email,
+        userState: "ACTIVE",
+        gender,
+      };
+  
+      await createUserProfile(userProfile, token);
+  
+      // 4. Thành công
+      setSnackbarType("success");
+      setSnackbarMessage("Đăng ký thành công! Chào mừng bạn.");
+      setOpenSnackbar(true);
+      setTimeout(() => navigate("/login"), 2000);
+    } catch (error) {
+      console.log("Lỗi đăng ký:", error);
+      setSnackbarType("error");
+      setSnackbarMessage("Đăng ký thất bại. Vui lòng thử lại.");
+      setOpenSnackbar(true);
+    }
   };
-
-  const handleLogin = () => {
-    navigate("/Login");
-  };
+  
+  
 
   const renderInputField = (
     label,
@@ -71,7 +101,7 @@ const SignUp = () => {
     setShowPasswordState,
     errorMessage
   ) => (
-    <Box sx={{ mb: 2, width: "47%" }}>
+    <Box sx={{ m: 2, width: "90%", textAlign:"center", alignItems: "center" }}>
       <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
         <Typography>{label}</Typography>
         <Typography sx={{ ml: 1, color: "#F60000" }}>*</Typography>
@@ -86,6 +116,7 @@ const SignUp = () => {
         }}
       >
         <InputBase
+          autoComplete="new-password"
           placeholder={placeholder}
           type={type === "password" && !showPasswordState ? "password" : "text"}
           value={value}
@@ -94,9 +125,7 @@ const SignUp = () => {
           endAdornment={
             type === "password" && (
               <InputAdornment position="end">
-                <IconButton
-                  onClick={() => setShowPasswordState(!showPasswordState)}
-                >
+                <IconButton onClick={() => setShowPasswordState(!showPasswordState)}>
                   {showPasswordState ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
@@ -113,117 +142,116 @@ const SignUp = () => {
   );
 
   return (
-    <Box sx={{ textAlign: "center", marginTop: 5 }}>
-      <Typography sx={{ fontWeight: "bold", mb: 2 }} variant="h4">ĐĂNG KÝ TÀI KHOẢN</Typography>
+    <Box
+      sx={{
+        textAlign: "center",
+          marginTop: 5,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          width: "100%",
+          bgcolor: "#f9f9f9",
+      }}
+    >
       <Box
-        sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+        sx={{
+          padding: 2,
+            // backgroundColor: "#F0F8FF",
+            borderRadius: "10px",
+            boxShadow: 3,
+            width: "60%",
+            textAlign: "left",
+        }}
       >
-        {renderInputField(
-          "Họ và tên",
-          "Vui lòng nhập họ và tên",
-          "text",
-          fullName,
-          setFullName
-        )}
-        {renderInputField(
-          "Địa chỉ",
-          "Vui lòng nhập địa chỉ",
-          "text",
-          address,
-          setAddress
-        )}
-        {renderInputField(
-          "Số điện thoại",
-          "Vui lòng nhập số điện thoại",
-          "text",
-          phoneNumber,
-          setPhoneNumber
-        )}
-        {renderInputField(
-          "Email",
-          "Vui lòng nhập email",
-          "text",
-          email,
-          setEmail
-        )}
-        {renderInputField(
-          "Mật khẩu",
-          "Vui lòng nhập mật khẩu",
-          "password",
-          password,
-          setPassword,
-          showPassword,
-          setShowPassword
-        )}
-        {renderInputField(
-          "Nhập lại mật khẩu",
-          "Vui lòng nhập lại mật khẩu",
-          "password",
-          passwordAgain,
-          setPasswordAgain,
-          showPasswordAgain,
-          setShowPasswordAgain,
-          passwordError
-        )}
+        <Typography variant="h4" align="center" fontWeight="bold" gutterBottom>
+          ĐĂNG KÝ TÀI KHOẢN
+        </Typography>
+  
+        <form onSubmit={handleSignup}>
+          {renderInputField("Tên đăng nhập", "Vui lòng nhập tên đăng nhập", "text", username, setUsername)}
+          {renderInputField("Họ và tên", "Vui lòng nhập họ và tên", "text", fullName, setFullName)}
+          {renderInputField("Địa chỉ", "Vui lòng nhập địa chỉ", "text", address, setAddress)}
+          {renderInputField("Số điện thoại", "Vui lòng nhập số điện thoại", "text", phoneNumber, setPhoneNumber)}
+          {renderInputField("Email", "Vui lòng nhập email", "text", email, setEmail)}
+          {renderInputField("Mật khẩu", "Vui lòng nhập mật khẩu", "password", password, setPassword, showPassword, setShowPassword)}
+          {renderInputField("Nhập lại mật khẩu", "Vui lòng nhập lại mật khẩu", "password", passwordAgain, setPasswordAgain, showPasswordAgain, setShowPasswordAgain, passwordError)}
+  
+          <Box sx={{ mb: 2, m: 3 }}>
+            <Typography sx={{ mb: 1 }}>Giới tính</Typography>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <label>
+                <input
+                  type="radio"
+                  value="MALE"
+                  name="gender"
+                  checked={gender === "MALE"}
+                  onChange={(e) => setGender(e.target.value)}
+                />{" "}
+                Nam
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value="FEMALE"
+                  name="gender"
+                  checked={gender === "FEMALE"}
+                  onChange={(e) => setGender(e.target.value)}
+                />{" "}
+                Nữ
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value="OTHER"
+                  name="gender"
+                  checked={gender === "OTHER"}
+                  onChange={(e) => setGender(e.target.value)}
+                />{" "}
+                Khác
+              </label>
+            </Box>
+          </Box>
 
-        <Box sx={{ display: "flex", alignItems: "center", mb: 2, justifyContent: "flex-start", width: "48%" }}>
-          <Checkbox
-            checked={isChecked}
-            onChange={handleCheckboxChange}
-            color="primary"
-          />
-          <Typography sx={{ fontSize: 14, ml: 1 }}>
-            Tôi đồng ý với điều khoản sử dụng
-          </Typography>
-        </Box>
-        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "flex-start", width: "48%" }}>
-          <Typography sx={{ fontSize: 14 }}>
-            Đã có tài khoản?
-          </Typography>
+          {/* 👇 Checkbox điều khoản */}
+          <Box sx={{ display: "flex", alignItems: "center", my: 2 }}>
+            <Checkbox checked={isChecked} onChange={handleCheckboxChange} />
+            <Typography sx={{ fontSize: 14 }}>Tôi đồng ý với điều khoản sử dụng</Typography>
+          </Box>
+  
+          {/* 👇 Nút Đăng ký */}
           <Button
-            onClick={handleLogin}
+            type="submit"
+            fullWidth
+            disabled={!isChecked}
             sx={{
-              ml: 1,
-              color: "#F60000",
+              backgroundColor: isChecked ? "#33CCFF" : "#CCCCCC",
+              color: "white",
+              borderRadius: 3,
               fontWeight: "bold",
-              fontSize: 14,
+              height: 45,
+              mb: 2,
             }}
           >
-            Đăng nhập ngay
+            Đăng ký
           </Button>
-        </Box>
-        <Button
-          disabled={!isChecked}
-          onClick={handleSignup}
-          sx={{
-            backgroundColor: isChecked ? "#33CCFF" : "#CCCCCC",
-            color: "white",
-            borderRadius: 15,
-            fontWeight: "bold",
-            mb: 5,
-            width: 160,
-          }}
-        >
-          Đăng ký
-        </Button>
-      </Box>
-
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={3000}
-        onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert
+        </form>
+  
+        {/* 👇 Thông báo SnackBar */}
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={3000}
           onClose={() => setOpenSnackbar(false)}
-          severity={snackbarType}
-          sx={{ width: "100%" }}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+          <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarType} sx={{ width: "100%" }}>
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+      </Box>
     </Box>
   );
+  
+  
 };
 
 export default SignUp;

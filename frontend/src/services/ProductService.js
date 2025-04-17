@@ -7,44 +7,6 @@ export const listProduct = () => {
   return axios.get(`${REST_API_BASE_URL}/products`);
 };
 
-export const registerUser = async (
-  fullName = "",
-  address = "",
-  phoneNumber = "",
-  email = "",
-  password = "",
-  role = ""
-) => {
-  try {
-    const respone = await axios.post(`${REST_API_BASE_URL2}/users/signup`, {
-      fullName,
-      address,
-      phoneNumber,
-      email,
-      password,
-      role,
-    });
-    return respone.data;
-  } catch (error) {
-    console.log("Error registering user:", error);
-    throw error;
-  }
-};
-
-export const login = async (userName = "", password = "") => {
-  try {
-    const response = await axios.post(`${REST_API_BASE_URL2}/users/login`, {
-      userName,
-      password,
-    });
-    console.log("Login successful, user data:", response.data);
-    return response.data;
-  } catch (error) {
-    console.log("Error registering user:", error);
-    throw error;
-  }
-};
-
 export const listProductBySearchTerm = (searchTerm = "") => {
   return searchTerm
     ? axios.get(`${REST_API_BASE_URL}/products?searchTerm=${searchTerm}`)

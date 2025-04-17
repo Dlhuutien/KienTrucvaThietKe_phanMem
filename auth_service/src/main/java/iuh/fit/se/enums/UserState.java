@@ -1,8 +1,5 @@
 package iuh.fit.se.enums;
 
-import lombok.Getter;
-
-@Getter
 public enum UserState {
     ACTIVE("Active"),
     INACTIVE("Inactive"),
@@ -10,8 +7,14 @@ public enum UserState {
 
     private String state;
 
+    // Constructor để khởi tạo giá trị cho enum
     UserState(String state) {
         this.state = state;
+    }
+
+    // Phương thức để trả về giá trị String của trạng thái
+    public String getState() {
+        return this.state;
     }
 
 }

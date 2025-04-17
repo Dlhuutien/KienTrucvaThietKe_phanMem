@@ -11,6 +11,7 @@ import {
   ListItemText,
   Avatar,
   Rating,
+  Modal,
 } from "@mui/material";
 import { deepPurple } from "@mui/material/colors";
 import { useParams, Link as RouterLink } from "react-router-dom";
@@ -23,8 +24,10 @@ import image04 from "../assets/phone_url04.png";
 import { getProductById } from "../services/ProductService";
 import { message } from "antd";
 import { createCart } from "../services/AddCartDetailService";
+import { useNavigate } from "react-router-dom";
 
 const Product_detail = () => {
+  const navigate = useNavigate();
   const { productId } = useParams();
   const [product, setProduct] = useState({
     discountedPrice: 0,
@@ -67,6 +70,7 @@ const Product_detail = () => {
   ]);
   const [newComment, setNewComment] = useState("");
   const [newRating, setNewRating] = useState(0);
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     if (productId) {
@@ -97,31 +101,38 @@ const Product_detail = () => {
     !value
       ? "N/A"
       : value.split("_")[0] === "GB"
-        ? `${value.split("_")[1]} GB`
-        : value;
+      ? `${value.split("_")[1]} GB`
+      : value;
   const formatCurrency = (value) =>
     value ? new Intl.NumberFormat("vi-VN").format(value) + " VND" : "0 VND";
-  
-const handleAddToCart = async () => {
-  try {
-    const cartDTO = {
-      userId: 1, // tạm thời userId
-      cartDetails: [
-        {
-          productId: product.id,
-          quantity: quantity,
-        },
-      ],
-    };
 
-    const response = await createCart(cartDTO);
-    message.success("Đã thêm sản phẩm vào giỏ hàng!");
-    console.log("Saved cart:", response.data);
-  } catch (error) {
-    console.error("Lỗi khi thêm vào giỏ hàng:", error);
-    message.error("Thêm vào giỏ hàng thất bại.");
-  }
-};
+  const handleAddToCart = async () => {
+    const userId = localStorage.getItem("userId"); // lấy userId từ localStorage
+    if (userId == null) {
+      console.log("userId", userId);
+      setOpenModal(true);
+      return;
+    }
+
+    try {
+      const cartDTO = {
+        userId: parseInt(userId),
+        cartDetails: [
+          {
+            productId: product.id,
+            quantity: quantity,
+          },
+        ],
+      };
+
+      const response = await createCart(cartDTO);
+      message.success("Đã thêm sản phẩm vào giỏ hàng!");
+      console.log("Saved cart:", response.data);
+    } catch (error) {
+      console.error("Lỗi khi thêm vào giỏ hàng:", error);
+      message.error("Thêm vào giỏ hàng thất bại.");
+    }
+  };
 
   return (
     <Box
@@ -150,7 +161,6 @@ const handleAddToCart = async () => {
         </Link>
         <Typography color="textPrimary">{product.name}</Typography>
       </Breadcrumbs>
-
       <LoadingModal isLoading={isLoading} />
       <Box display="flex">
         <Box sx={{ mt: "35px", textAlign: "center", mr: "180px" }}>
@@ -282,7 +292,6 @@ const handleAddToCart = async () => {
           </Button>
         </Box>
       </Box>
-
       <Box
         sx={{
           display: "flex",
@@ -568,6 +577,43 @@ const handleAddToCart = async () => {
           </Button>
         </Box>
       </Box>
+      <Modal open={openModal} onClose={() => setOpenModal(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            borderRadius: 2,
+            boxShadow: 24,
+            p: 4,
+            textAlign: "center",
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Vui lòng đăng nhập!
+          </Typography>
+          <Typography sx={{ mb: 2 }}>
+            Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.
+          </Typography>
+          <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+            <Button variant="contained" onClick={() => setOpenModal(false)}>
+              Đóng
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                setOpenModal(false);
+                navigate("/login");
+              }}
+            >
+              Đăng nhập ngay
+            </Button>
+          </Box>
+        </Box>
+      </Modal>;
     </Box>
   );
 };
