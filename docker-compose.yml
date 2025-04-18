@@ -25,12 +25,12 @@ services:
       context: ./auth_service
     container_name: auth-service
     ports:
-      - "8085:8085" 
+      - "8085:8085"
     depends_on:
       - eureka-server
     networks:
       - my-network
-  
+
   user-service:
     build:
       context: ./user_service
@@ -64,6 +64,28 @@ services:
     networks:
       - my-network
 
+  order-service:
+    build:
+      context: ./order_service
+    container_name: order-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - eureka-server
+    networks:
+      - my-network
+  
+  inventory-service:
+    build:
+      context: ./inventory_service
+      dockerfile: inventory-service
+    ports:
+      - "8086:8086"
+    depends_on:
+      - eureka-server
+    networks:
+      - my-network
+
   api-gateway:
     build:
       context: ./api-gateway
@@ -75,21 +97,11 @@ services:
     networks:
       - my-network
 
-  order-service:
-    build:
-      context: ./order_service
-    container_name: order-service
-    ports:
-      - "8082:8082"
-    depends_on:
-      - eureka-server
-    networks:
-      - my-network
-
 
 networks:
   my-network:
     driver: bridge
+
 
 # Chạy Docker
 # docker-compose up --build
@@ -112,3 +124,6 @@ networks:
 
 # Xem status
 # docker ps
+
+# Nếu có code mới ở sẻvice nào thì
+# docker restart auth-service
