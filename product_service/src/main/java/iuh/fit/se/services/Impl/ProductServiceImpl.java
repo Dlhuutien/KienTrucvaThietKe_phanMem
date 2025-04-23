@@ -5,20 +5,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import iuh.fit.se.exceptions.ItemNotFoundException;
+import iuh.fit.se.models.dtos.ProductDTO;
 import iuh.fit.se.models.entities.*;
 import iuh.fit.se.models.enums.Category;
 import iuh.fit.se.models.repositories.*;
+import iuh.fit.se.services.DiscountService;
+import iuh.fit.se.services.ProductService;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import iuh.fit.se.exceptions.ItemNotFoundException;
-import iuh.fit.se.models.dtos.ProductDTO;
-import iuh.fit.se.services.DiscountService;
-//import iuh.fit.se.models.services.DiscountService;
-import iuh.fit.se.services.ProductService;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -160,7 +160,6 @@ public class ProductServiceImpl implements ProductService {
 		product.setUrl(productDTO.getUrl());
 		product.setBrand(productDTO.getBrand());
 		product.setCategory(productDTO.getCategory());
-		product.setQuantity(productDTO.getQuantity());
 		product.setSalePrice(productDTO.getSalePrice());
 		product.setPurchasePrice(productDTO.getPurchasePrice());
 
@@ -244,5 +243,21 @@ public class ProductServiceImpl implements ProductService {
 		return productRepository.findAll().stream()
 				.map(Product::getName)
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public void updatePrice(int productId, BigDecimal purchasePrice, BigDecimal salePrice) {
+		Product product = productRepository.findById(productId)
+				.orElseThrow(() -> new ItemNotFoundException("Product id = " + productId + " is not found"));
+
+		if (purchasePrice != null) {
+			product.setPurchasePrice(purchasePrice);
+		}
+
+		if (salePrice != null) {
+			product.setSalePrice(salePrice);
+		}
+
+		productRepository.save(product);
 	}
 }

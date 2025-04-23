@@ -1,11 +1,13 @@
 package iuh.fit.se.services;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
 import iuh.fit.se.models.dtos.ProductDTO;
 import iuh.fit.se.models.entities.Product;
+
 
 public interface ProductService {
 	List<ProductDTO> findAll();
@@ -26,4 +28,6 @@ public interface ProductService {
 	List<String> getAllProductNames();
 
 	boolean delete(int id);
+	
+	void updatePrice(int productId, BigDecimal purchasePrice, BigDecimal salePrice);
 }

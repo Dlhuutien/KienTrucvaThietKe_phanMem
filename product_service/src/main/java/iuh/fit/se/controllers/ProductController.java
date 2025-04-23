@@ -139,4 +139,15 @@ public class ProductController {
 		List<String> productNames = productService.getAllProductNames();
 		return ResponseEntity.ok(productNames);
 	}
+	
+	@PutMapping("/api/products/{id}/price")
+	public ResponseEntity<?> updateProductPrice(
+		@PathVariable int id,
+		@RequestParam(required = false) BigDecimal purchasePrice,
+		@RequestParam(required = false) BigDecimal salePrice
+	) {
+		productService.updatePrice(id, purchasePrice, salePrice);
+		return ResponseEntity.ok(Map.of("message", "Cập nhật giá thành công"));
+	}
+
 }

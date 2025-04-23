@@ -78,7 +78,7 @@ services:
   inventory-service:
     build:
       context: ./inventory_service
-      dockerfile: inventory-service
+    container_name: inventory-service
     ports:
       - "8086:8086"
     depends_on:
@@ -127,3 +127,8 @@ networks:
 
 # Nếu có code mới ở sẻvice nào thì
 # docker restart auth-service
+
+# Có code mới
+# mvn clean package -DskipTests
+# docker-compose build inventory-service
+# docker-compose up -d inventory-service

@@ -27,7 +27,6 @@ public class ProductDTO {
 	private String url;
 	private Brand brand;
 	private Category category;
-	private int quantity;
 	private BigDecimal salePrice;
 	private BigDecimal purchasePrice;
 
