@@ -39,10 +39,6 @@ public class ProductDTO {
     @NotNull(message = "Danh mục sản phẩm không được để trống")
 	private Category category;
     
-    @NotNull(message = "Số lượng không được để trống")
-    @Min(value = 0, message = "Số lượng phải lớn hơn hoặc bằng 0")
-	private int quantity;
-    
     @Min(value = 0, message = "Giá bán phải lớn hơn hoặc bằng 0")
     @Digits(integer = 19, fraction = 0, message = "Giá nhập tối đa 19 chữ số và không có phần thập phân")
 	private BigDecimal salePrice;

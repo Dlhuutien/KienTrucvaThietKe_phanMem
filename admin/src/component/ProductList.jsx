@@ -16,25 +16,39 @@ import {
   InputLabel,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import { listProduct, deleteProduct } from "../services/ProductService";
+import { listProduct, deleteProduct, getInventories } from "../services/ProductService";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
 
-
-
   const fetchProducts = async () => {
-    listProduct()
-      .then((response) => {
-        setProducts(response.data.data);
-        setFilteredProducts(response.data.data);
-      })
-      .catch((error) => {
-        console.log(error);
+    try {
+      const [productRes, inventoryRes] = await Promise.all([
+        listProduct(),
+        getInventories()
+      ]);
+  
+      const products = productRes.data.data;
+      const inventories = inventoryRes.data.data;
+  
+      // Gán quantity cho mỗi product từ inventory
+      const merged = products.map(product => {
+        const inventory = inventories.find(inv => inv.productId === product.id);
+        return {
+          ...product,
+          quantity: inventory ? inventory.quantity : 0
+        };
       });
+  
+      setProducts(merged);
+      setFilteredProducts(merged);
+    } catch (error) {
+      console.error(error);
+    }
   };
+  
 
   useEffect(() => {
     fetchProducts();

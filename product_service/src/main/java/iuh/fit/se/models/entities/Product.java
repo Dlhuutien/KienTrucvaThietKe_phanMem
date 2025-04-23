@@ -35,7 +35,6 @@ public class Product {
 //	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
 //	protected  Set<ProductDiscount> productDiscounts;
 	
-	protected int quantity;
 	@Column(name = "sale_price", columnDefinition = "Decimal(19,0)")
 	protected BigDecimal salePrice;
 	@Column(name = "purchase_price", columnDefinition = "Decimal(19,0)")
