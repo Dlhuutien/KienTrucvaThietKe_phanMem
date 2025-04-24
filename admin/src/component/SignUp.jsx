@@ -14,12 +14,14 @@ import React, { useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useNavigate } from "react-router-dom";
-import { registerUser, createUserProfile, login } from "../services/UserService";
+import CircularProgress from "@mui/material/CircularProgress";
+import { registerUser, login, updateUserProfileByEmail } from "../services/UserService";
 
 const SignUp = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordAgain, setShowPasswordAgain] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
@@ -47,6 +49,7 @@ const SignUp = () => {
     }
   
     setPasswordError("");
+    setIsLoading(true);
   
     try {
       // 1. Đăng ký tài khoản (auth-service)
@@ -61,7 +64,7 @@ const SignUp = () => {
   
       // 2. Đăng nhập để lấy token
       const loginResponse = await login(username, password);
-      const token = loginResponse.token; //
+      const token = loginResponse.token;
   
       if (!token) throw new Error("Không lấy được token sau khi đăng nhập!");
   
@@ -75,7 +78,7 @@ const SignUp = () => {
         gender,
       };
   
-      await createUserProfile(userProfile, token);
+      await updateUserProfileByEmail(email, userProfile, token);
   
       // 4. Thành công
       setSnackbarType("success");
@@ -223,7 +226,7 @@ const SignUp = () => {
           <Button
             type="submit"
             fullWidth
-            disabled={!isChecked}
+            disabled={!isChecked || isLoading}
             sx={{
               backgroundColor: isChecked ? "#33CCFF" : "#CCCCCC",
               color: "white",
@@ -233,8 +236,12 @@ const SignUp = () => {
               mb: 2,
             }}
           >
-            Đăng ký
-          </Button>
+          {isLoading ? (
+            <CircularProgress size={24} sx={{ color: "white" }} />
+          ) : (
+            "Đăng ký"
+          )}
+        </Button>
         </form>
   
         {/* 👇 Thông báo SnackBar */}

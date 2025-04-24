@@ -3,6 +3,10 @@ import axios from "axios";
 const REST_API_BASE_URL = "http://localhost:8000/api";
 const REST_API_BASE_URL2 = "http://localhost:8000";
 
+export const getInventories = () => {
+  return axios.get("http://localhost:8000/inventory");
+};
+
 export const listProduct = () => {
   return axios.get(`${REST_API_BASE_URL}/products`);
 };

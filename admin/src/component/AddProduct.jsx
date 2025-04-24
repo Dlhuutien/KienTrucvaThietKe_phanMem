@@ -91,7 +91,7 @@ const AddProduct = () => {
 
     if (!product.name.trim()) {
       error.name = "Tên sản phẩm không được để trống.";
-    } else if (!/^[a-zA-Z0-9\s]+$/.test(product.name)) {
+    } else if (!/^[\p{L}0-9\s!@#$%^&*()_+=\-,.]+$/u.test(product.name)) {
       error.name = "Tên sản phẩm không được chứa ký tự đặc biệt.";
     }
 

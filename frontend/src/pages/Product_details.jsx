@@ -126,7 +126,13 @@ const Product_detail = () => {
       };
 
       const response = await createCart(cartDTO);
-      message.success("Đã thêm sản phẩm vào giỏ hàng!");
+      message.success({
+        content: "Đã thêm sản phẩm vào giỏ hàng!",
+        duration: 3, // 3 giây
+        style: {
+          marginTop: '10vh',
+        },
+      });      
       console.log("Saved cart:", response.data);
     } catch (error) {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);

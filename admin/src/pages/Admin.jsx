@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ProductList from "../component/ProductList";
 import AddProduct from "../component/AddProduct";
@@ -13,6 +13,17 @@ import Login from "../component/Login";
 import SignUp from "../component/SignUp";
 
 const Admin = () => {
+  useEffect(() => {
+    const loginTime = parseInt(localStorage.getItem("loginTime"), 10);
+    const now = Date.now();
+    const maxAge = 3 * 60 * 60 * 1000; // 3 tiếng
+
+    if (loginTime && now - loginTime > maxAge) {
+      localStorage.clear();
+      console.log("Phiên đăng nhập đã hết hạn, yêu cầu đăng nhập lại.");
+      window.location.href = "/DangNhap"; // tự chuyển về trang đăng nhập
+    }
+  }, []);
   return (
     <div>
       <Routes>

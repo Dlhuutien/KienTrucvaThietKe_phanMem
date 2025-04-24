@@ -26,7 +26,7 @@ public class ProductDTO {
 
 	@NotBlank(message = "Tên sản phẩm không được để trống")
 	@Size(max = 100, message = "Tên sản phẩm không được vượt quá 100 ký tự")
-	@Pattern(regexp = "^[a-zA-Z0-9\\s]+$", message = "Tên sản phẩm không được chứa ký tự đặc biệt")
+	@Pattern(regexp = "^[\\p{L}0-9\\s!@#$%^&*()_+=\\-.,]+$", message = "Tên sản phẩm chứa ký tự không hợp lệ")
 	private String name;
 
 	@NotBlank(message = "URL ảnh không được để trống")

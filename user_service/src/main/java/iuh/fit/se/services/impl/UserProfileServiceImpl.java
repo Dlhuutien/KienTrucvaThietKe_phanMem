@@ -72,4 +72,28 @@ public class UserProfileServiceImpl implements UserProfileService {
     	return convertToDTO(userProfileRepository.save(user));  // Lưu và trả về DTO đã cập nhật
 }
 
+	@Override
+	public UserProfileDTO updateProfileByEmail(String email, UserProfileDTO updatedProfile) {
+		UserProfile existingProfile = userProfileRepository.findByEmail(email)
+				.orElseThrow(() -> new ItemNotFoundException("User with email " + email + " not found"));
+
+		existingProfile.setFullName(updatedProfile.getFullName());
+		existingProfile.setAddress(updatedProfile.getAddress());
+		existingProfile.setPhoneNumber(updatedProfile.getPhoneNumber());
+		existingProfile.setGender(updatedProfile.getGender());
+		existingProfile.setUserState(updatedProfile.getUserState());
+		existingProfile.setUrl(updatedProfile.getUrl());
+
+		UserProfile savedProfile = userProfileRepository.save(existingProfile);
+		return convertToDTO(savedProfile);
+	}
+	
+	@Override
+	public UserProfileDTO findByEmail(String email) {
+	    UserProfile user = userProfileRepository.findByEmail(email)
+	        .orElseThrow(() -> new ItemNotFoundException("Không tìm thấy email: " + email));
+	    return convertToDTO(user);
+	}
+
+
 }
