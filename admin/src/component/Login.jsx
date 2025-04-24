@@ -13,9 +13,11 @@ import { useNavigate } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { login } from "../services/UserService";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
@@ -33,6 +35,7 @@ const Login = () => {
 
     if (storedUser) {
       setIsLoggedIn(true);
+      localStorage.setItem("loginTime", Date.now().toString());
       setUserName(storedUser);
       setUserRole(storedRoles.map((r) => r.authority).join(", "));
     }
@@ -43,6 +46,7 @@ const Login = () => {
   };
 
   const handleLogin = async () => {
+    setLoading(true);
     try {
       const userData = await login(userName, password); // Gọi hàm login từ dịch vụ
       setUserRole(userData.roles.map((r) => r.authority).join(", "));
@@ -51,6 +55,10 @@ const Login = () => {
       setOpenSnackbar(true);
       setIsLoggedIn(true);
       setUserRole(userData.role); // Cập nhật vai trò từ phản hồi của server
+      // Reload toàn bộ trang sau khi đăng nhập
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000); // chờ 1 giây để hiển thị snackbar trước khi reload
     } catch (error) {
       setSnackbarType("error");
       setSnackbarMessage(
@@ -67,6 +75,8 @@ const Login = () => {
     setUserRole(null);
     localStorage.removeItem("loggedInUser");
     localStorage.removeItem("userRole");
+    localStorage.clear();
+    console.log("Token sau khi logout:", localStorage.getItem("token"));
   };
 
   const handleClickShowPassword = () => {
@@ -215,10 +225,18 @@ const Login = () => {
               width: 160,
               color: "white",
               fontWeight: "bold",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 1,
             }}
             onClick={handleLogin}
+            disabled={loading}
           >
-            Đăng nhập
+            {loading && (
+              <CircularProgress size={20} color="inherit" />
+            )}
+            {!loading && "Đăng nhập"}
           </Button>
         </Box>
       </Box>

@@ -14,5 +14,8 @@ public interface UserProfileService {
 	UserProfileDTO updateUserState(int id, UserState newState);
 	
 	List<UserProfileDTO> findByState(UserState userState);
-
+	
+	UserProfileDTO updateProfileByEmail(String email, UserProfileDTO updatedProfile);
+	
+	UserProfileDTO findByEmail(String email);
 }

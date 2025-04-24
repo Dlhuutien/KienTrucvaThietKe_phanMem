@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   List,
   ListItem,
@@ -17,11 +17,29 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import DiscountIcon from "@mui/icons-material/Discount";
 import shop_logo from "../assets/logo.png";
 const MenuList = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [openSanPham, setOpenSanPham] = useState(false);
   const [openKhachHang, setOpenKhachHang] = useState(false);
   const [openNhaCungCap, setOpenNhaCungCap] = useState(false);
   const [openMuaHang, setOpenMuaHang] = useState(false);
   const [openKhuyenMai, setOpenKhuyenMai] = useState(false);
+
+  useEffect(() => {
+    const checkLogin = () => {
+      const token = localStorage.getItem("token");
+      setIsLoggedIn(!!token);
+    };
+
+    // Gọi khi component load
+    checkLogin();
+
+    // Lắng nghe khi localStorage thay đổi (từ logout hoặc tab khác)
+    window.addEventListener("storage", checkLogin);
+
+    return () => {
+      window.removeEventListener("storage", checkLogin);
+    };
+  }, []);
 
   const handleSanPhamClick = () => {
     setOpenSanPham(!openSanPham);
@@ -47,7 +65,8 @@ const MenuList = () => {
         sx={{
           backgroundColor: "#F5F5F5",
           height: "100px",
-          justifyContent: "center", alignContent:'center',
+          justifyContent: "center",
+          alignContent: "center",
           "&:hover": {
             backgroundColor: "#4a5395",
             boxShadow: "0px 4px 10px #6495ED",
@@ -55,19 +74,22 @@ const MenuList = () => {
         }}
       >
         <ListItemIcon>
-          <img src={shop_logo} alt="Logo" style={{ width: 100, height: 100}} />
+          <img src={shop_logo} alt="Logo" style={{ width: 100, height: 100 }} />
         </ListItemIcon>
       </ListItem>
+      {/* Sản phẩm */}
       <ListItem
         button
-        onClick={handleSanPhamClick}
+        onClick={isLoggedIn ? handleSanPhamClick : null}
         sx={{
           backgroundColor: "#D2E2FF",
+          opacity: isLoggedIn ? 1 : 0.6,
+          pointerEvents: isLoggedIn ? "auto" : "none",
           "&:hover": {
-            backgroundColor: "#4a5395",
-            boxShadow: "0px 6px 15px #00008B",
+            backgroundColor: isLoggedIn ? "#4a5395" : "#D2E2FF",
+            boxShadow: isLoggedIn ? "0px 6px 15px #00008B" : "none",
             "& .text": {
-              color: "#fff",
+              color: isLoggedIn ? "#fff" : "inherit",
             },
           },
         }}
@@ -78,22 +100,25 @@ const MenuList = () => {
         <ListItemText className="text" primary="Sản phẩm" />
         {openSanPham ? <ExpandLess /> : <ExpandMore />}
       </ListItem>
+
       <Collapse in={openSanPham} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
           <ListItem
             button
-            component={Link}
-            to={"/DanhSachSanPham"}
+            component={isLoggedIn ? Link : "div"}
+            to={isLoggedIn ? "/DanhSachSanPham" : "#"}
             sx={{
               pl: 4,
               backgroundColor: "#D2E2FF",
+              opacity: isLoggedIn ? 1 : 0.6,
+              pointerEvents: isLoggedIn ? "auto" : "none",
               textDecoration: "none",
               color: "black",
               "&:hover": {
-                backgroundColor: "#4a5395",
-                boxShadow: "0px 6px 15px #00008B",
+                backgroundColor: isLoggedIn ? "#4a5395" : "#D2E2FF",
+                boxShadow: isLoggedIn ? "0px 6px 15px #00008B" : "none",
                 "& .text": {
-                  color: "#fff",
+                  color: isLoggedIn ? "#fff" : "inherit",
                 },
               },
             }}
@@ -103,20 +128,23 @@ const MenuList = () => {
             </ListItemIcon>
             <ListItemText className="text" primary="Danh sách" />
           </ListItem>
+
           <ListItem
             button
-            component={Link}
-            to={"/ThemSanPham"}
+            component={isLoggedIn ? Link : "div"}
+            to={isLoggedIn ? "/ThemSanPham" : "#"}
             sx={{
               pl: 4,
               backgroundColor: "#D2E2FF",
+              opacity: isLoggedIn ? 1 : 0.6,
+              pointerEvents: isLoggedIn ? "auto" : "none",
               textDecoration: "none",
               color: "black",
               "&:hover": {
-                backgroundColor: "#4a5395",
-                boxShadow: "0px 6px 15px #00008B",
+                backgroundColor: isLoggedIn ? "#4a5395" : "#D2E2FF",
+                boxShadow: isLoggedIn ? "0px 6px 15px #00008B" : "none",
                 "& .text": {
-                  color: "#fff",
+                  color: isLoggedIn ? "#fff" : "inherit",
                 },
               },
             }}
@@ -129,16 +157,19 @@ const MenuList = () => {
         </List>
       </Collapse>
 
+      {/* Khách hàng */}
       <ListItem
         button
-        onClick={handleKhachHangClick}
+        onClick={isLoggedIn ? handleKhachHangClick : null}
         sx={{
           backgroundColor: "#D2E2FF",
+          opacity: isLoggedIn ? 1 : 0.6,
+          pointerEvents: isLoggedIn ? "auto" : "none",
           "&:hover": {
-            backgroundColor: "#4a5395",
-            boxShadow: "0px 6px 15px #00008B",
+            backgroundColor: isLoggedIn ? "#4a5395" : "#D2E2FF",
+            boxShadow: isLoggedIn ? "0px 6px 15px #00008B" : "none",
             "& .text": {
-              color: "#fff",
+              color: isLoggedIn ? "#fff" : "inherit",
             },
           },
         }}
@@ -149,22 +180,25 @@ const MenuList = () => {
         <ListItemText className="text" primary="Khách hàng" />
         {openKhachHang ? <ExpandLess /> : <ExpandMore />}
       </ListItem>
+
       <Collapse in={openKhachHang} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
           <ListItem
             button
-            component={Link}
-            to={"/DanhSachKhachHang"}
+            component={isLoggedIn ? Link : "div"}
+            to={isLoggedIn ? "/DanhSachKhachHang" : "#"}
             sx={{
               pl: 4,
               backgroundColor: "#D2E2FF",
+              opacity: isLoggedIn ? 1 : 0.6,
+              pointerEvents: isLoggedIn ? "auto" : "none",
               textDecoration: "none",
               color: "black",
               "&:hover": {
-                backgroundColor: "#4a5395",
-                boxShadow: "0px 6px 15px #00008B",
+                backgroundColor: isLoggedIn ? "#4a5395" : "#D2E2FF",
+                boxShadow: isLoggedIn ? "0px 6px 15px #00008B" : "none",
                 "& .text": {
-                  color: "#fff",
+                  color: isLoggedIn ? "#fff" : "inherit",
                 },
               },
             }}
@@ -174,20 +208,23 @@ const MenuList = () => {
             </ListItemIcon>
             <ListItemText className="text" primary="Danh sách" />
           </ListItem>
+
           <ListItem
             button
-            component={Link}
-            to={"/ThemKhachHang"}
+            component={isLoggedIn ? Link : "div"}
+            to={isLoggedIn ? "/ThemKhachHang" : "#"}
             sx={{
               pl: 4,
               backgroundColor: "#D2E2FF",
+              opacity: isLoggedIn ? 1 : 0.6,
+              pointerEvents: isLoggedIn ? "auto" : "none",
               textDecoration: "none",
               color: "black",
               "&:hover": {
-                backgroundColor: "#4a5395",
-                boxShadow: "0px 6px 15px #00008B",
+                backgroundColor: isLoggedIn ? "#4a5395" : "#D2E2FF",
+                boxShadow: isLoggedIn ? "0px 6px 15px #00008B" : "none",
                 "& .text": {
-                  color: "#fff",
+                  color: isLoggedIn ? "#fff" : "inherit",
                 },
               },
             }}
@@ -200,16 +237,19 @@ const MenuList = () => {
         </List>
       </Collapse>
 
+      {/* Nhà cung cấp */}
       <ListItem
         button
-        onClick={handleNhaCungCapClick}
+        onClick={isLoggedIn ? handleNhaCungCapClick : null}
         sx={{
           backgroundColor: "#D2E2FF",
+          opacity: isLoggedIn ? 1 : 0.6,
+          pointerEvents: isLoggedIn ? "auto" : "none",
           "&:hover": {
-            backgroundColor: "#4a5395",
-            boxShadow: "0px 6px 15px #00008B",
+            backgroundColor: isLoggedIn ? "#4a5395" : "#D2E2FF",
+            boxShadow: isLoggedIn ? "0px 6px 15px #00008B" : "none",
             "& .text": {
-              color: "#fff",
+              color: isLoggedIn ? "#fff" : "inherit",
             },
           },
         }}
@@ -220,22 +260,25 @@ const MenuList = () => {
         <ListItemText className="text" primary="Nhà cung cấp" />
         {openNhaCungCap ? <ExpandLess /> : <ExpandMore />}
       </ListItem>
+
       <Collapse in={openNhaCungCap} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
           <ListItem
             button
-            component={Link}
-            to={"/NhaCungCap"}
+            component={isLoggedIn ? Link : "div"}
+            to={isLoggedIn ? "/NhaCungCap" : "#"}
             sx={{
               pl: 4,
               backgroundColor: "#D2E2FF",
+              opacity: isLoggedIn ? 1 : 0.6,
+              pointerEvents: isLoggedIn ? "auto" : "none",
               textDecoration: "none",
               color: "black",
               "&:hover": {
-                backgroundColor: "#4a5395",
-                boxShadow: "0px 6px 15px #00008B",
+                backgroundColor: isLoggedIn ? "#4a5395" : "#D2E2FF",
+                boxShadow: isLoggedIn ? "0px 6px 15px #00008B" : "none",
                 "& .text": {
-                  color: "#fff",
+                  color: isLoggedIn ? "#fff" : "inherit",
                 },
               },
             }}
@@ -245,20 +288,23 @@ const MenuList = () => {
             </ListItemIcon>
             <ListItemText className="text" primary="Danh sách" />
           </ListItem>
+
           <ListItem
             button
-            component={Link}
-            to={"/ThemNhaCungCap"}
+            component={isLoggedIn ? Link : "div"}
+            to={isLoggedIn ? "/ThemNhaCungCap" : "#"}
             sx={{
               pl: 4,
               backgroundColor: "#D2E2FF",
+              opacity: isLoggedIn ? 1 : 0.6,
+              pointerEvents: isLoggedIn ? "auto" : "none",
               textDecoration: "none",
               color: "black",
               "&:hover": {
-                backgroundColor: "#4a5395",
-                boxShadow: "0px 6px 15px #00008B",
+                backgroundColor: isLoggedIn ? "#4a5395" : "#D2E2FF",
+                boxShadow: isLoggedIn ? "0px 6px 15px #00008B" : "none",
                 "& .text": {
-                  color: "#fff",
+                  color: isLoggedIn ? "#fff" : "inherit",
                 },
               },
             }}
@@ -271,16 +317,19 @@ const MenuList = () => {
         </List>
       </Collapse>
 
+      {/* Mua hàng */}
       <ListItem
         button
-        onClick={handleMuaHangClick}
+        onClick={isLoggedIn ? handleMuaHangClick : null}
         sx={{
           backgroundColor: "#D2E2FF",
+          opacity: isLoggedIn ? 1 : 0.6,
+          pointerEvents: isLoggedIn ? "auto" : "none",
           "&:hover": {
-            backgroundColor: "#4a5395",
-            boxShadow: "0px 6px 15px #00008B",
+            backgroundColor: isLoggedIn ? "#4a5395" : "#D2E2FF",
+            boxShadow: isLoggedIn ? "0px 6px 15px #00008B" : "none",
             "& .text": {
-              color: "#fff",
+              color: isLoggedIn ? "#fff" : "inherit",
             },
           },
         }}
@@ -291,22 +340,25 @@ const MenuList = () => {
         <ListItemText className="text" primary="Mua hàng" />
         {openMuaHang ? <ExpandLess /> : <ExpandMore />}
       </ListItem>
+
       <Collapse in={openMuaHang} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
           <ListItem
             button
-            component={Link}
-            to={"/NhapHang"}
+            component={isLoggedIn ? Link : "div"}
+            to={isLoggedIn ? "/NhapHang" : "#"}
             sx={{
               pl: 4,
               backgroundColor: "#D2E2FF",
+              opacity: isLoggedIn ? 1 : 0.6,
+              pointerEvents: isLoggedIn ? "auto" : "none",
               textDecoration: "none",
               color: "black",
               "&:hover": {
-                backgroundColor: "#4a5395",
-                boxShadow: "0px 6px 15px #00008B",
+                backgroundColor: isLoggedIn ? "#4a5395" : "#D2E2FF",
+                boxShadow: isLoggedIn ? "0px 6px 15px #00008B" : "none",
                 "& .text": {
-                  color: "#fff",
+                  color: isLoggedIn ? "#fff" : "inherit",
                 },
               },
             }}
@@ -316,20 +368,23 @@ const MenuList = () => {
             </ListItemIcon>
             <ListItemText className="text" primary="Danh sách" />
           </ListItem>
+
           <ListItem
             button
-            component={Link}
-            to={"/ThemNhapHang"}
+            component={isLoggedIn ? Link : "div"}
+            to={isLoggedIn ? "/ThemNhapHang" : "#"}
             sx={{
               pl: 4,
               backgroundColor: "#D2E2FF",
+              opacity: isLoggedIn ? 1 : 0.6,
+              pointerEvents: isLoggedIn ? "auto" : "none",
               textDecoration: "none",
               color: "black",
               "&:hover": {
-                backgroundColor: "#4a5395",
-                boxShadow: "0px 6px 15px #00008B",
+                backgroundColor: isLoggedIn ? "#4a5395" : "#D2E2FF",
+                boxShadow: isLoggedIn ? "0px 6px 15px #00008B" : "none",
                 "& .text": {
-                  color: "#fff",
+                  color: isLoggedIn ? "#fff" : "inherit",
                 },
               },
             }}

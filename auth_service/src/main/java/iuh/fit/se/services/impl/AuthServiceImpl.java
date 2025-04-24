@@ -81,7 +81,7 @@ public class AuthServiceImpl implements AuthService {
 		// return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.builder().status(String.valueOf("SUCCESS"))
 		// 		.message("User account has been successfully created!").build());
 		
-		// 🟢 Gửi API sang user-service
+		// Gửi API sang user-service
 		createUserProfile(signUpRequest);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.builder()
@@ -136,11 +136,11 @@ public class AuthServiceImpl implements AuthService {
 
 	private void createUserProfile(SignUpRequest req) {
 		UserProfileDTO profileDTO = UserProfileDTO.builder()
-				.fullName(req.getUserName())      // dùng userName làm fullName ban đầu
+				.fullName("") 
 				.email(req.getEmail())
-				.phoneNumber("")                  // để rỗng lúc đầu
+				.phoneNumber("")                 
 				.address("")
-				.gender(Gender.MALE)              // hoặc cho phép người dùng nhập ở frontend
+				.gender(Gender.MALE)            
 				.userState(UserState.ACTIVE)
 				.url("")
 				.build();

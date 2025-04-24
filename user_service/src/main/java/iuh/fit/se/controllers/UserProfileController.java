@@ -152,4 +152,42 @@ public class UserProfileController {
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
+	
+	@PutMapping("/email/{email}")
+	public ResponseEntity<Map<String, Object>> updateUserProfileByEmail(
+	        @PathVariable String email,
+	        @Valid @RequestBody UserProfileDTO profileDTO,
+	        BindingResult bindingResult) {
+
+	    Map<String, Object> response = new LinkedHashMap<>();
+
+	    if (bindingResult.hasErrors()) {
+	        Map<String, String> errors = new LinkedHashMap<>();
+	        bindingResult.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+	        response.put("status", HttpStatus.BAD_REQUEST.value());
+	        response.put("errors", errors);
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+	    }
+
+	    try {
+	        UserProfileDTO updatedProfile = userProfileService.updateProfileByEmail(email, profileDTO);
+	        response.put("status", HttpStatus.OK.value());
+	        response.put("data", updatedProfile);
+	        return ResponseEntity.ok(response);
+	    } catch (ItemNotFoundException e) {
+	        response.put("status", HttpStatus.NOT_FOUND.value());
+	        response.put("message", e.getMessage());
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+	    }
+	}
+	
+	@GetMapping("/email/{email}")
+	public ResponseEntity<?> getProfileByEmail(@PathVariable String email) {
+	    try {
+	        UserProfileDTO dto = userProfileService.findByEmail(email);
+	        return ResponseEntity.ok(dto);
+	    } catch (ItemNotFoundException e) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy profile với email: " + email);
+	    }
+	}
 }

@@ -7,33 +7,9 @@ import sale from '../assets/sale.webp'
 import galaxyS25 from '../assets/galaxys25.webp'
 import galaxyA56 from '../assets/galaxya56.webp'
 import Item from "../component/Item";
-import { listProduct } from "../services/ProductService";
-
-import hinhanh from '../assets/iphone15.jpeg'
+import { listProduct, getInventories  } from "../services/ProductService";
 
 const banners = [iphone, xiaomi, sale, galaxyS25, galaxyA56];
-
-const fakeData = {
-  data: [
-    { id: 1, name: "iPhone 14", url: hinhanh, purchasePrice: 22000000, salePrice: 25000000, percentDiscount: 12 },
-    { id: 2, name: "Samsung Galaxy S23", url: hinhanh, purchasePrice: 20000000, salePrice: 23000000, percentDiscount: 13 },
-    { id: 3, name: "MacBook Pro", url: hinhanh, purchasePrice: 35000000, salePrice: 40000000, percentDiscount: 10 },
-    { id: 4, name: "Realme GT Neo", url: hinhanh, purchasePrice: 10000000, salePrice: 12000000, percentDiscount: 15 },
-    { id: 5, name: "Huawei P50", url: hinhanh, purchasePrice: 15000000, salePrice: 18000000, percentDiscount: 14 },
-    { id: 6, name: "iPhone 13", url: hinhanh, purchasePrice: 18000000, salePrice: 20000000, percentDiscount: 10 },
-    { id: 7, name: "Samsung Z Fold 4", url: hinhanh, purchasePrice: 35000000, salePrice: 40000000, percentDiscount: 12 },
-    { id: 8, name: "MacBook Air M2", url: hinhanh, purchasePrice: 28000000, salePrice: 30000000, percentDiscount: 7 },
-    { id: 9, name: "Realme C55", url: hinhanh, purchasePrice: 5000000, salePrice: 6000000, percentDiscount: 8 },
-    { id: 10, name: "Huawei Mate 40", url: hinhanh, purchasePrice: 20000000, salePrice: 23000000, percentDiscount: 13 },
-    { id: 11, name: "iPhone 12", url: hinhanh, purchasePrice: 16000000, salePrice: 18000000, percentDiscount: 11 },
-    { id: 12, name: "Samsung A73", url: hinhanh, purchasePrice: 9000000, salePrice: 10000000, percentDiscount: 10 },
-    { id: 13, name: "MacBook Pro M1", url: hinhanh, purchasePrice: 30000000, salePrice: 32000000, percentDiscount: 6 },
-    { id: 14, name: "Realme 9 Pro", url: hinhanh, purchasePrice: 7000000, salePrice: 8000000, percentDiscount: 9 },
-    { id: 15, name: "Huawei Nova 9", url: hinhanh, purchasePrice: 12000000, salePrice: 14000000, percentDiscount: 12 },
-    { id: 16, name: "iPhone 11", url: hinhanh, purchasePrice: 13000000, salePrice: 15000000, percentDiscount: 10 },
-  ],
-};
-
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -52,15 +28,48 @@ const Home = () => {
   };
 
 
+  // useEffect(() => {
+  //   listProduct()
+  //     .then((response) => {
+  //       setDataTest(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }, []);
   useEffect(() => {
-    listProduct()
-      .then((response) => {
-        setDataTest(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    const fetchData = async () => {
+      try {
+        const [productRes, inventoryRes] = await Promise.all([
+          listProduct(),
+          getInventories()
+        ]);
+  
+        const products = productRes.data.data;
+        const inventories = inventoryRes.data.data;
+  
+        // Map product với quantity từ inventory
+        const merged = products.map(product => {
+          const inventory = inventories.find(i => i.productId === product.id);
+          return {
+            ...product,
+            quantity: inventory ? inventory.quantity : 0
+          };
+        });
+  
+        // Lọc chỉ lấy sản phẩm có quantity > 0
+        const availableProducts = merged.filter(product => product.quantity > 0);
+  
+        setDataTest({ data: availableProducts });
+      } catch (error) {
+        console.error("Lỗi khi fetch dữ liệu:", error);
+      }
+    };
+  
+    fetchData();
   }, []);
+
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prevSlide) => (prevSlide + 1) % banners.length);

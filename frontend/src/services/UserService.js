@@ -26,21 +26,21 @@ export const registerUser = async (
   return response.data;
 };
 
-
 // === 2. Tạo user profile bên USER-SERVICE ===
-export const createUserProfile = async (profile, token) => {
+export const updateUserProfileByEmail = async (email, profile, token) => {
   try {
-    const response = await axios.post(USER_PROFILE_API, profile, {
+    const response = await axios.put(`${USER_PROFILE_API}/email/${email}`, profile, {
       headers: {
-        Authorization: `Bearer ${token}`, // nếu cần gửi kèm token
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
   } catch (error) {
-    console.log("Lỗi khi tạo user profile:", error);
+    console.error("Lỗi khi cập nhật profile bằng email:", error);
     throw error;
   }
 };
+
 
 // === 3. Đăng nhập tài khoản ===
 export const login = async (username = "", password = "") => {
@@ -51,21 +51,35 @@ export const login = async (username = "", password = "") => {
     });
 
     const { token, id, username: userNameResp, email, roles } = response.data.response;
-    
-    // Lưu vào localStorage
-    localStorage.setItem("userId", id);
+
+    // Lưu token tạm để gọi tiếp user profile
     localStorage.setItem("token", token);
+
+    // Gọi thêm API lấy user profile theo userId
+    const profileResponse = await axios.get(`${USER_PROFILE_API}/email/${email}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const { fullName, address, phoneNumber, gender } = profileResponse.data;
+
+    // Lưu thông tin vào localStorage
+    localStorage.setItem("userId", id);
     localStorage.setItem("loggedInUser", userNameResp);
     localStorage.setItem("email", email);
     localStorage.setItem("roles", JSON.stringify(roles));
+    localStorage.setItem("fullName", fullName);
+    localStorage.setItem("address", address);
+    localStorage.setItem("phoneNumber", phoneNumber);
+    localStorage.setItem("gender", gender);
 
-    return response.data.response; // Trả token + user info để frontend dùng
+    return response.data.response;
   } catch (error) {
     console.log("Lỗi khi đăng nhập:", error);
     throw error;
   }
 };
-
 
 // === 4. Các API thao tác với USER-SERVICE ===
 export const listUser = () => {

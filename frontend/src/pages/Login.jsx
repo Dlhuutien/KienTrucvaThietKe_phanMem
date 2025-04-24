@@ -50,6 +50,7 @@ const Login = () => {
       setSnackbarMessage("Đăng nhập thành công");
       setOpenSnackbar(true);
       setIsLoggedIn(true);
+      localStorage.setItem("loginTime", Date.now()); // Lưu thông tin lên local trong 1 khoảng tgian
       setUserRole(userData.role); // Cập nhật vai trò từ phản hồi của server
     } catch (error) {
       setSnackbarType("error");
@@ -108,7 +109,13 @@ const Login = () => {
             Email: {localStorage.getItem("email")}
           </Typography>
           <Typography variant="h6" sx={{ mb: 2 }}>
-            Vai trò: {userRole}
+            Số điện thoại: {localStorage.getItem("phoneNumber")}
+          </Typography>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Địa chỉ: {localStorage.getItem("address")}
+          </Typography>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Giới tính: {localStorage.getItem("gender") === "MALE" ? "Nam" : localStorage.getItem("gender") === "FEMALE" ? "Nữ" : "Khác"}
           </Typography>
           <Button
             sx={{

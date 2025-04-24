@@ -28,16 +28,16 @@ export const registerUser = async (
 
 
 // === 2. Tạo user profile bên USER-SERVICE ===
-export const createUserProfile = async (profile, token) => {
+export const updateUserProfileByEmail = async (email, profile, token) => {
   try {
-    const response = await axios.post(USER_PROFILE_API, profile, {
+    const response = await axios.put(`${USER_PROFILE_API}/email/${email}`, profile, {
       headers: {
-        Authorization: `Bearer ${token}`, // nếu cần gửi kèm token
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
   } catch (error) {
-    console.log("Lỗi khi tạo user profile:", error);
+    console.error("Lỗi khi cập nhật profile bằng email:", error);
     throw error;
   }
 };
