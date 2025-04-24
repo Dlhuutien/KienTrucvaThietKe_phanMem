@@ -61,3 +61,295 @@
 2025-04-16T14:10:17.045+07:00  INFO 7720 --- [product_service] [RMI TCP Connection(14)-127.0.0.1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2025-04-16T14:10:17.060+07:00  INFO 7720 --- [product_service] [RMI TCP Connection(14)-127.0.0.1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
 2025-04-16T14:10:17.064+07:00  INFO 7720 --- [product_service] [RMI TCP Connection(14)-127.0.0.1] com.netflix.discovery.DiscoveryClient    : Shutting down DiscoveryClient ...
+2025-04-18T21:12:25.307+07:00  INFO 32356 --- [product-service] [restartedMain] iuh.fit.se.ProductServiceApplication     : Starting ProductServiceApplication using Java 22.0.2 with PID 32356 (D:\HK2_2024-2025\KTPM\KienTrucvaThietKe_phanMem\product_service\target\classes started by kioma in D:\HK2_2024-2025\KTPM\KienTrucvaThietKe_phanMem\product_service)
+2025-04-18T21:12:25.310+07:00  INFO 32356 --- [product-service] [restartedMain] iuh.fit.se.ProductServiceApplication     : No active profile set, falling back to 1 default profile: "default"
+2025-04-18T21:12:25.379+07:00  INFO 32356 --- [product-service] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-04-18T21:12:25.379+07:00  INFO 32356 --- [product-service] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-04-18T21:12:27.298+07:00  INFO 32356 --- [product-service] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-18T21:12:27.583+07:00  INFO 32356 --- [product-service] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 273 ms. Found 6 JPA repository interfaces.
+2025-04-18T21:12:28.129+07:00  INFO 32356 --- [product-service] [restartedMain] o.s.cloud.context.scope.GenericScope     : BeanFactory id=23750be4-12ac-39a4-aab5-6c5421b2321e
+2025-04-18T21:12:29.308+07:00  INFO 32356 --- [product-service] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 5000 (http)
+2025-04-18T21:12:29.335+07:00  INFO 32356 --- [product-service] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-18T21:12:29.336+07:00  INFO 32356 --- [product-service] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-04-18T21:12:29.444+07:00  INFO 32356 --- [product-service] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-04-18T21:12:29.445+07:00  INFO 32356 --- [product-service] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 4064 ms
+2025-04-18T21:12:30.046+07:00  INFO 32356 --- [product-service] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-18T21:12:30.153+07:00  INFO 32356 --- [product-service] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2025-04-18T21:12:30.216+07:00  INFO 32356 --- [product-service] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-04-18T21:12:30.752+07:00  INFO 32356 --- [product-service] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-04-18T21:12:30.802+07:00  INFO 32356 --- [product-service] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-04-18T21:12:34.659+07:00  WARN 32356 --- [product-service] [restartedMain] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 0, SQLState: 08000
+2025-04-18T21:12:34.660+07:00 ERROR 32356 --- [product-service] [restartedMain] o.h.engine.jdbc.spi.SqlExceptionHelper   : Socket fail to connect to host:address=(host=mariadb)(port=3306)(type=primary). mariadb
+2025-04-18T21:12:34.661+07:00  WARN 32356 --- [product-service] [restartedMain] o.h.e.j.e.i.JdbcEnvironmentInitiator     : HHH000342: Could not obtain connection to query metadata
+
+org.hibernate.exception.JDBCConnectionException: unable to obtain isolated JDBC connection [Socket fail to connect to host:address=(host=mariadb)(port=3306)(type=primary). mariadb] [n/a]
+	at org.hibernate.exception.internal.SQLStateConversionDelegate.convert(SQLStateConversionDelegate.java:100)
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:58)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:108)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:94)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:116)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:292)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:124)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:78)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:221)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:189)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:171)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1431)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1502)
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:390)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:366)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1853)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1802)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:205)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:954)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:625)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1363)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1352)
+	at iuh.fit.se.ProductServiceApplication.main(ProductServiceApplication.java:15)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: java.sql.SQLNonTransientConnectionException: Socket fail to connect to host:address=(host=mariadb)(port=3306)(type=primary). mariadb
+	at org.mariadb.jdbc.client.impl.ConnectionHelper.connectSocket(ConnectionHelper.java:140)
+	at org.mariadb.jdbc.client.impl.StandardClient.<init>(StandardClient.java:102)
+	at org.mariadb.jdbc.Driver.connect(Driver.java:69)
+	at org.mariadb.jdbc.Driver.connect(Driver.java:95)
+	at org.mariadb.jdbc.Driver.connect(Driver.java:26)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:137)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:360)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:202)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:461)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:550)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:98)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111)
+	at org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl.getConnection(DatasourceConnectionProviderImpl.java:122)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:439)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:61)
+	... 38 common frames omitted
+Caused by: java.net.UnknownHostException: mariadb
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:567)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
+	at java.base/java.net.Socket.connect(Socket.java:752)
+	at org.mariadb.jdbc.client.impl.ConnectionHelper.connectSocket(ConnectionHelper.java:134)
+	... 52 common frames omitted
+
+2025-04-18T21:12:34.667+07:00 ERROR 32356 --- [product-service] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Failed to initialize JPA EntityManagerFactory: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+2025-04-18T21:12:34.669+07:00  WARN 32356 --- [product-service] [restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+2025-04-18T21:12:34.675+07:00  INFO 32356 --- [product-service] [restartedMain] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-04-18T21:12:34.701+07:00  INFO 32356 --- [product-service] [restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-04-18T21:12:34.738+07:00 ERROR 32356 --- [product-service] [restartedMain] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1806)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:205)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:954)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:625)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1363)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1352)
+	at iuh.fit.se.ProductServiceApplication.main(ProductServiceApplication.java:15)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: org.hibernate.service.spi.ServiceException: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:276)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:221)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:189)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:171)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1431)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1502)
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:390)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:366)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1853)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1802)
+	... 18 common frames omitted
+Caused by: org.hibernate.HibernateException: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+	at org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl.determineDialect(DialectFactoryImpl.java:191)
+	at org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl.buildDialect(DialectFactoryImpl.java:87)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentWithDefaults(JdbcEnvironmentInitiator.java:153)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:364)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:124)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:78)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263)
+	... 33 common frames omitted
+
+2025-04-18T21:44:18.279+07:00  INFO 9272 --- [product-service] [restartedMain] iuh.fit.se.ProductServiceApplication     : Starting ProductServiceApplication using Java 22.0.2 with PID 9272 (D:\HK2_2024-2025\KTPM\KienTrucvaThietKe_phanMem\product_service\target\classes started by kioma in D:\HK2_2024-2025\KTPM\KienTrucvaThietKe_phanMem\product_service)
+2025-04-18T21:44:18.282+07:00  INFO 9272 --- [product-service] [restartedMain] iuh.fit.se.ProductServiceApplication     : No active profile set, falling back to 1 default profile: "default"
+2025-04-18T21:44:18.360+07:00  INFO 9272 --- [product-service] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-04-18T21:44:18.361+07:00  INFO 9272 --- [product-service] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-04-18T21:44:20.607+07:00  INFO 9272 --- [product-service] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-18T21:44:20.882+07:00  INFO 9272 --- [product-service] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 256 ms. Found 6 JPA repository interfaces.
+2025-04-18T21:44:21.375+07:00  INFO 9272 --- [product-service] [restartedMain] o.s.cloud.context.scope.GenericScope     : BeanFactory id=23750be4-12ac-39a4-aab5-6c5421b2321e
+2025-04-18T21:44:22.648+07:00  INFO 9272 --- [product-service] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 5000 (http)
+2025-04-18T21:44:22.678+07:00  INFO 9272 --- [product-service] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-18T21:44:22.679+07:00  INFO 9272 --- [product-service] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-04-18T21:44:22.786+07:00  INFO 9272 --- [product-service] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-04-18T21:44:22.789+07:00  INFO 9272 --- [product-service] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 4426 ms
+2025-04-18T21:44:23.398+07:00  INFO 9272 --- [product-service] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-18T21:44:23.515+07:00  INFO 9272 --- [product-service] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2025-04-18T21:44:23.601+07:00  INFO 9272 --- [product-service] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-04-18T21:44:24.493+07:00  INFO 9272 --- [product-service] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-04-18T21:44:24.591+07:00  INFO 9272 --- [product-service] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-04-18T21:44:28.510+07:00  WARN 9272 --- [product-service] [restartedMain] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 0, SQLState: 08000
+2025-04-18T21:44:28.511+07:00 ERROR 9272 --- [product-service] [restartedMain] o.h.engine.jdbc.spi.SqlExceptionHelper   : Socket fail to connect to host:address=(host=mariadb)(port=3306)(type=primary). mariadb
+2025-04-18T21:44:28.514+07:00  WARN 9272 --- [product-service] [restartedMain] o.h.e.j.e.i.JdbcEnvironmentInitiator     : HHH000342: Could not obtain connection to query metadata
+
+org.hibernate.exception.JDBCConnectionException: unable to obtain isolated JDBC connection [Socket fail to connect to host:address=(host=mariadb)(port=3306)(type=primary). mariadb] [n/a]
+	at org.hibernate.exception.internal.SQLStateConversionDelegate.convert(SQLStateConversionDelegate.java:100)
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:58)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:108)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:94)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:116)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:292)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:124)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:78)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:221)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:189)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:171)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1431)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1502)
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:390)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:366)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1853)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1802)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:205)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:954)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:625)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1363)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1352)
+	at iuh.fit.se.ProductServiceApplication.main(ProductServiceApplication.java:15)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: java.sql.SQLNonTransientConnectionException: Socket fail to connect to host:address=(host=mariadb)(port=3306)(type=primary). mariadb
+	at org.mariadb.jdbc.client.impl.ConnectionHelper.connectSocket(ConnectionHelper.java:140)
+	at org.mariadb.jdbc.client.impl.StandardClient.<init>(StandardClient.java:102)
+	at org.mariadb.jdbc.Driver.connect(Driver.java:69)
+	at org.mariadb.jdbc.Driver.connect(Driver.java:95)
+	at org.mariadb.jdbc.Driver.connect(Driver.java:26)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:137)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:360)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:202)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:461)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:550)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:98)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111)
+	at org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl.getConnection(DatasourceConnectionProviderImpl.java:122)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:439)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:61)
+	... 38 common frames omitted
+Caused by: java.net.UnknownHostException: mariadb
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:567)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
+	at java.base/java.net.Socket.connect(Socket.java:752)
+	at org.mariadb.jdbc.client.impl.ConnectionHelper.connectSocket(ConnectionHelper.java:134)
+	... 52 common frames omitted
+
+2025-04-18T21:44:28.526+07:00 ERROR 9272 --- [product-service] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Failed to initialize JPA EntityManagerFactory: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+2025-04-18T21:44:28.529+07:00  WARN 9272 --- [product-service] [restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+2025-04-18T21:44:28.546+07:00  INFO 9272 --- [product-service] [restartedMain] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-04-18T21:44:28.604+07:00  INFO 9272 --- [product-service] [restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-04-18T21:44:28.667+07:00 ERROR 9272 --- [product-service] [restartedMain] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1806)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:205)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:954)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:625)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1363)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1352)
+	at iuh.fit.se.ProductServiceApplication.main(ProductServiceApplication.java:15)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: org.hibernate.service.spi.ServiceException: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:276)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:221)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:189)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:171)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1431)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1502)
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:390)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:366)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1853)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1802)
+	... 18 common frames omitted
+Caused by: org.hibernate.HibernateException: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+	at org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl.determineDialect(DialectFactoryImpl.java:191)
+	at org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl.buildDialect(DialectFactoryImpl.java:87)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentWithDefaults(JdbcEnvironmentInitiator.java:153)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:364)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:124)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:78)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263)
+	... 33 common frames omitted
+
