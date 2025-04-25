@@ -12,7 +12,7 @@ export const registerUser = async (
   phoneNumber = "",
   email = "",
   password = "",
-  role = "ROLE_ADMIN"
+  roles = ["ROLE_ADMIN", "ROLE_USER"]
 ) => {
   const response = await axios.post(AUTH_API, {
     userName: username,
@@ -21,10 +21,27 @@ export const registerUser = async (
     phoneNumber,
     email,
     password,
-    roles: [role],
+    roles,
   });
   return response.data;
 };
+
+export const checkEmailUnique = async (email) => {
+  try {
+    await axios.get(`http://localhost:8000/userProfiles/email/${encodeURIComponent(email)}`);
+    // Nếu gọi được => email đã tồn tại => ném lỗi thủ công để bên ngoài bắt
+    const error = new Error("Email đã tồn tại.");
+    error.response = { status: 400 };
+    throw error;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      // Email chưa tồn tại => hợp lệ
+      return;
+    }
+    throw error; // các lỗi khác (server, mạng...) vẫn throw ra
+  }
+};
+
 
 // === 2. Tạo user profile bên USER-SERVICE ===
 export const updateUserProfileByEmail = async (email, profile, token) => {
@@ -41,8 +58,60 @@ export const updateUserProfileByEmail = async (email, profile, token) => {
   }
 };
 
+// ==== Nếu bên admin đăng nhập vào -> thêm role USER ===
+export const addRoleToUser = async (userId, role, token) => {
+  return axios.put(
+    `http://localhost:8000/users/${userId}/add-role`,
+    role, // truyền string ví dụ "ROLE_USER"
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "text/plain",
+      },
+    }
+  );
+};
+
+
 
 // === 3. Đăng nhập tài khoản ===
+// export const login = async (username = "", password = "") => {
+//   try {
+//     const response = await axios.post("http://localhost:8000/sign-in", {
+//       userName: username,
+//       password,
+//     });
+
+//     const { token, id, username: userNameResp, email, roles } = response.data.response;
+
+//     // Lưu token tạm để gọi tiếp user profile
+//     localStorage.setItem("token", token);
+
+//     // Gọi thêm API lấy user profile theo userId
+//     const profileResponse = await axios.get(`${USER_PROFILE_API}/email/${email}`, {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
+
+//     const { fullName, address, phoneNumber, gender } = profileResponse.data;
+
+//     // Lưu thông tin vào localStorage
+//     localStorage.setItem("userId", id);
+//     localStorage.setItem("loggedInUser", userNameResp);
+//     localStorage.setItem("email", email);
+//     localStorage.setItem("roles", JSON.stringify(roles));
+//     localStorage.setItem("fullName", fullName);
+//     localStorage.setItem("address", address);
+//     localStorage.setItem("phoneNumber", phoneNumber);
+//     localStorage.setItem("gender", gender);
+
+//     return response.data.response;
+//   } catch (error) {
+//     console.log("Lỗi khi đăng nhập:", error);
+//     throw error;
+//   }
+// };
 export const login = async (username = "", password = "") => {
   try {
     const response = await axios.post("http://localhost:8000/sign-in", {
@@ -52,10 +121,16 @@ export const login = async (username = "", password = "") => {
 
     const { token, id, username: userNameResp, email, roles } = response.data.response;
 
-    // Lưu token tạm để gọi tiếp user profile
     localStorage.setItem("token", token);
 
-    // Gọi thêm API lấy user profile theo userId
+    // Nếu chưa có ROLE_USER thì thêm
+    const hasRoleUser = roles.some((r) => r.authority === "ROLE_USER");
+    if (!hasRoleUser) {
+      await addRoleToUser(id, "ROLE_USER", token);
+      roles.push({ authority: "ROLE_USER" }); // cập nhật tạm trên frontend nếu chưa có role USER
+    }
+
+    // Gọi API lấy profile
     const profileResponse = await axios.get(`${USER_PROFILE_API}/email/${email}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -64,7 +139,7 @@ export const login = async (username = "", password = "") => {
 
     const { fullName, address, phoneNumber, gender } = profileResponse.data;
 
-    // Lưu thông tin vào localStorage
+    // Lưu localStorage
     localStorage.setItem("userId", id);
     localStorage.setItem("loggedInUser", userNameResp);
     localStorage.setItem("email", email);
@@ -80,6 +155,7 @@ export const login = async (username = "", password = "") => {
     throw error;
   }
 };
+
 
 // === 4. Các API thao tác với USER-SERVICE ===
 export const listUser = () => {

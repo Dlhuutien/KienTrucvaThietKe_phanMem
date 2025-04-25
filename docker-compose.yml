@@ -124,3 +124,8 @@ networks:
 
 # Nếu có code mới ở sẻvice nào thì
 # docker restart auth-service
+
+# Có code mới
+# mvn clean package -DskipTests
+# docker-compose build inventory-service
+# docker-compose up -d inventory-service

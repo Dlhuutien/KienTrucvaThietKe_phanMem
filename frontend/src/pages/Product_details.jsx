@@ -12,6 +12,8 @@ import {
   Avatar,
   Rating,
   Modal,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import { deepPurple } from "@mui/material/colors";
 import { useParams, Link as RouterLink } from "react-router-dom";
@@ -25,6 +27,7 @@ import { getProductById } from "../services/ProductService";
 import { message } from "antd";
 import { createCart } from "../services/AddCartDetailService";
 import { useNavigate } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Product_detail = () => {
   const navigate = useNavigate();
@@ -71,6 +74,9 @@ const Product_detail = () => {
   const [newComment, setNewComment] = useState("");
   const [newRating, setNewRating] = useState(0);
   const [openModal, setOpenModal] = useState(false);
+  const [addCartLoading, setAddCartLoading] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
 
   useEffect(() => {
     if (productId) {
@@ -107,14 +113,14 @@ const Product_detail = () => {
     value ? new Intl.NumberFormat("vi-VN").format(value) + " VND" : "0 VND";
 
   const handleAddToCart = async () => {
-    const userId = localStorage.getItem("userId"); // lấy userId từ localStorage
+    const userId = localStorage.getItem("userId");
     if (userId == null) {
-      console.log("userId", userId);
       setOpenModal(true);
       return;
     }
-
+  
     try {
+      setAddCartLoading(true);
       const cartDTO = {
         userId: parseInt(userId),
         cartDetails: [
@@ -124,19 +130,15 @@ const Product_detail = () => {
           },
         ],
       };
-
-      const response = await createCart(cartDTO);
-      message.success({
-        content: "Đã thêm sản phẩm vào giỏ hàng!",
-        duration: 3, // 3 giây
-        style: {
-          marginTop: '10vh',
-        },
-      });      
-      console.log("Saved cart:", response.data);
+  
+      await createCart(cartDTO);
+  
+      setSnackbarOpen(true); // show snackbar
     } catch (error) {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
       message.error("Thêm vào giỏ hàng thất bại.");
+    } finally {
+      setAddCartLoading(false);
     }
   };
 
@@ -292,9 +294,18 @@ const Product_detail = () => {
               </Button>
             </Box>
           </Box>
-
-          <Button variant="contained" color="primary" onClick={handleAddToCart}>
-            Thêm vào giỏ hàng
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleAddToCart}
+            disabled={addCartLoading}
+            sx={{ minWidth: 160 }}
+          >
+            {addCartLoading ? (
+              <CircularProgress size={24} sx={{ color: "white" }} />
+            ) : (
+              "Thêm vào giỏ hàng"
+            )}
           </Button>
         </Box>
       </Box>
@@ -620,8 +631,22 @@ const Product_detail = () => {
           </Box>
         </Box>
       </Modal>;
-    </Box>
-  );
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={3000}
+          onClose={() => setSnackbarOpen(false)}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert
+            onClose={() => setSnackbarOpen(false)}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            Sản phẩm đã được thêm vào giỏ hàng!
+          </Alert>
+        </Snackbar>
+    </Box>  
+);
 };
 
 export default Product_detail;

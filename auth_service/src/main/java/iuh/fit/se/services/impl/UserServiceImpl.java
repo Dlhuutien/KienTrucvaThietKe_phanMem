@@ -59,6 +59,9 @@ public class UserServiceImpl implements UserService {
 				.orElseThrow(() -> new UsernameNotFoundException("User Not Found with id: " + id));
 	}
 
+	/**
+	 * Cập nhật trạng thái kích hoạt (ACTIVE/INACTIVE) cho user
+	 */
 	@Override
 	public UserDTO updateState(UserDTO userDTO) {
 		User user = userRepository.findById((long) userDTO.getId())
@@ -70,6 +73,9 @@ public class UserServiceImpl implements UserService {
 		return userToDTO(user);
 	}
 
+	/**
+	 * Cập nhật thông tin user (bao gồm cả role)
+	 */
 	@Override
 	public UserDTO updateUser(int id, UserDTO userDTO) {
 		User user = userRepository.findById((long) id)
@@ -80,6 +86,7 @@ public class UserServiceImpl implements UserService {
 		user.setPassword(userDTO.getPassword());
 		user.setEnabled(userDTO.getUserState() == UserState.ACTIVE);
 
+		/** GÁN ROLE CHO USER (THAY THẾ TOÀN BỘ ROLE HIỆN CÓ) */
 		if (userDTO.getRole() != null) {
 			user.setRoles(Set.of(userDTO.getRole()));
 		}
@@ -122,6 +129,9 @@ public class UserServiceImpl implements UserService {
 		return userToDTO(savedUser);
 	}
 
+	/**
+	 * Kiểm tra đăng nhập đơn giản (không mã hóa mật khẩu)
+	 */
 	@Override
 	public boolean login(LoginRequest request) {
 		Optional<User> user = userRepository.findByUserName(request.getUserName());
@@ -129,6 +139,9 @@ public class UserServiceImpl implements UserService {
 				.orElse(false);
 	}
 
+	/**
+	 * Chuyển User entity sang DTO, chỉ lấy role đầu tiên
+	 */
 	private UserDTO userToDTO(User user) {
 		return UserDTO.builder()
 				.id(user.getId() != null ? user.getId().intValue() : 0)
@@ -139,4 +152,14 @@ public class UserServiceImpl implements UserService {
 				.role(user.getRoles().stream().findFirst().orElse(null)) // Nếu có nhiều Role, chỉ lấy Role đầu tiên
 				.build();
 	}
+	
+	/**
+	 * Lấy User entity theo ID (trả về entity)
+	 */
+	@Override
+	public User findEntityById(int id) {
+		return userRepository.findById((long) id)
+				.orElseThrow(() -> new UsernameNotFoundException("User Not Found with id: " + id));
+	}
+
 }

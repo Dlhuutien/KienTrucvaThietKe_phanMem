@@ -4,9 +4,11 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -15,9 +17,11 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Table(name = "roles")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Role extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@EqualsAndHashCode.Include
 	private Long id;
 
 	private String code;

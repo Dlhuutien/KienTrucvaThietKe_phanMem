@@ -30,4 +30,6 @@ public interface UserService {
 	UserDTO saveUserDTO(UserDTO userDTO);
 
 	boolean login(LoginRequest request);
+	
+	User findEntityById(int id);
 }

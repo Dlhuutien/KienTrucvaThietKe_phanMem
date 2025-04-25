@@ -50,8 +50,8 @@ const Login = () => {
     try {
       const userData = await login(userName, password); // Gọi hàm login từ dịch vụ
       setUserRole(userData.roles.map((r) => r.authority).join(", "));
-      setSnackbarType("success");
       setSnackbarMessage("Đăng nhập thành công");
+      setSnackbarType("success");
       setOpenSnackbar(true);
       setIsLoggedIn(true);
       setUserRole(userData.role); // Cập nhật vai trò từ phản hồi của server
@@ -77,6 +77,7 @@ const Login = () => {
     localStorage.removeItem("userRole");
     localStorage.clear();
     console.log("Token sau khi logout:", localStorage.getItem("token"));
+    window.location.reload();
   };
 
   const handleClickShowPassword = () => {
