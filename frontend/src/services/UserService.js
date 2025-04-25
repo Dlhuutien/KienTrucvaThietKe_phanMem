@@ -28,7 +28,9 @@ export const registerUser = async (
 
 export const checkEmailUnique = async (email) => {
   try {
-    await axios.get(`http://localhost:8000/userProfiles/email/${encodeURIComponent(email)}`);
+    await axios.get(
+      `http://localhost:8000/userProfiles/email/${encodeURIComponent(email)}`
+    );
     // Nếu gọi được => email đã tồn tại => ném lỗi thủ công để bên ngoài bắt
     const error = new Error("Email đã tồn tại.");
     error.response = { status: 400 };
@@ -42,15 +44,18 @@ export const checkEmailUnique = async (email) => {
   }
 };
 
-
 // === 2. Tạo user profile bên USER-SERVICE ===
 export const updateUserProfileByEmail = async (email, profile, token) => {
   try {
-    const response = await axios.put(`${USER_PROFILE_API}/email/${email}`, profile, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axios.put(
+      `${USER_PROFILE_API}/email/${email}`,
+      profile,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error("Lỗi khi cập nhật profile bằng email:", error);
@@ -72,46 +77,7 @@ export const addRoleToUser = async (userId, role, token) => {
   );
 };
 
-
-
 // === 3. Đăng nhập tài khoản ===
-// export const login = async (username = "", password = "") => {
-//   try {
-//     const response = await axios.post("http://localhost:8000/sign-in", {
-//       userName: username,
-//       password,
-//     });
-
-//     const { token, id, username: userNameResp, email, roles } = response.data.response;
-
-//     // Lưu token tạm để gọi tiếp user profile
-//     localStorage.setItem("token", token);
-
-//     // Gọi thêm API lấy user profile theo userId
-//     const profileResponse = await axios.get(`${USER_PROFILE_API}/email/${email}`, {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
-//     });
-
-//     const { fullName, address, phoneNumber, gender } = profileResponse.data;
-
-//     // Lưu thông tin vào localStorage
-//     localStorage.setItem("userId", id);
-//     localStorage.setItem("loggedInUser", userNameResp);
-//     localStorage.setItem("email", email);
-//     localStorage.setItem("roles", JSON.stringify(roles));
-//     localStorage.setItem("fullName", fullName);
-//     localStorage.setItem("address", address);
-//     localStorage.setItem("phoneNumber", phoneNumber);
-//     localStorage.setItem("gender", gender);
-
-//     return response.data.response;
-//   } catch (error) {
-//     console.log("Lỗi khi đăng nhập:", error);
-//     throw error;
-//   }
-// };
 export const login = async (username = "", password = "") => {
   try {
     const response = await axios.post("http://localhost:8000/sign-in", {
@@ -119,9 +85,34 @@ export const login = async (username = "", password = "") => {
       password,
     });
 
-    const { token, id, username: userNameResp, email, roles } = response.data.response;
+    const {
+      token,
+      id,
+      username: userNameResp,
+      email,
+      roles,
+    } = response.data.response;
 
     localStorage.setItem("token", token);
+
+    // Gọi API lấy profile
+    const profileResponse = await axios.get(
+      `${USER_PROFILE_API}/email/${email}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const { fullName, address, phoneNumber, gender, userState } =
+      profileResponse.data;
+
+    // Kiểm tra trạng thái tài khoản
+    if (userState === "BANNED") {
+      console.log("Tài khoản bị cấm");
+      throw new Error("BANNED_ACCOUNT");
+    }
 
     // Nếu chưa có ROLE_USER thì thêm
     const hasRoleUser = roles.some((r) => r.authority === "ROLE_USER");
@@ -129,15 +120,6 @@ export const login = async (username = "", password = "") => {
       await addRoleToUser(id, "ROLE_USER", token);
       roles.push({ authority: "ROLE_USER" }); // cập nhật tạm trên frontend nếu chưa có role USER
     }
-
-    // Gọi API lấy profile
-    const profileResponse = await axios.get(`${USER_PROFILE_API}/email/${email}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const { fullName, address, phoneNumber, gender } = profileResponse.data;
 
     // Lưu localStorage
     localStorage.setItem("userId", id);
@@ -148,14 +130,18 @@ export const login = async (username = "", password = "") => {
     localStorage.setItem("address", address);
     localStorage.setItem("phoneNumber", phoneNumber);
     localStorage.setItem("gender", gender);
+    localStorage.setItem("userState", userState);
 
     return response.data.response;
   } catch (error) {
+    if (error.message === "BANNED_ACCOUNT") {
+      console.log("Tài khoản bị cấm");
+      throw error;
+    }
     console.log("Lỗi khi đăng nhập:", error);
     throw error;
   }
 };
-
 
 // === 4. Các API thao tác với USER-SERVICE ===
 export const listUser = () => {

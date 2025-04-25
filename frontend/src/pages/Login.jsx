@@ -57,10 +57,21 @@ const Login = () => {
       setUserRole(userData.role); // Cập nhật vai trò từ phản hồi của server
     } catch (error) {
       setSnackbarType("error");
-      setSnackbarMessage(
-        "Đăng nhập thất bại, số điện thoại hoặc mật khẩu không hợp lệ."
-      );
+
+      // Kiểm tra nếu là lỗi tài khoản bị banned
+      if (error.message === "BANNED_ACCOUNT") {
+        setSnackbarMessage(
+          "Tài khoản của bạn đã bị cấm. Vui lòng liên hệ quản trị viên để biết thêm chi tiết."
+        );
+      } else {
+        setSnackbarMessage(
+          "Đăng nhập thất bại, số điện thoại hoặc mật khẩu không hợp lệ."
+        );
+      }
+
       setOpenSnackbar(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -118,7 +129,12 @@ const Login = () => {
             Địa chỉ: {localStorage.getItem("address")}
           </Typography>
           <Typography variant="h6" sx={{ mb: 2 }}>
-            Giới tính: {localStorage.getItem("gender") === "MALE" ? "Nam" : localStorage.getItem("gender") === "FEMALE" ? "Nữ" : "Khác"}
+            Giới tính:{" "}
+            {localStorage.getItem("gender") === "MALE"
+              ? "Nam"
+              : localStorage.getItem("gender") === "FEMALE"
+              ? "Nữ"
+              : "Khác"}
           </Typography>
           <Button
             sx={{
@@ -234,9 +250,7 @@ const Login = () => {
             onClick={handleLogin}
             disabled={loading}
           >
-            {loading && (
-              <CircularProgress size={20} color="inherit" />
-            )}
+            {loading && <CircularProgress size={20} color="inherit" />}
             {!loading && "Đăng nhập"}
           </Button>
         </Box>
