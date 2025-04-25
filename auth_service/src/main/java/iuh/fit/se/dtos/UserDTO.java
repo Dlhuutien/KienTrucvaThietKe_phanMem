@@ -22,7 +22,6 @@ public class UserDTO {
     private String address;
     private Role role;
     private String url;
-    private BigDecimal coin;
     private UserState userState;
     private String password;
     private LocalDateTime createdTime;
