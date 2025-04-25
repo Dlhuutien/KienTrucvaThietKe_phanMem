@@ -17,6 +17,6 @@ public class CartDetailDTO {
 	@NotNull(message = "Số lượng không được để trống")
 	@Min(value = 0, message = "Số lượng phải lớn hơn hoặc bằng 0")
 	private int quantity;
-	
+
 	private BigDecimal priceAtTransaction;
 }

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import iuh.fit.se.common.dtos.InventoryDTO;
 import iuh.fit.se.exceptions.ItemNotFoundException;
 import iuh.fit.se.models.dtos.ProductDTO;
 import iuh.fit.se.models.dtos.ProviderDTO;
@@ -103,32 +102,6 @@ public class PurchaseDetailServiceImpl implements PurchaseDetailService {
 
                 System.out.println("Saving PurchaseDetail: " + purchaseDetail);
                 PurchaseDetail savedPurchaseDetail = purchaseDetailRepository.save(purchaseDetail);
-                
-                // Gọi API tới inventory-service để cập nhật tồn kho
-                InventoryDTO inventoryDTO = InventoryDTO.builder()
-                    .productId(product.getId())
-                    .quantity(purchaseDetailDTO.getQuantity()) // cộng thêm
-                    .build();
-
-                restTemplate.postForEntity(
-                    apiGatewayUrl + "/inventory",
-                    inventoryDTO,
-                    Void.class
-                );
-                
-                // Cập nhật giá sản phẩm
-                ProductDTO updateProductPrice = ProductDTO.builder()
-                        .id(product.getId())
-                        .purchasePrice(purchaseDetailDTO.getPurchasePrice())
-                        .salePrice(purchaseDetailDTO.getSalePrice())
-                        .build();
-
-                restTemplate.put(
-                	    apiGatewayUrl + "/api/products/" + product.getId() + "/price" +
-                	    "?purchasePrice=" + purchaseDetailDTO.getPurchasePrice() +
-                	    "&salePrice=" + purchaseDetailDTO.getSalePrice(),
-                	    null
-                	);
                 return convertToDTO(savedPurchaseDetail);
             }
             throw new RuntimeException("Product not found by name");

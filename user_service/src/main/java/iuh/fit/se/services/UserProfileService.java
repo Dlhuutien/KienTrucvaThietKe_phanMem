@@ -10,12 +10,14 @@ public interface UserProfileService {
 	UserProfileDTO findById(int id);
 
 	UserProfileDTO save(UserProfileDTO userProfileDTO);
+	
+
+	UserProfileDTO update(int id, UserProfileDTO userProfileDTO);
+	
+	boolean delete(int id);
 
 	UserProfileDTO updateUserState(int id, UserState newState);
 	
 	List<UserProfileDTO> findByState(UserState userState);
-	
-	UserProfileDTO updateProfileByEmail(String email, UserProfileDTO updatedProfile);
-	
-	UserProfileDTO findByEmail(String email);
+
 }

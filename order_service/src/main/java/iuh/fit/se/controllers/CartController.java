@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,7 +25,7 @@ import iuh.fit.se.services.CartService;
 import jakarta.validation.Valid;
 
 @RestController
-// @CrossOrigin(origins = { "http://localhost:3000", "http://localhost:5173" })
+@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:5173", "http://localhost:8000" })
 @RequestMapping("/cart")
 public class CartController {
 
@@ -38,6 +39,36 @@ public class CartController {
 		List<CartDTO> cartDTOs = cartService.findAll();
 		response.put("data", cartDTOs);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+
+	@GetMapping("/{cartId}")
+	public ResponseEntity<Map<String, Object>> getCartById(@PathVariable int cartId) {
+		Map<String, Object> response = new LinkedHashMap<>();
+		try {
+			CartDTO cartDTO = cartService.findById(cartId);
+			response.put("status", HttpStatus.OK.value());
+			response.put("data", cartDTO);
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		} catch (RuntimeException e) {
+			response.put("status", HttpStatus.NOT_FOUND.value());
+			response.put("message", e.getMessage());
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+		}
+	}
+
+	@GetMapping("/user/{userId}")
+	public ResponseEntity<Map<String, Object>> getCartByUserId(@PathVariable int userId) {
+		Map<String, Object> response = new LinkedHashMap<>();
+		try {
+			CartDTO cartDTO = cartService.findPendingCartByUserId(userId);
+			response.put("status", HttpStatus.OK.value());
+			response.put("data", cartDTO);
+			return ResponseEntity.ok(response);
+		} catch (RuntimeException e) {
+			response.put("status", HttpStatus.NOT_FOUND.value());
+			response.put("message", e.getMessage());
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+		}
 	}
 
 	@DeleteMapping("/cart-detail/{id}")
@@ -76,25 +107,43 @@ public class CartController {
 			return ResponseEntity.status(HttpStatus.CREATED).body(response);
 		}
 	}
-	
+
 	@PostMapping("/cart-detail/{id}/update-quantity")
 	public ResponseEntity<Map<String, Object>> updateCartDetailQuantity(
-	        @PathVariable int id,
-	        @RequestParam int quantity) {
+			@PathVariable int id,
+			@RequestParam int quantity) {
 
-	    Map<String, Object> response = new LinkedHashMap<>();
-	    boolean updated = cartService.updateCartDetailQuantity(id, quantity);
+		Map<String, Object> response = new LinkedHashMap<>();
+		boolean updated = cartService.updateCartDetailQuantity(id, quantity);
 
-	    if (updated) {
-	        response.put("status", HttpStatus.OK.value());
-	        response.put("message", "Cập nhật số lượng thành công.");
-	        return ResponseEntity.ok(response);
-	    } else {
-	        response.put("status", HttpStatus.NOT_FOUND.value());
-	        response.put("message", "Không tìm thấy CartDetail.");
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-	    }
+		if (updated) {
+			response.put("status", HttpStatus.OK.value());
+			response.put("message", "Cập nhật số lượng thành công.");
+			return ResponseEntity.ok(response);
+		} else {
+			response.put("status", HttpStatus.NOT_FOUND.value());
+			response.put("message", "Không tìm thấy CartDetail.");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+		}
 	}
 
-
+	@PutMapping("/{cartId}/update-state")
+	public ResponseEntity<Map<String, Object>> updateCartState(@PathVariable int cartId,
+			@RequestBody Map<String, String> request) {
+		Map<String, Object> response = new LinkedHashMap<>();
+		try {
+			String newState = request.get("state");
+			if (newState == null) {
+				throw new RuntimeException("Trạng thái không được cung cấp");
+			}
+			cartService.updateCartState(cartId, newState);
+			response.put("status", HttpStatus.OK.value());
+			response.put("message", "Cập nhật trạng thái giỏ hàng thành công");
+			return ResponseEntity.ok(response);
+		} catch (RuntimeException e) {
+			response.put("status", HttpStatus.BAD_REQUEST.value());
+			response.put("message", e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+		}
+	}
 }
