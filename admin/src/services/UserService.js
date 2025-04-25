@@ -91,9 +91,47 @@ export const login = async (username = "", password = "") => {
 };
 
 // === 4. Các API thao tác với USER-SERVICE ===
-export const listUser = () => {
-  return axios.get(USER_PROFILE_API);
+const USERS_API = "http://localhost:8000/users";
+
+export const listUser = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const headers = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const [profileRes, userRes] = await Promise.all([
+      axios.get(USER_PROFILE_API, headers),
+      axios.get(USERS_API, headers),
+    ]);
+
+    const profiles = profileRes.data.data || [];
+    const users = userRes.data.data || [];
+
+    const mergedCustomers = profiles
+      .map(profile => {
+        const matchedUser = users.find(user => user.email === profile.email);
+        if (matchedUser && matchedUser.roles.some(role => role.authority === "ROLE_USER")) {
+          return {
+            ...profile,
+            roles: matchedUser.roles,
+          };
+        }
+        return null;
+      })
+      .filter(profile => profile !== null);
+
+    return mergedCustomers;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách khách hàng:", error);
+    throw error;
+  }
 };
+
+
 
 export const updateStateUser = (id, userState) => {
   return axios.post(`${USER_PROFILE_API}/${id}/state`, { userState });

@@ -19,7 +19,7 @@ public interface UserService {
 
 	UserDTO updateState(UserDTO userDTO);
 
-	UserDTO updateUser(int id, UserDTO userDTO);
+//	UserDTO updateUser(int id, UserDTO userDTO);
 
 	void delete(int id);
 	
@@ -27,7 +27,7 @@ public interface UserService {
 
 	User save(User user);
 
-	UserDTO saveUserDTO(UserDTO userDTO);
+//	UserDTO saveUserDTO(UserDTO userDTO);
 
 	boolean login(LoginRequest request);
 	
