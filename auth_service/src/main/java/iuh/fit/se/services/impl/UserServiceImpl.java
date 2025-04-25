@@ -73,27 +73,27 @@ public class UserServiceImpl implements UserService {
 		return userToDTO(user);
 	}
 
-	/**
-	 * Cập nhật thông tin user (bao gồm cả role)
-	 */
-	@Override
-	public UserDTO updateUser(int id, UserDTO userDTO) {
-		User user = userRepository.findById((long) id)
-				.orElseThrow(() -> new UsernameNotFoundException("User Not Found with id: " + id));
-
-		user.setUserName(userDTO.getFullName());
-		user.setEmail(userDTO.getEmail());
-		user.setPassword(userDTO.getPassword());
-		user.setEnabled(userDTO.getUserState() == UserState.ACTIVE);
-
-		/** GÁN ROLE CHO USER (THAY THẾ TOÀN BỘ ROLE HIỆN CÓ) */
-		if (userDTO.getRole() != null) {
-			user.setRoles(Set.of(userDTO.getRole()));
-		}
-
-		userRepository.save(user);
-		return userToDTO(user);
-	}
+//	/**
+//	 * Cập nhật thông tin user (bao gồm cả role)
+//	 */
+//	@Override
+//	public UserDTO updateUser(int id, UserDTO userDTO) {
+//		User user = userRepository.findById((long) id)
+//				.orElseThrow(() -> new UsernameNotFoundException("User Not Found with id: " + id));
+//
+//		user.setUserName(userDTO.getFullName());
+//		user.setEmail(userDTO.getEmail());
+//		user.setPassword(userDTO.getPassword());
+//		user.setEnabled(userDTO.getUserState() == UserState.ACTIVE);
+//
+//		/** GÁN ROLE CHO USER (THAY THẾ TOÀN BỘ ROLE HIỆN CÓ) */
+//		if (userDTO.getRole() != null) {
+//			user.setRoles(Set.of(userDTO.getRole()));
+//		}
+//
+//		userRepository.save(user);
+//		return userToDTO(user);
+//	}
 
 	@Override
 	public void delete(int id) {
@@ -113,21 +113,21 @@ public class UserServiceImpl implements UserService {
 		return userRepository.save(user);
 	}
 
-	@Override
-	public UserDTO saveUserDTO(UserDTO userDTO) {
-		User user = new User();
-		user.setUserName(userDTO.getFullName());
-		user.setEmail(userDTO.getEmail());
-		user.setPassword(userDTO.getPassword());
-		user.setEnabled(userDTO.getUserState() == UserState.ACTIVE);
-
-		if (userDTO.getRole() != null) {
-			user.setRoles(Set.of(userDTO.getRole()));
-		}
-
-		User savedUser = userRepository.save(user);
-		return userToDTO(savedUser);
-	}
+//	@Override
+//	public UserDTO saveUserDTO(UserDTO userDTO) {
+//		User user = new User();
+//		user.setUserName(userDTO.getFullName());
+//		user.setEmail(userDTO.getEmail());
+//		user.setPassword(userDTO.getPassword());
+//		user.setEnabled(userDTO.getUserState() == UserState.ACTIVE);
+//
+//		if (userDTO.getRole() != null) {
+//			user.setRoles(Set.of(userDTO.getRole()));
+//		}
+//
+//		User savedUser = userRepository.save(user);
+//		return userToDTO(savedUser);
+//	}
 
 	/**
 	 * Kiểm tra đăng nhập đơn giản (không mã hóa mật khẩu)
@@ -140,17 +140,30 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/**
-	 * Chuyển User entity sang DTO, chỉ lấy role đầu tiên
+	 * Chuyển User entity sang DTO
 	 */
 	private UserDTO userToDTO(User user) {
-		return UserDTO.builder()
-				.id(user.getId() != null ? user.getId().intValue() : 0)
-				.fullName(user.getUserName())
-				.email(user.getEmail())
-				.password(user.getPassword())
-				.userState(user.isEnabled() ? UserState.ACTIVE : UserState.INACTIVE)
-				.role(user.getRoles().stream().findFirst().orElse(null)) // Nếu có nhiều Role, chỉ lấy Role đầu tiên
-				.build();
+	    List<UserDTO.RoleDTO> authorities = user.getRoles().stream()
+	            .flatMap(role -> role.getPermissions().stream()
+	                    .map(permission -> UserDTO.RoleDTO.builder()
+	                            .authority(permission.getCode())
+	                            .build()))
+	            .collect(Collectors.toList());
+
+	    // Thêm Role vào list
+	    authorities.addAll(user.getRoles().stream()
+	            .map(role -> UserDTO.RoleDTO.builder()
+	                    .authority(role.getCode())
+	                    .build())
+	            .toList());
+
+	    return UserDTO.builder()
+	            .id(user.getId() != null ? user.getId().intValue() : 0)
+	            .username(user.getUserName())
+	            .email(user.getEmail())
+	            .roles(authorities)
+	            .userState(user.isEnabled() ? UserState.ACTIVE : UserState.INACTIVE)
+	            .build();
 	}
 	
 	/**

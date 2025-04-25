@@ -47,23 +47,23 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
-	@PutMapping("/{id}")
-	public ResponseEntity<Map<String, Object>> updateUser(@PathVariable int id, @Valid @RequestBody UserDTO userDTO,
-			BindingResult bindingResult) {
-		Map<String, Object> response = new LinkedHashMap<>();
-
-		if (bindingResult.hasErrors()) {
-			Map<String, Object> errors = new LinkedHashMap<>();
-			bindingResult.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-			response.put("status", HttpStatus.BAD_REQUEST.value());
-			response.put("errors", errors);
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-		}
-
-		response.put("status", HttpStatus.OK.value());
-		response.put("data", userService.updateUser(id, userDTO));
-		return ResponseEntity.status(HttpStatus.OK).body(response);
-	}
+//	@PutMapping("/{id}")
+//	public ResponseEntity<Map<String, Object>> updateUser(@PathVariable int id, @Valid @RequestBody UserDTO userDTO,
+//			BindingResult bindingResult) {
+//		Map<String, Object> response = new LinkedHashMap<>();
+//
+//		if (bindingResult.hasErrors()) {
+//			Map<String, Object> errors = new LinkedHashMap<>();
+//			bindingResult.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+//			response.put("status", HttpStatus.BAD_REQUEST.value());
+//			response.put("errors", errors);
+//			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+//		}
+//
+//		response.put("status", HttpStatus.OK.value());
+//		response.put("data", userService.updateUser(id, userDTO));
+//		return ResponseEntity.status(HttpStatus.OK).body(response);
+//	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> deleteUser(@PathVariable int id) {
@@ -74,23 +74,23 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
-	@PostMapping
-	public ResponseEntity<Map<String, Object>> saveUser(@Valid @RequestBody UserDTO userDTO,
-			BindingResult bindingResult) {
-		Map<String, Object> response = new LinkedHashMap<>();
-
-		if (bindingResult.hasErrors()) {
-			Map<String, Object> errors = new LinkedHashMap<>();
-			bindingResult.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-			response.put("status", HttpStatus.BAD_REQUEST.value());
-			response.put("errors", errors);
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-		}
-
-		response.put("status", HttpStatus.CREATED.value());
-		response.put("data", userService.saveUserDTO(userDTO));
-		return ResponseEntity.status(HttpStatus.CREATED).body(response);
-	}
+//	@PostMapping
+//	public ResponseEntity<Map<String, Object>> saveUser(@Valid @RequestBody UserDTO userDTO,
+//			BindingResult bindingResult) {
+//		Map<String, Object> response = new LinkedHashMap<>();
+//
+//		if (bindingResult.hasErrors()) {
+//			Map<String, Object> errors = new LinkedHashMap<>();
+//			bindingResult.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+//			response.put("status", HttpStatus.BAD_REQUEST.value());
+//			response.put("errors", errors);
+//			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+//		}
+//
+//		response.put("status", HttpStatus.CREATED.value());
+//		response.put("data", userService.saveUserDTO(userDTO));
+//		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//	}
 
 	@PostMapping("/signup")
 	public ResponseEntity<Map<String, Object>> registerUser(@RequestBody User user) {

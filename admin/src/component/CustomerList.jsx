@@ -21,11 +21,24 @@ const CustomerList = () => {
     fetchCustomers();
   }, []);
 
+  // const fetchCustomers = async () => {
+  //   try {
+  //     const res = await listUser();
+  //     if (res && res.data && Array.isArray(res.data.data)) {
+  //       setCustomer(res.data.data);
+  //     } else {
+  //       console.log("Không có dữ liệu khách hàng");
+  //     }
+  //   } catch (error) {
+  //     console.error("Lỗi khi lấy danh sách khách hàng:", error);
+  //   }
+  // };
+
   const fetchCustomers = async () => {
     try {
       const res = await listUser();
-      if (res && res.data && Array.isArray(res.data.data)) {
-        setCustomer(res.data.data);
+      if (res && Array.isArray(res)) {
+        setCustomer(res);
       } else {
         console.log("Không có dữ liệu khách hàng");
       }
@@ -33,6 +46,7 @@ const CustomerList = () => {
       console.error("Lỗi khi lấy danh sách khách hàng:", error);
     }
   };
+  
 
   const handleChangeState = async (id, currentState) => {
     if (currentState !== "ACTIVE") return; // chỉ cho phép cấm khi đang active

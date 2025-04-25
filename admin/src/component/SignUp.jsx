@@ -75,6 +75,16 @@ const SignUp = () => {
       else delete tempErrors.email;
     }
 
+    if (!fieldName || fieldName === "password") {
+      if (!password.trim()) {
+        tempErrors.password = "Mật khẩu không được để trống.";
+      } else if (password.length < 8 || password.length > 16) {
+        tempErrors.password = "Mật khẩu phải từ 8 đến 16 ký tự.";
+      } else {
+        delete tempErrors.password;
+      }
+    }    
+
     if (!fieldName || fieldName === "passwordAgain") {
       if (password !== passwordAgain)
         tempErrors.passwordAgain = "Mật khẩu không khớp.";
