@@ -13,9 +13,11 @@ import { useNavigate } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { login } from "../services/UserService";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
@@ -43,11 +45,12 @@ const Login = () => {
   };
 
   const handleLogin = async () => {
+    setLoading(true);
     try {
       const userData = await login(userName, password); // Gọi hàm login từ dịch vụ
       setUserRole(userData.roles.map((r) => r.authority).join(", "));
-      setSnackbarType("success");
       setSnackbarMessage("Đăng nhập thành công");
+      setSnackbarType("success");
       setOpenSnackbar(true);
       setIsLoggedIn(true);
       localStorage.setItem("loginTime", Date.now()); // Lưu thông tin lên local trong 1 khoảng tgian
@@ -223,10 +226,18 @@ const Login = () => {
               width: 160,
               color: "white",
               fontWeight: "bold",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 1,
             }}
             onClick={handleLogin}
+            disabled={loading}
           >
-            Đăng nhập
+            {loading && (
+              <CircularProgress size={20} color="inherit" />
+            )}
+            {!loading && "Đăng nhập"}
           </Button>
         </Box>
       </Box>

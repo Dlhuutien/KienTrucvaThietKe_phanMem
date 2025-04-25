@@ -26,6 +26,23 @@ export const registerUser = async (
   return response.data;
 };
 
+
+export const checkEmailUnique = async (email) => {
+  try {
+    await axios.get(`http://localhost:8000/userProfiles/email/${encodeURIComponent(email)}`);
+    // Nếu gọi được => email đã tồn tại => ném lỗi thủ công để bên ngoài bắt
+    const error = new Error("Email đã tồn tại.");
+    error.response = { status: 400 };
+    throw error;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      // Email chưa tồn tại => hợp lệ
+      return;
+    }
+    throw error; 
+  }
+};
+
 // === 2. Tạo user profile bên USER-SERVICE ===
 export const updateUserProfileByEmail = async (email, profile, token) => {
   try {

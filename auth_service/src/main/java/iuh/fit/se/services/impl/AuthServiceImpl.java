@@ -31,6 +31,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashSet;
@@ -66,6 +68,14 @@ public class AuthServiceImpl implements AuthService {
 		this.jwtEncoder = jwtEncoder;
 	}
 
+	/**
+	 * Đăng ký tài khoản mới nếu username hoặc email chưa tồn tại.
+	 * Sau khi tạo User, đồng thời gửi thông tin để tạo UserProfile ở user-service.
+	 * 
+	 * @param signUpRequest thông tin đăng ký người dùng
+	 * @return ResponseEntity với thông báo thành công
+	 * @throws UserAlreadyExistsException nếu username hoặc email đã tồn tại
+	 */
 	@Override
 	public ResponseEntity<ApiResponse<?>> signUp(SignUpRequest signUpRequest) throws UserAlreadyExistsException {
 		if (userService.existsByUserName(signUpRequest.getUserName())) {
@@ -78,9 +88,10 @@ public class AuthServiceImpl implements AuthService {
 
 		User user = createUser(signUpRequest);
 		userService.saveUser(user);
-		// return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.builder().status(String.valueOf("SUCCESS"))
-		// 		.message("User account has been successfully created!").build());
-		
+		// return
+		// ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.builder().status(String.valueOf("SUCCESS"))
+		// .message("User account has been successfully created!").build());
+
 		// Gửi API sang user-service
 		createUserProfile(signUpRequest);
 
@@ -90,13 +101,26 @@ public class AuthServiceImpl implements AuthService {
 				.build());
 	}
 
+	/**
+	 * Tạo đối tượng User từ thông tin đăng ký.
+	 * Mã hóa mật khẩu và gán role.
+	 * 
+	 * @param signUpRequest thông tin đăng ký
+	 * @return đối tượng User đã khởi tạo
+	 */
 	private User createUser(SignUpRequest signUpRequest) {
-
 		return User.builder().email(signUpRequest.getEmail()).userName(signUpRequest.getUserName())
 				.password(passwordEncoder.encode(signUpRequest.getPassword())).enabled(true)
 				.roles(determineRoles(signUpRequest.getRoles())).build();
 	}
 
+	/**
+	 * Xác định danh sách các role tương ứng từ danh sách tên role (string).
+	 * Nếu không có role nào, gán mặc định ROLE_USER.
+	 * 
+	 * @param strRoles danh sách tên role
+	 * @return tập hợp các đối tượng Role
+	 */
 	private Set<Role> determineRoles(Set<String> strRoles) {
 		Set<Role> roles = new HashSet<>();
 
@@ -110,6 +134,13 @@ public class AuthServiceImpl implements AuthService {
 		return roles;
 	}
 
+	/**
+	 * Thực hiện đăng nhập người dùng với username và password.
+	 * Xác thực bằng AuthenticationManager -> tạo JWT token và lưu vào bảng token.
+	 * 
+	 * @param signInRequest chứa username và password
+	 * @return SignInResponse chứa thông tin token, user, role
+	 */
 	@Override
 	public ResponseEntity<ApiResponse<?>> signIn(SignInRequest signInRequest) {
 		Authentication authentication = authenticationManager.authenticate(
@@ -134,22 +165,27 @@ public class AuthServiceImpl implements AuthService {
 				.response(signInResponse).build());
 	}
 
+	/**
+	 * Gửi API sang user-service để tạo UserProfile tương ứng với email.
+	 * Dùng RestTemplate để gọi API bên ngoài.
+	 * 
+	 * @param req chứa thông tin đăng ký để tạo profile
+	 */
 	private void createUserProfile(SignUpRequest req) {
 		UserProfileDTO profileDTO = UserProfileDTO.builder()
-				.fullName("") 
+				.fullName("")
 				.email(req.getEmail())
-				.phoneNumber("")                 
+				.phoneNumber("")
 				.address("")
-				.gender(Gender.MALE)            
+				.gender(Gender.MALE)
 				.userState(UserState.ACTIVE)
 				.url("")
 				.build();
-	
+
 		try {
 			restTemplate.postForEntity(userServiceUrl, profileDTO, Void.class);
 		} catch (Exception ex) {
 			log.error("Không thể tạo UserProfile: {}", ex.getMessage());
 		}
 	}
-	
 }

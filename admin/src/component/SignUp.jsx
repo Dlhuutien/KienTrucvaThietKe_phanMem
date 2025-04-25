@@ -7,15 +7,19 @@ import {
   IconButton,
   InputAdornment,
   Snackbar,
-  Alert, 
-  Radio, RadioGroup, FormControlLabel, FormLabel, FormControl 
+  Alert,
 } from "@mui/material";
 import React, { useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
-import { registerUser, login, updateUserProfileByEmail } from "../services/UserService";
+import {
+  registerUser,
+  login,
+  updateUserProfileByEmail,
+  checkEmailUnique,
+} from "../services/UserService";
 
 const SignUp = () => {
   const [isChecked, setIsChecked] = useState(false);
@@ -32,27 +36,100 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
 
-  const [passwordError, setPasswordError] = useState("");
+  const [errors, setErrors] = useState({});
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarType, setSnackbarType] = useState("success");
 
   const navigate = useNavigate();
 
+  const validate = (fieldName) => {
+    let tempErrors = { ...errors };
+
+    if (!fieldName || fieldName === "username") {
+      if (!username.trim())
+        tempErrors.username = "Tên đăng nhập không được để trống.";
+      else delete tempErrors.username;
+    }
+
+    if (!fieldName || fieldName === "fullName") {
+      if (!fullName.trim()) tempErrors.fullName = "Họ tên không được để trống.";
+      else delete tempErrors.fullName;
+    }
+
+    if (!fieldName || fieldName === "address") {
+      if (!address.trim()) tempErrors.address = "Địa chỉ không được để trống.";
+      else delete tempErrors.address;
+    }
+
+    if (!fieldName || fieldName === "phoneNumber") {
+      if (!phoneNumber.trim())
+        tempErrors.phoneNumber = "Số điện thoại không được để trống.";
+      else delete tempErrors.phoneNumber;
+    }
+
+    if (!fieldName || fieldName === "email") {
+      if (!email.trim()) tempErrors.email = "Email không được để trống.";
+      else if (!/\S+@\S+\.\S+/.test(email))
+        tempErrors.email = "Email không hợp lệ.";
+      else delete tempErrors.email;
+    }
+
+    if (!fieldName || fieldName === "passwordAgain") {
+      if (password !== passwordAgain)
+        tempErrors.passwordAgain = "Mật khẩu không khớp.";
+      else delete tempErrors.passwordAgain;
+    }
+
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
+  };
+
+  const handleBlur = async (e) => {
+    const { name } = e.target;
+    validate(name);
+
+    if (name === "email" && email.trim()) {
+      try {
+        await checkEmailUnique(email);
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.email;
+          return newErrors;
+        });
+      } catch (error) {
+        if (error.response && error.response.status === 400) {
+          setErrors((prev) => ({
+            ...prev,
+            email: "Email này đã tồn tại.",
+          }));
+        } else {
+          setErrors((prev) => ({
+            ...prev,
+            email: "Lỗi kiểm tra email. Vui lòng thử lại sau.",
+          }));
+        }
+      }
+    }
+  };
+
   const handleCheckboxChange = (event) => setIsChecked(event.target.checked);
 
   const handleSignup = async (event) => {
     event.preventDefault();
+    if (!validate()) return;
+  
     if (password !== passwordAgain) {
-      setPasswordError("Mật khẩu không khớp. Vui lòng kiểm tra lại.");
+      setErrors((prev) => ({
+        ...prev,
+        passwordAgain: "Mật khẩu không khớp.",
+      }));
       return;
     }
   
-    setPasswordError("");
     setIsLoading(true);
-  
     try {
-      // 1. Đăng ký tài khoản (auth-service)
+      // Gửi đăng ký
       await registerUser(
         username,
         fullName,
@@ -60,15 +137,13 @@ const SignUp = () => {
         phoneNumber,
         email,
         password,
-        "ROLE_ADMIN");
+        "ROLE_ADMIN"
+      );
   
-      // 2. Đăng nhập để lấy token
+      // Đăng nhập lấy token
       const loginResponse = await login(username, password);
       const token = loginResponse.token;
   
-      if (!token) throw new Error("Không lấy được token sau khi đăng nhập!");
-  
-      // 3. Tạo user profile
       const userProfile = {
         fullName,
         address,
@@ -80,16 +155,37 @@ const SignUp = () => {
   
       await updateUserProfileByEmail(email, userProfile, token);
   
-      // 4. Thành công
       setSnackbarType("success");
       setSnackbarMessage("Đăng ký thành công! Chào mừng bạn.");
       setOpenSnackbar(true);
       setTimeout(() => navigate("/DangNhap"), 2000);
     } catch (error) {
-      console.log("Lỗi đăng ký:", error);
+      if (error.response) {
+        const message = error.response.data?.message?.toLowerCase() || "";
+  
+        if (message.includes("username")) {
+          setErrors((prev) => ({
+            ...prev,
+            username: "Tên đăng nhập đã tồn tại.",
+          }));
+          return;
+        }
+  
+        if (message.includes("email")) {
+          setErrors((prev) => ({
+            ...prev,
+            email: "Email đã tồn tại.",
+          }));
+          return;
+        }
+      }
+  
+      // Lỗi khác
       setSnackbarType("error");
       setSnackbarMessage("Đăng ký thất bại. Vui lòng thử lại.");
       setOpenSnackbar(true);
+    } finally {
+      setIsLoading(false);
     }
   };
   
@@ -103,9 +199,10 @@ const SignUp = () => {
     setValue,
     showPasswordState,
     setShowPasswordState,
-    errorMessage
+    errorMessage,
+    name
   ) => (
-    <Box sx={{ m: 2, width: "90%", textAlign:"center", alignItems: "center" }}>
+    <Box sx={{ m: 2, width: "90%", textAlign: "center" }}>
       <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
         <Typography>{label}</Typography>
         <Typography sx={{ ml: 1, color: "#F60000" }}>*</Typography>
@@ -120,6 +217,8 @@ const SignUp = () => {
         }}
       >
         <InputBase
+          name={name}
+          onBlur={handleBlur}
           autoComplete="new-password"
           placeholder={placeholder}
           type={type === "password" && !showPasswordState ? "password" : "text"}
@@ -129,7 +228,9 @@ const SignUp = () => {
           endAdornment={
             type === "password" && (
               <InputAdornment position="end">
-                <IconButton onClick={() => setShowPasswordState(!showPasswordState)}>
+                <IconButton
+                  onClick={() => setShowPasswordState(!showPasswordState)}
+                >
                   {showPasswordState ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
@@ -149,37 +250,106 @@ const SignUp = () => {
     <Box
       sx={{
         textAlign: "center",
-          marginTop: 5,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          width: "100%",
-          bgcolor: "#f9f9f9",
+        marginTop: 5,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        width: "100%",
+        bgcolor: "#f9f9f9",
       }}
     >
       <Box
         sx={{
           padding: 2,
-            // backgroundColor: "#F0F8FF",
-            borderRadius: "10px",
-            boxShadow: 3,
-            width: "60%",
-            textAlign: "left",
+          borderRadius: "10px",
+          boxShadow: 3,
+          width: "60%",
+          textAlign: "left",
         }}
       >
         <Typography variant="h4" align="center" fontWeight="bold" gutterBottom>
           ĐĂNG KÝ TÀI KHOẢN
         </Typography>
-  
+
         <form onSubmit={handleSignup}>
-          {renderInputField("Tên đăng nhập", "Vui lòng nhập tên đăng nhập", "text", username, setUsername)}
-          {renderInputField("Họ và tên", "Vui lòng nhập họ và tên", "text", fullName, setFullName)}
-          {renderInputField("Địa chỉ", "Vui lòng nhập địa chỉ", "text", address, setAddress)}
-          {renderInputField("Số điện thoại", "Vui lòng nhập số điện thoại", "text", phoneNumber, setPhoneNumber)}
-          {renderInputField("Email", "Vui lòng nhập email", "text", email, setEmail)}
-          {renderInputField("Mật khẩu", "Vui lòng nhập mật khẩu", "password", password, setPassword, showPassword, setShowPassword)}
-          {renderInputField("Nhập lại mật khẩu", "Vui lòng nhập lại mật khẩu", "password", passwordAgain, setPasswordAgain, showPasswordAgain, setShowPasswordAgain, passwordError)}
-  
+          {renderInputField(
+            "Tên đăng nhập",
+            "Nhập tên đăng nhập",
+            "text",
+            username,
+            setUsername,
+            null,
+            null,
+            errors.username,
+            "username"
+          )}
+          {renderInputField(
+            "Họ và tên",
+            "Nhập họ và tên",
+            "text",
+            fullName,
+            setFullName,
+            null,
+            null,
+            errors.fullName,
+            "fullName"
+          )}
+          {renderInputField(
+            "Địa chỉ",
+            "Nhập địa chỉ",
+            "text",
+            address,
+            setAddress,
+            null,
+            null,
+            errors.address,
+            "address"
+          )}
+          {renderInputField(
+            "Số điện thoại",
+            "Nhập số điện thoại",
+            "text",
+            phoneNumber,
+            setPhoneNumber,
+            null,
+            null,
+            errors.phoneNumber,
+            "phoneNumber"
+          )}
+          {renderInputField(
+            "Email",
+            "Nhập email",
+            "text",
+            email,
+            setEmail,
+            null,
+            null,
+            errors.email,
+            "email"
+          )}
+          {renderInputField(
+            "Mật khẩu",
+            "Nhập mật khẩu",
+            "password",
+            password,
+            setPassword,
+            showPassword,
+            setShowPassword,
+            errors.password,
+            "password"
+          )}
+          {renderInputField(
+            "Nhập lại mật khẩu",
+            "Nhập lại mật khẩu",
+            "password",
+            passwordAgain,
+            setPasswordAgain,
+            showPasswordAgain,
+            setShowPasswordAgain,
+            errors.passwordAgain,
+            "passwordAgain"
+          )}
+
           <Box sx={{ mb: 2, m: 3 }}>
             <Typography sx={{ mb: 1 }}>Giới tính</Typography>
             <Box sx={{ display: "flex", gap: 2 }}>
@@ -216,13 +386,13 @@ const SignUp = () => {
             </Box>
           </Box>
 
-          {/* 👇 Checkbox điều khoản */}
           <Box sx={{ display: "flex", alignItems: "center", my: 2 }}>
             <Checkbox checked={isChecked} onChange={handleCheckboxChange} />
-            <Typography sx={{ fontSize: 14 }}>Tôi đồng ý với điều khoản sử dụng</Typography>
+            <Typography sx={{ fontSize: 14 }}>
+              Tôi đồng ý với điều khoản sử dụng
+            </Typography>
           </Box>
-  
-          {/* 👇 Nút Đăng ký */}
+
           <Button
             type="submit"
             fullWidth
@@ -236,30 +406,31 @@ const SignUp = () => {
               mb: 2,
             }}
           >
-          {isLoading ? (
-            <CircularProgress size={24} sx={{ color: "white" }} />
-          ) : (
-            "Đăng ký"
-          )}
-        </Button>
+            {isLoading ? (
+              <CircularProgress size={24} sx={{ color: "white" }} />
+            ) : (
+              "Đăng ký"
+            )}
+          </Button>
         </form>
-  
-        {/* 👇 Thông báo SnackBar */}
+
         <Snackbar
           open={openSnackbar}
           autoHideDuration={3000}
           onClose={() => setOpenSnackbar(false)}
           anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
-          <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarType} sx={{ width: "100%" }}>
+          <Alert
+            onClose={() => setOpenSnackbar(false)}
+            severity={snackbarType}
+            sx={{ width: "100%" }}
+          >
             {snackbarMessage}
           </Alert>
         </Snackbar>
       </Box>
     </Box>
   );
-  
-  
 };
 
 export default SignUp;
