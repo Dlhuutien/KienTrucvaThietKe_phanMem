@@ -75,16 +75,6 @@ const SignUp = () => {
       else delete tempErrors.email;
     }
 
-    if (!fieldName || fieldName === "password") {
-      if (!password.trim()) {
-        tempErrors.password = "Mật khẩu không được để trống.";
-      } else if (password.length < 8 || password.length > 16) {
-        tempErrors.password = "Mật khẩu phải từ 8 đến 16 ký tự.";
-      } else {
-        delete tempErrors.password;
-      }
-    }    
-
     if (!fieldName || fieldName === "passwordAgain") {
       if (password !== passwordAgain)
         tempErrors.passwordAgain = "Mật khẩu không khớp.";
@@ -128,7 +118,7 @@ const SignUp = () => {
   const handleSignup = async (event) => {
     event.preventDefault();
     if (!validate()) return;
-  
+
     if (password !== passwordAgain) {
       setErrors((prev) => ({
         ...prev,
@@ -136,7 +126,7 @@ const SignUp = () => {
       }));
       return;
     }
-  
+
     setIsLoading(true);
     try {
       // Gửi đăng ký
@@ -149,11 +139,11 @@ const SignUp = () => {
         password,
         ["ROLE_ADMIN", "ROLE_USER"]
       );
-  
+
       // Đăng nhập lấy token
       const loginResponse = await login(username, password);
       const token = loginResponse.token;
-  
+
       const userProfile = {
         fullName,
         address,
@@ -162,9 +152,9 @@ const SignUp = () => {
         userState: "ACTIVE",
         gender,
       };
-  
+
       await updateUserProfileByEmail(email, userProfile, token);
-  
+
       setSnackbarType("success");
       setSnackbarMessage("Đăng ký thành công! Chào mừng bạn.");
       setOpenSnackbar(true);
@@ -172,7 +162,7 @@ const SignUp = () => {
     } catch (error) {
       if (error.response) {
         const message = error.response.data?.message?.toLowerCase() || "";
-  
+
         if (message.includes("username")) {
           setErrors((prev) => ({
             ...prev,
@@ -180,7 +170,7 @@ const SignUp = () => {
           }));
           return;
         }
-  
+
         if (message.includes("email")) {
           setErrors((prev) => ({
             ...prev,
@@ -189,7 +179,7 @@ const SignUp = () => {
           return;
         }
       }
-  
+
       // Lỗi khác
       setSnackbarType("error");
       setSnackbarMessage("Đăng ký thất bại. Vui lòng thử lại.");
@@ -198,8 +188,6 @@ const SignUp = () => {
       setIsLoading(false);
     }
   };
-  
-  
 
   const renderInputField = (
     label,
