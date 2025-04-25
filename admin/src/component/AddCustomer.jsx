@@ -98,13 +98,11 @@ const AddCustomer = () => {
       if (customer.id) {
         const response = await updateUser(customer.id, customer);
         console.log("Customer data updated:", response.data);
-        navigate("/DanhSachKhachHang");
+        navigate("/DanhSachKhachHang"); // Chuyển hướng đến danh sách khách hàng
       } else {
-        console.log(customer);
-
         const response = await saveUser(customer);
-        console.log(response.data);
-        navigate("/DanhSachKhachHang");
+        console.log("Customer added:", response.data);
+        navigate("/DanhSachKhachHang"); // Chuyển hướng đến danh sách khách hàng
       }
     } catch (error) {
       console.log("Error:", error);
@@ -118,7 +116,6 @@ const AddCustomer = () => {
       reader.onload = () => {
         setCustomer({ ...customer, url: reader.result });
       };
-
       reader.readAsDataURL(file);
     }
   };
@@ -128,7 +125,7 @@ const AddCustomer = () => {
       <Typography variant="h4" fontWeight={700} mb={2}>
         {customer.id ? "Cập nhật Khách Hàng" : "Thêm Khách Hàng"}
       </Typography>
-      <form action="">
+      <form>
         {customer.id && (
           <TextField
             label="ID"
@@ -169,20 +166,10 @@ const AddCustomer = () => {
             </Typography>
           )}
         </FormControl>
-        {/* <TextField
-          label="Mật khẩu"
-          name="password"
-          value={customer.password}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 2 }}
-          error={!!errors.password}
-          helperText={errors.password}
-        /> */}
         <TextField
           label="Mật khẩu"
           name="password"
-          type={showPassword ? "text" : "password"} // Toggle between 'text' and 'password'
+          type={showPassword ? "text" : "password"}
           value={customer.password}
           onChange={handleChange}
           fullWidth
@@ -284,7 +271,7 @@ const AddCustomer = () => {
           </Select>
           {errors.userState && (
             <Typography color="error" variant="caption">
-              {errors.useState}
+              {errors.userState}
             </Typography>
           )}
         </FormControl>

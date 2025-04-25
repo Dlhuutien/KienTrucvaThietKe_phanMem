@@ -26,15 +26,18 @@ export const registerUser = async (
   return response.data;
 };
 
-
 // === 2. Tạo user profile bên USER-SERVICE ===
 export const updateUserProfileByEmail = async (email, profile, token) => {
   try {
-    const response = await axios.put(`${USER_PROFILE_API}/email/${email}`, profile, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axios.put(
+      `${USER_PROFILE_API}/email/${email}`,
+      profile,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error("Lỗi khi cập nhật profile bằng email:", error);
@@ -50,7 +53,12 @@ export const login = async (username = "", password = "") => {
       password,
     });
 
-    const { token, username: userNameResp, email, roles } = response.data.response;
+    const {
+      token,
+      username: userNameResp,
+      email,
+      roles,
+    } = response.data.response;
 
     // Lưu vào localStorage
     localStorage.setItem("token", token);
@@ -64,7 +72,6 @@ export const login = async (username = "", password = "") => {
     throw error;
   }
 };
-
 
 // === 4. Các API thao tác với USER-SERVICE ===
 export const listUser = () => {

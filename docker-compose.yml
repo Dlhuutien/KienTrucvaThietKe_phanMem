@@ -74,7 +74,7 @@ services:
       - eureka-server
     networks:
       - my-network
-  
+
   inventory-service:
     build:
       context: ./inventory_service
@@ -97,12 +97,9 @@ services:
     networks:
       - my-network
 
-
 networks:
   my-network:
     driver: bridge
-
-
 # Chạy Docker
 # docker-compose up --build
 
@@ -127,8 +124,3 @@ networks:
 
 # Nếu có code mới ở sẻvice nào thì
 # docker restart auth-service
-
-# Có code mới
-# mvn clean package -DskipTests
-# docker-compose build inventory-service
-# docker-compose up -d inventory-service

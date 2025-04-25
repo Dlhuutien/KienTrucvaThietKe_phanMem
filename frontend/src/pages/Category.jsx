@@ -33,7 +33,6 @@ import PhoneIcon from "@mui/icons-material/Smartphone";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Newspaper } from "@mui/icons-material";
 
-
 const Category = () => {
   //data for filter
   const [data, setData] = useState([]);
