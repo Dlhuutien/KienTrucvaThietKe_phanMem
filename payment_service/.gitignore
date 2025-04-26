@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Secret config
+payment-secrets.properties
+payment_service/src/main/resources/payment-secrets.properties

@@ -165,7 +165,11 @@ public class PurchaseDetailServiceImpl implements PurchaseDetailService {
             }
             ProductDTO product = products.get(0);
 
-            updatedDetail.setQuantity(updatedDetailDTO.getQuantity());
+            int oldQuantity = updatedDetail.getQuantity();
+            int newQuantity = updatedDetailDTO.getQuantity();
+            int quantityDiff = newQuantity - oldQuantity;
+
+            updatedDetail.setQuantity(newQuantity);
             updatedDetail.setPurchasePrice(updatedDetailDTO.getPurchasePrice());
             updatedDetail.setSalePrice(updatedDetailDTO.getSalePrice());
 
@@ -177,6 +181,20 @@ public class PurchaseDetailServiceImpl implements PurchaseDetailService {
             updatedDetail.setCreatedTime(LocalDateTime.now());
 
             PurchaseDetail savedUpdatedDetail = purchaseDetailRepository.save(updatedDetail);
+
+            // Nếu quantity thay đổi thì cập nhật lại inventory
+            if (quantityDiff != 0) {
+                InventoryDTO inventoryDTO = InventoryDTO.builder()
+                        .productId(product.getId())
+                        .quantity(quantityDiff) // có thể âm hoặc dương
+                        .build();
+
+                restTemplate.postForEntity(
+                        apiGatewayUrl + "/inventory",
+                        inventoryDTO,
+                        Void.class
+                );
+            }
 
             return convertToDTO(savedUpdatedDetail);
         }
