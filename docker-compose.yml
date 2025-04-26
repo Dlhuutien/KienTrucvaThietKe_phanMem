@@ -86,6 +86,17 @@ services:
     networks:
       - my-network
 
+  payment-service:
+    build:
+      context: ./payment_service
+    container_name: payment-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - eureka-server
+    networks:
+      - my-network
+
   api-gateway:
     build:
       context: ./api-gateway

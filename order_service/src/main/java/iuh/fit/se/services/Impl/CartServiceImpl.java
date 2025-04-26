@@ -312,7 +312,43 @@ public class CartServiceImpl implements CartService {
 	    return true;
 	}
 
+	@Transactional(readOnly = true)
+	@Override
+	public CartDTO findById(int cartId) {
+		Optional<Cart> cartOptional = cartRepository.findById(cartId);
+		if (cartOptional.isEmpty()) {
+			throw new RuntimeException("Không tìm thấy giỏ hàng với ID: " + cartId);
+		}
+		return convertToCartDTO(cartOptional.get());
+	}
 
+	@Transactional
+	@Override
+	public void updateCartState(int cartId, String newState) {
+		Optional<Cart> cartOptional = cartRepository.findById(cartId);
+		if (cartOptional.isEmpty()) {
+			throw new RuntimeException("Không tìm thấy giỏ hàng với ID: " + cartId);
+		}
+
+		Cart cart = cartOptional.get();
+		try {
+			cart.setState(State.valueOf(newState));
+		} catch (IllegalArgumentException e) {
+			throw new RuntimeException("Trạng thái không hợp lệ: " + newState);
+		}
+
+		cartRepository.save(cart);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public CartDTO findPendingCartByUserId(int userId) {
+		Cart cart = cartRepository.findByUserIdAndState(userId, State.PENDING);
+		if (cart == null) {
+			throw new RuntimeException("Không tìm thấy giỏ hàng PENDING cho userId: " + userId);
+		}
+		return convertToCartDTO(cart);
+	}
 
 
 }

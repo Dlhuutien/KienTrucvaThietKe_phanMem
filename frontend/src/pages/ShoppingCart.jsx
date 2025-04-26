@@ -22,6 +22,7 @@ import {
   deleteCartDetail,
 } from "../services/AddCartDetailService";
 import { useNavigate } from "react-router-dom";
+import { createPayment } from "../services/PaymentService"; 
 
 const formatCurrency = (value) => {
   return new Intl.NumberFormat("vi-VN", {
@@ -34,6 +35,7 @@ const ShoppingCart = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [openModal, setOpenModal] = useState(false);
+  
 
   useEffect(() => {
     loadCart();
@@ -81,6 +83,34 @@ const ShoppingCart = () => {
       loadCart();
     } catch (err) {
       message.error("Không thể xóa sản phẩm!");
+    }
+  };
+
+  const handleCheckout = async () => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      message.error("Bạn cần đăng nhập để thanh toán.");
+      return;
+    }
+  
+    const totalAmount = products.reduce((total, p) => total + p.totalPrice, 0);
+  
+    const paymentData = {
+      userId: parseInt(userId),
+      amount: totalAmount,
+      currency: "VND", // hoặc "usd" nếu dùng Stripe test
+      successUrl: "http://localhost:3000/payment-success",
+      cancelUrl: "http://localhost:3000/payment-cancel",
+    };
+  
+    try {
+      const response = await createPayment(paymentData);
+      // window.location.href = response.data.paymentUrl; // Redirect đến trang thanh toán Stripe
+      window.location.href = response.data.checkoutUrl;
+      console.log("checkoutUrl:", response.data);
+    } catch (err) {
+      console.error("Thanh toán thất bại:", err);
+      message.error("Lỗi khi tạo thanh toán.");
     }
   };
 
@@ -177,7 +207,12 @@ const ShoppingCart = () => {
           </Typography>
         </Box>
       </Box>
-      <Button variant="contained" color="primary" sx={{ marginTop: 2 }}>
+      <Button
+        variant="contained"
+        color="primary"
+        sx={{ marginTop: 2 }}
+        onClick={handleCheckout}
+      >
         Thanh toán
       </Button>
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
@@ -214,7 +249,6 @@ const ShoppingCart = () => {
           </Box>
         </Box>
       </Modal>
-      ;
     </Box>
   );
 };
