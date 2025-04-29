@@ -68,10 +68,10 @@ const CustomerList = () => {
           <TableHead>
             <TableRow>
               <TableCell>No</TableCell>
-              <TableCell>Url</TableCell>
+              {/* <TableCell>Url</TableCell> */}
               <TableCell>Tên khách hàng</TableCell>
               <TableCell>Địa chỉ</TableCell>
-              <TableCell>Coin</TableCell>
+              {/* <TableCell>Coin</TableCell> */}
               <TableCell>Email</TableCell>
               <TableCell>Giới tính</TableCell>
               <TableCell>Số điện thoại</TableCell>
@@ -84,16 +84,16 @@ const CustomerList = () => {
               customer.map((customer, index) => (
                 <TableRow key={customer.id}>
                   <TableCell>{index + 1}</TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <img
                       src={customer.url}
                       alt="Customer"
                       style={{ width: "100px", height: "auto" }}
                     />
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>{customer.fullName}</TableCell>
                   <TableCell>{customer.address}</TableCell>
-                  <TableCell>{customer.coin}</TableCell>
+                  {/* <TableCell>{customer.coin}</TableCell> */}
                   <TableCell>{customer.email}</TableCell>
                   <TableCell>{customer.gender}</TableCell>
                   <TableCell>{customer.phoneNumber}</TableCell>

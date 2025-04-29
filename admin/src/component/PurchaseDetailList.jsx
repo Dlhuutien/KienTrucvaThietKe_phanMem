@@ -113,14 +113,14 @@ const PurchaseDetailList = () => {
                   >
                     Cập nhật
                   </Button>
-                  <Button
+                  {/* <Button
                     variant="contained"
                     color="error"
                     size="small"
                     onClick={() => handleDelete(detail.id)}
                   >
                     Xóa
-                  </Button>
+                  </Button> */}
                 </TableCell>
               </TableRow>
             ))}
