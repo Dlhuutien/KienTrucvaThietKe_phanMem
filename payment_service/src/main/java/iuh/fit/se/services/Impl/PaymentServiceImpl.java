@@ -102,6 +102,37 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
+//    @Override
+//    public void updatePaymentStatus(String sessionId, PaymentStatus status) {
+//        Payment payment = paymentRepository.findBySessionId(sessionId)
+//                .orElseThrow(() -> new RuntimeException("Payment session not found"));
+//
+//        payment.setStatus(status);
+//        if (status == PaymentStatus.COMPLETED) {
+//        	payment.setCompletedTime(LocalDateTime.now());
+//
+//            // Lấy cartId từ Stripe session metadata
+//            try {
+//                Stripe.apiKey = stripeSecretKey;
+//                Session session = Session.retrieve(sessionId);
+//                String cartId = session.getMetadata().get("cart_id");
+//
+//                // Cập nhật trạng thái giỏ hàng thông qua API Gateway
+//                String url = apiGatewayUrl + "/cart/" + cartId + "/update-state";
+//                Map<String, String> request = new HashMap<>();
+//                request.put("state", "COMPLETED");
+//
+//                restTemplate.put(url, request);
+//            } catch (Exception e) {
+//                throw new RuntimeException("Thanh toán xong nhưng không cập nhật được giỏ hàng: " + e.getMessage(), e);
+//            }
+//        }
+//
+//        paymentRepository.save(payment);
+//    }
+    
+ // Trong PaymentServiceImpl.java
+
     @Override
     public void updatePaymentStatus(String sessionId, PaymentStatus status) {
         Payment payment = paymentRepository.findBySessionId(sessionId)
@@ -109,27 +140,54 @@ public class PaymentServiceImpl implements PaymentService {
 
         payment.setStatus(status);
         if (status == PaymentStatus.COMPLETED) {
-        	payment.setCompletedTime(LocalDateTime.now());
+            payment.setCompletedTime(LocalDateTime.now());
 
-            // Lấy cartId từ Stripe session metadata
             try {
                 Stripe.apiKey = stripeSecretKey;
                 Session session = Session.retrieve(sessionId);
                 String cartId = session.getMetadata().get("cart_id");
 
                 // Cập nhật trạng thái giỏ hàng thông qua API Gateway
-                String url = apiGatewayUrl + "/cart/" + cartId + "/update-state";
-                Map<String, String> request = new HashMap<>();
-                request.put("state", "COMPLETED");
+                String updateCartUrl = apiGatewayUrl + "/cart/" + cartId + "/update-state";
+                Map<String, String> cartRequest = new HashMap<>();
+                cartRequest.put("state", "COMPLETED");
+                restTemplate.put(updateCartUrl, cartRequest);
 
-                restTemplate.put(url, request);
+                // Trừ kho (inventory)
+                String getCartDetailsUrl = apiGatewayUrl + "/cart/detail/" + cartId;
+                ResponseEntity<Map<String, Object>> cartDetailResponse = restTemplate.exchange(
+                    getCartDetailsUrl,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<Map<String, Object>>() {}
+                );
+
+                if (!cartDetailResponse.getStatusCode().is2xxSuccessful() || cartDetailResponse.getBody() == null) {
+                    throw new RuntimeException("Không thể lấy chi tiết giỏ hàng để cập nhật tồn kho");
+                }
+
+                // Duyệt qua từng sản phẩm và trừ số lượng
+                var cartDetails = (Iterable<Map<String, Object>>) cartDetailResponse.getBody().get("data");
+                for (Map<String, Object> item : cartDetails) {
+                    int productId = (int) item.get("productId");
+                    int quantity = (int) item.get("quantity");
+
+                    String inventoryUrl = apiGatewayUrl + "/inventory/reduce-quantity";
+                    Map<String, Object> inventoryRequest = new HashMap<>();
+                    inventoryRequest.put("productId", productId);
+                    inventoryRequest.put("quantity", quantity);
+
+                    restTemplate.postForEntity(inventoryUrl, inventoryRequest, Void.class);
+                }
+
             } catch (Exception e) {
-                throw new RuntimeException("Thanh toán xong nhưng không cập nhật được giỏ hàng: " + e.getMessage(), e);
+                throw new RuntimeException("Thanh toán xong nhưng lỗi khi cập nhật cart hoặc inventory: " + e.getMessage(), e);
             }
         }
 
         paymentRepository.save(payment);
     }
+    
     @Override
     public Payment getPaymentBySessionId(String sessionId) {
         return paymentRepository.findBySessionId(sessionId)
