@@ -45,7 +45,7 @@ jobs:
       - name: Deploy to Render
         run: |
           curl -X POST https://api.render.com/deploy/srv-d0k4vkbuibrs7397aclg \
-            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{"image": "${{ secrets.DOCKER_USERNAME }}/auth-service:latest"}'
+          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+          -H "Content-Type: application/json" \
+          -d "{\"image\": \"${{ secrets.DOCKER_USERNAME }}/auth-service:latest\"}"
 
