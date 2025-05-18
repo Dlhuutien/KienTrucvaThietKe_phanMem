@@ -43,9 +43,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to Render
-        run: |
-          curl -X POST https://api.render.com/deploy/srv-d0kasr7fte5s738hh0l0 \
-          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-          -H "Content-Type: application/json" \
-          -d "{\"image\": \"${{ secrets.DOCKER_USERNAME }}/auth-service:latest\"}"
+        run: curl -X POST "https://api.render.com/deploy/srv-d0ko1ijuibrs739mj9p0?key=${{ secrets.RENDER_API_KEY }}"
 
