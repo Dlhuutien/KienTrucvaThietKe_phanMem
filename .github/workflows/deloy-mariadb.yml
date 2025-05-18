@@ -30,7 +30,7 @@ jobs:
     steps:
       - name: Deploy MariaDB to Render
         run: |
-          curl -X POST https://api.render.com/deploy/srv-d0knmtd6ubrc73ben7r0 \
+          curl -X POST https://api.render.com/deploy/srv-d0ko1ijuibrs739mj9p0 \
             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
             -H "Content-Type: application/json" \
             -d '{"image": "${{ secrets.DOCKER_USERNAME }}/mariadb-custom:latest"}'
