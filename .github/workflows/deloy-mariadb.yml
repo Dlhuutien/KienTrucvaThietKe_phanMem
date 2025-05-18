@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'mariadb/**'   # thư mục Dockerfile MariaDB nếu bạn để đó
 
 jobs:
   build-and-push:
