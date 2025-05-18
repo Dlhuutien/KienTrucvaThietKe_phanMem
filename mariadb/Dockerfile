@@ -1,11 +1,8 @@
-# Sử dụng image chính thức của MariaDB
 FROM mariadb:10.5
 
-# Thiết lập biến môi trường cho database
 ENV MYSQL_ROOT_PASSWORD=root
+EXPOSE 3306 3308
 
-# Expose port MariaDB
-EXPOSE 3306
-
-# Khởi động MariaDB
-CMD ["mysqld"]
+# Fake HTTP Server để Render nhận diện
+RUN apt-get update && apt-get install -y python3
+CMD ["bash", "-c", "mysqld & python3 -m http.server 3308"]
