@@ -18,7 +18,8 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build MariaDB image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/mariadb-custom:latest ./mariadb
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/mariadb-custom:latest $GITHUB_WORKSPACE/mariadb
+
 
       - name: Push MariaDB image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/mariadb-custom:latest
