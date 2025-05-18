@@ -43,5 +43,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to Render
-        run: curl -X POST "https://api.render.com/deploy/srv-d0ko1ijuibrs739mj9p0?key=${{ secrets.RENDER_API_KEY }}"
+        run: curl -X POST "https://api.render.com/deploy/srv-d0kasr7fte5s738hh0l0?key=${{ secrets.RENDER_API_KEY }}"
 
