@@ -27,7 +27,7 @@ services:
     ports:
       - "8085:8085"
     depends_on:
-      - mariadb
+      # - mariadb
       - eureka-server
     networks:
       - my-network
