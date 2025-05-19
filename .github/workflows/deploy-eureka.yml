@@ -43,4 +43,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to Render
-        run: curl -X POST "https://api.render.com/deploy/srv-xxxxxxx?key=${{ secrets.RENDER_API_KEY }}"
+        run: curl -X POST "https://api.render.com/deploy/srv-d0le93buibrs73a85te0?key=${{ secrets.RENDER_API_KEY_EUREKA }}"
