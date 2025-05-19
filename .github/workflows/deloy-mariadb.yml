@@ -3,7 +3,7 @@ name: Build and Deploy MariaDB to Render
 on:
   push:
     branches:
-      - main
+      - deloy
 
 jobs:
   build-and-push:

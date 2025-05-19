@@ -6,7 +6,7 @@ on:
       - 'auth_service/**'
       - '.github/workflows/deploy-auth.yml'
     branches:
-      - main
+      - deloy
 
 jobs:
   docker-build-push:
