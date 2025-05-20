@@ -20,6 +20,9 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: Build common-library
+        run: mvn clean install -f ./common-library/pom.xml -DskipTests
+
       - name: Build Java project
         run: mvn clean package -f ./order_service/pom.xml -DskipTests
 

@@ -43,4 +43,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to Render
-        run: curl -X POST "https://api.render.com/deploy/YOUR_PAYMENT_SERVICE_ID?key=${{ secrets.RENDER_API_KEY }}"
+        run: curl -X POST "https://api.render.com/deploy/srv-d0m1h1odl3ps73btqcgg?key=${{ secrets.RENDER_API_KEY_PAYMENT }}"
