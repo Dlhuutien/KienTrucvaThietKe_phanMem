@@ -11,9 +11,8 @@ public class GatewaySecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-          .csrf().disable() // tắt CSRF cho toàn bộ Gateway
-          .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll()); // tạm cho phép tất cả
-
+          .csrf().disable()
+          .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
         return http.build();
     }
 }
