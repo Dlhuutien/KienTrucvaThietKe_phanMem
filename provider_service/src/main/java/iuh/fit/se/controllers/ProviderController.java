@@ -16,7 +16,6 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/providers")
-// @CrossOrigin(origins = { "http://localhost:3000", "http://localhost:5173" })
 public class ProviderController {
 
     @Autowired

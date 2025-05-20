@@ -80,8 +80,8 @@ public class PaymentServiceImpl implements PaymentService {
                                     .setQuantity(1L)
                                     .build())
                     .setMode(SessionCreateParams.Mode.PAYMENT)
-                    .setSuccessUrl("http://localhost:3000/payment/success?session_id={CHECKOUT_SESSION_ID}")
-                    .setCancelUrl("http://localhost:3000/payment/cancel")
+                    .setSuccessUrl("https://temgfrontend-git-deloy-dlhuutiens-projects.vercel.app/payment/success?session_id={CHECKOUT_SESSION_ID}")
+                    .setCancelUrl("https://temgfrontend-git-deloy-dlhuutiens-projects.vercel.app/payment/cancel")
                     .putMetadata("cart_id", String.valueOf(cartId)) 
                     .build();
 

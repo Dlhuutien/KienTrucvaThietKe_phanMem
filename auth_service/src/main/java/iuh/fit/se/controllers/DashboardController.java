@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.security.Principal;
 
 @RestController
-// @CrossOrigin(origins = { "http://localhost:3000", "http://localhost:5173" })
 @RequestMapping("/api")
 public class DashboardController {
 	/**

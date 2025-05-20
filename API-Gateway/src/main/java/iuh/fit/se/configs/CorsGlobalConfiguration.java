@@ -15,7 +15,7 @@ public class CorsGlobalConfiguration {
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:3000")); 
+        config.setAllowedOrigins(Arrays.asList("https://kien-trucva-thiet-ke-phan-mem-git-deloy-dlhuutiens-projects.vercel.app", "https://temgfrontend-git-deloy-dlhuutiens-projects.vercel.app")); 
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
 

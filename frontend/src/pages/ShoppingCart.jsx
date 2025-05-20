@@ -99,8 +99,8 @@ const ShoppingCart = () => {
       userId: parseInt(userId),
       amount: totalAmount,
       currency: "VND", // hoặc "usd" nếu dùng Stripe test
-      successUrl: "http://localhost:3000/payment-success",
-      cancelUrl: "http://localhost:3000/payment-cancel",
+      successUrl: "https://temgfrontend-git-deloy-dlhuutiens-projects.vercel.app/payment-success",
+      cancelUrl: "https://temgfrontend-git-deloy-dlhuutiens-projects.vercel.app/payment-cancel",
     };
   
     try {

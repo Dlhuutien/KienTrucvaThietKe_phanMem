@@ -21,7 +21,6 @@ import java.util.Map;
 import iuh.fit.se.models.entities.Payment;
 
 @RestController
-//@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:5173" })
 @RequestMapping("/payment")
 public class PaymentController {
 
