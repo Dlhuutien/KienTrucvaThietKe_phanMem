@@ -1,5 +1,6 @@
 package iuh.fit.se.models.entities;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import iuh.fit.se.models.enums.Brand;
@@ -7,14 +8,14 @@ import iuh.fit.se.models.enums.Category;
 import jakarta.persistence.*;
 import lombok.*;
 
-
 @Data
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "product")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product {
+public class Product implements Serializable {
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	protected int id;
@@ -28,28 +29,28 @@ public class Product {
 
 	@Enumerated(EnumType.STRING)
 	protected Category category;
-	
-//	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
-//	protected Set<Comment> comments;
-	
-//	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
-//	protected  Set<ProductDiscount> productDiscounts;
-	
+
+	// @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy =
+	// "product")
+	// protected Set<Comment> comments;
+
+	// @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy =
+	// "product")
+	// protected Set<ProductDiscount> productDiscounts;
+
 	@Column(name = "sale_price", columnDefinition = "Decimal(19,0)")
 	protected BigDecimal salePrice;
 	@Column(name = "purchase_price", columnDefinition = "Decimal(19,0)")
 	protected BigDecimal purchasePrice;
-	
+
 	@PrePersist
 	protected void onCreate() {
-	    if (salePrice == null) {
-	        salePrice = BigDecimal.ONE;
-	    }
-	    if (purchasePrice == null) {
-	        purchasePrice = BigDecimal.ONE;
-	    }
+		if (salePrice == null) {
+			salePrice = BigDecimal.ONE;
+		}
+		if (purchasePrice == null) {
+			purchasePrice = BigDecimal.ONE;
+		}
 	}
-
-
 
 }

@@ -8,6 +8,8 @@ import Home from "./pages/Home";
 import Category from "./pages/Category";
 import Product_detail from "./pages/Product_details";
 import ShoppingCart from "./pages/ShoppingCart";
+import PaymentSuccess from './pages/PaymentSuccess';
+import PaymentCancel from './pages/PaymentCancel';
 import { useEffect } from "react";
 
 function App() {
@@ -33,6 +35,8 @@ function App() {
         <Route path="/SignUp" element={<SignUp />} />
         <Route path="/products/:productId" element={<Product_detail />} />
         <Route path="/cart" element={<ShoppingCart />} />
+        <Route path="/payment/success" element={<PaymentSuccess />} />
+        <Route path="/payment-cancel" element={<PaymentCancel />} />
       </Routes>
       <Footer />
     </BrowserRouter>

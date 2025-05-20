@@ -1,5 +1,6 @@
 package iuh.fit.se.models.entities;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,7 +30,8 @@ import lombok.*;
 @Table(name = "cart")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Cart {
+public class Cart implements Serializable {
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
@@ -37,10 +39,12 @@ public class Cart {
 	@Column(name = "user_id", nullable = false)
 	private int userId;
 
-//	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER, mappedBy = "cart", orphanRemoval = true)
-//	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "cart", orphanRemoval = true)
+	// @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch =
+	// FetchType.EAGER, mappedBy = "cart", orphanRemoval = true)
+	// @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy =
+	// "cart", orphanRemoval = true)
 	@OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-//	@JsonManagedReference
+	// @JsonManagedReference
 	@JsonIgnoreProperties("cart")
 	private List<CartDetail> cartDetails;
 
@@ -59,11 +63,10 @@ public class Cart {
 		createdTime = LocalDateTime.now();
 		state = State.PENDING;
 	}
-	
+
 	@PreUpdate
 	protected void onUpdate() {
 		modifiedTime = LocalDateTime.now();
 	}
-
 
 }
