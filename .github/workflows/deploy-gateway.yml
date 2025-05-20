@@ -3,7 +3,7 @@ name: Deploy API Gateway to Render
 on:
   push:
     paths:
-      - 'api-gateway/**'
+      - 'API-Gateway/**'
       - '.github/workflows/deploy-gateway.yml'
     branches:
       - deloy
