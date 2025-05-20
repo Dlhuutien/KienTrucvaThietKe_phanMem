@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const CART_API_URL = "http://localhost:8000/cart";
-const PRODUCT_API_URL = "http://localhost:8000/api/products";
+const CART_API_URL = "https://api-gateway-ow6h.onrender.com/cart";
+const PRODUCT_API_URL = "https://api-gateway-ow6h.onrender.com/api/products";
 
 // Lấy cart
 export const getCartByUserId = async (userId) => {

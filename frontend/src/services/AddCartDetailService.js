@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_API_URL = "http://localhost:8000/cart";
+const BASE_API_URL = "https://api-gateway-ow6h.onrender.com/cart";
 
 // Thêm Cart mới (bao gồm cả danh sách cartDetails)
 export const createCart = (cartDTO) => {

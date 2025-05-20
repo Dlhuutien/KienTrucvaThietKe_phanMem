@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const REST_API_BASE_URL = 'http://localhost:8000'
+const REST_API_BASE_URL = 'https://api-gateway-ow6h.onrender.com'
 
 export const listPurchaseDetail = () => {
     return axios.get(`${REST_API_BASE_URL}/purchaseDetail`)

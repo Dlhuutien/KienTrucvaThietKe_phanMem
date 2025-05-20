@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/payment';
+const API_URL = 'https://api-gateway-ow6h.onrender.com/payment';
 
 export const createPayment = async (paymentData) => {
     try {

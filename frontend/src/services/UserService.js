@@ -1,8 +1,8 @@
 import axios from "axios";
 
 // API Gateway base
-const AUTH_API = "http://localhost:8000/sign-up";
-const USER_PROFILE_API = "http://localhost:8000/userProfiles";
+const AUTH_API = "https://api-gateway-ow6h.onrender.com/sign-up";
+const USER_PROFILE_API = "https://api-gateway-ow6h.onrender.com/userProfiles";
 
 // === 1. Đăng ký tài khoản tại AUTH-SERVICE ===
 export const registerUser = async (
@@ -29,7 +29,7 @@ export const registerUser = async (
 export const checkEmailUnique = async (email) => {
   try {
     await axios.get(
-      `http://localhost:8000/userProfiles/email/${encodeURIComponent(email)}`
+      `https://api-gateway-ow6h.onrender.com/userProfiles/email/${encodeURIComponent(email)}`
     );
     // Nếu gọi được => email đã tồn tại => ném lỗi thủ công để bên ngoài bắt
     const error = new Error("Email đã tồn tại.");
@@ -66,7 +66,7 @@ export const updateUserProfileByEmail = async (email, profile, token) => {
 // ==== Nếu bên admin đăng nhập vào -> thêm role USER ===
 export const addRoleToUser = async (userId, role, token) => {
   return axios.put(
-    `http://localhost:8000/users/${userId}/add-role`,
+    `https://api-gateway-ow6h.onrender.com/users/${userId}/add-role`,
     role, // truyền string ví dụ "ROLE_USER"
     {
       headers: {
@@ -80,7 +80,7 @@ export const addRoleToUser = async (userId, role, token) => {
 // === 3. Đăng nhập tài khoản ===
 export const login = async (username = "", password = "") => {
   try {
-    const response = await axios.post("http://localhost:8000/sign-in", {
+    const response = await axios.post("https://api-gateway-ow6h.onrender.com/sign-in", {
       userName: username,
       password,
     });

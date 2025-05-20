@@ -68,14 +68,14 @@ const PaymentSuccess = () => {
     useEffect(() => {
         const sessionId = new URLSearchParams(location.search).get('session_id');
         if (sessionId) {
-            axios.get(`http://localhost:8000/payment/status?sessionId=${sessionId}`)
+            axios.get(`https://api-gateway-ow6h.onrender.com/payment/status?sessionId=${sessionId}`)
                 .then(async (response) => {
                     const data = response.data.data;
                     setPaymentDetails(data);
 
                     if (data.status === 'PENDING') {
                         // Nếu đang ở trạng thái chờ -> gọi complete
-                        await axios.post(`http://localhost:8000/payment/complete`, null, {
+                        await axios.post(`https://api-gateway-ow6h.onrender.com/payment/complete`, null, {
                             params: {
                                 sessionId: sessionId,
                                 status: 'COMPLETED'

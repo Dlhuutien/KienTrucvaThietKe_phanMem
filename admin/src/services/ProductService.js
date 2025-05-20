@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Cập nhật đúng REST API URL
-const REST_API_BASE_URL = "http://localhost:8000/api"; // sửa URL ở đây
+const REST_API_BASE_URL = "https://api-gateway-ow6h.onrender.com/api"; // sửa URL ở đây
 
 export const listProduct = () => {
   return axios.get(`${REST_API_BASE_URL}/products`);
@@ -20,5 +20,5 @@ export const deleteProduct = (id) => {
 };
 
 export const getInventories = () => {
-  return axios.get("http://localhost:8000/inventory");
+  return axios.get("https://api-gateway-ow6h.onrender.com/inventory");
 };

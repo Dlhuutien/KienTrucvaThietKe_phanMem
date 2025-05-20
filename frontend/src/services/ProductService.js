@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const REST_API_BASE_URL = "http://localhost:8000/api";
-const REST_API_BASE_URL2 = "http://localhost:8000";
+const REST_API_BASE_URL = "https://api-gateway-ow6h.onrender.com/api";
+const REST_API_BASE_URL2 = "https://api-gateway-ow6h.onrender.com";
 
 export const getInventories = () => {
-  return axios.get("http://localhost:8000/inventory");
+  return axios.get("https://api-gateway-ow6h.onrender.com/inventory");
 };
 
 export const listProduct = () => {
@@ -111,7 +111,7 @@ export const searchProductSale = () => {
 
 export const searchProduct = (searchTerm) => {
   const searchQuery = `?searchTerm=${encodeURIComponent(searchTerm)}`;
-  return axios.get(`http://localhost:5000/search${searchQuery}`);
+  return axios.get(`https://api-gateway-ow6h.onrender.com/search${searchQuery}`);
 };
 
 export const getProductById = (productId) => {
