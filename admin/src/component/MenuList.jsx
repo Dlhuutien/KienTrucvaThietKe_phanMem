@@ -209,7 +209,7 @@ const MenuList = () => {
             <ListItemText className="text" primary="Danh sách" />
           </ListItem>
 
-          <ListItem
+          {/* <ListItem
             button
             component={isLoggedIn ? Link : "div"}
             to={isLoggedIn ? "/ThemKhachHang" : "#"}
@@ -233,7 +233,7 @@ const MenuList = () => {
               <AddCircleOutlineIcon />
             </ListItemIcon>
             <ListItemText className="text" primary="Thêm khách hàng" />
-          </ListItem>
+          </ListItem> */}
         </List>
       </Collapse>
 

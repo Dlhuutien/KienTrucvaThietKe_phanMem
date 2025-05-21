@@ -2,7 +2,6 @@ package iuh.fit.se.models.dtos;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import iuh.fit.se.models.entities.Cart;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

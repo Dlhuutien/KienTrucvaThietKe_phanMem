@@ -57,6 +57,7 @@ services:
     ports:
       - "5000:5000"
     depends_on:
+      - mariadb
       - redis
       - eureka-server
     networks:
@@ -82,6 +83,7 @@ services:
     environment:
       - SPRING_REDIS_HOST=redis
     depends_on:
+      - mariadb
       - redis
       - eureka-server
     networks:

@@ -11,6 +11,7 @@ import ShoppingCart from "./pages/ShoppingCart";
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentCancel from './pages/PaymentCancel';
 import { useEffect } from "react";
+import OrderHistory from './pages/OrderHistory';
 
 function App() {
   useEffect(() => {
@@ -35,6 +36,7 @@ function App() {
         <Route path="/SignUp" element={<SignUp />} />
         <Route path="/products/:productId" element={<Product_detail />} />
         <Route path="/cart" element={<ShoppingCart />} />
+        <Route path="/order-history" element={<OrderHistory />} />
         <Route path="/payment/success" element={<PaymentSuccess />} />
         <Route path="/payment-cancel" element={<PaymentCancel />} />
       </Routes>
