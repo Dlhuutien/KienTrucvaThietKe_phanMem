@@ -1,14 +1,20 @@
 package iuh.fit.se.services.Impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import iuh.fit.se.exceptions.ItemNotFoundException;
 import iuh.fit.se.models.dtos.ProviderDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import iuh.fit.se.models.entities.Provider;
 import iuh.fit.se.models.repositories.ProviderRepository;
@@ -21,6 +27,12 @@ public class ProviderServiceImpl implements ProviderService {
 
 	@Autowired
 	private ModelMapper modelMapper;
+
+	@Autowired
+	private RestTemplate restTemplate;
+
+	@Value("${api_gateway.url}")
+	private String apiGatewayUrl;
 
 	@Transactional(readOnly = true)
 	@Override
@@ -108,5 +120,25 @@ public class ProviderServiceImpl implements ProviderService {
 		return providerRepository.findAll().stream()
 				.map(Provider::getName)
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public boolean isProviderInUse(int id) {
+		try {
+			ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+					apiGatewayUrl + "/purchaseDetail/provider/" + id + "/count",
+					HttpMethod.GET,
+					null,
+					new ParameterizedTypeReference<Map<String, Object>>() {
+					});
+
+			if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+				Long count = Long.valueOf(response.getBody().get("count").toString());
+				return count > 0;
+			}
+			return false;
+		} catch (Exception e) {
+			return true;
+		}
 	}
 }

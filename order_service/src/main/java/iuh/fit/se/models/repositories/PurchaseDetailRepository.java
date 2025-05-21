@@ -12,7 +12,7 @@ import iuh.fit.se.models.entities.PurchaseDetail;
 public interface PurchaseDetailRepository extends JpaRepository<PurchaseDetail, Integer> {
 	@Query("SELECT pd FROM PurchaseDetail pd WHERE pd.productId = :productId AND pd.providerId = :providerId")
 	List<PurchaseDetail> findByProductIdAndProviderId(@Param("productId") int productId,
-	                                                  @Param("providerId") int providerId);
+			@Param("providerId") int providerId);
 
 	List<PurchaseDetail> findAllByOrderByCreatedTimeDesc();
 
@@ -27,8 +27,11 @@ public interface PurchaseDetailRepository extends JpaRepository<PurchaseDetail, 
 			"STR(p.purchasePrice) LIKE CONCAT('%', :searchTerm, '%') OR " +
 			"CAST(p.quantity AS string) LIKE CONCAT('%', :searchTerm, '%')")
 	List<PurchaseDetail> findPurchaseDetailBySearchTerm(@Param("searchTerm") String searchTerm);
+
 	long countByProductId(int productId);
 
 	@Query("SELECT SUM(p.quantity) FROM PurchaseDetail p")
 	Long getTotalQuantity();
+
+	long countByProviderId(int providerId);
 }

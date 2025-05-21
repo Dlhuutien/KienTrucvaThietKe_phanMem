@@ -26,4 +26,8 @@ public interface PurchaseDetailService {
 	List<String> getProductNames();
 
 	List<String> getProviderNames();
+
+	long countByProviderId(int providerId);
+
+	boolean isProductUsed(int productId);
 }

@@ -121,4 +121,22 @@ public class PurchaseDetailController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
+    @GetMapping("/provider/{providerId}/count")
+    public ResponseEntity<Map<String, Object>> countPurchaseDetailsByProviderId(@PathVariable int providerId) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        long count = purchaseDetailService.countByProviderId(providerId);
+        response.put("status", HttpStatus.OK.value());
+        response.put("count", count);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/check-product-usage/{productId}")
+    public ResponseEntity<Map<String, Object>> checkProductUsage(@PathVariable int productId) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        boolean isUsed = purchaseDetailService.isProductUsed(productId);
+        response.put("status", HttpStatus.OK.value());
+        response.put("isUsed", isUsed);
+        return ResponseEntity.ok(response);
+    }
 }

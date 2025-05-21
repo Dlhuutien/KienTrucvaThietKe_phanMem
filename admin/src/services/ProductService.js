@@ -22,3 +22,7 @@ export const deleteProduct = (id) => {
 export const getInventories = () => {
   return axios.get("http://localhost:8000/inventory");
 };
+
+export const checkProductCanDelete = (id) => {
+  return axios.get(`${REST_API_BASE_URL}/products/${id}/can-delete`);
+};

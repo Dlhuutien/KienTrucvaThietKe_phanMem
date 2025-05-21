@@ -124,7 +124,6 @@ public class ProviderController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> deleteProvider(@PathVariable int id) {
         Map<String, Object> response = new LinkedHashMap<>();
@@ -147,5 +146,16 @@ public class ProviderController {
     public ResponseEntity<List<String>> getAllProviderNames() {
         List<String> providerNames = providerService.getAllProviderNames();
         return ResponseEntity.ok(providerNames);
+    }
+
+    @GetMapping("/{id}/check-in-use")
+    public ResponseEntity<Map<String, Object>> checkProviderInUse(@PathVariable int id) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        boolean inUse = providerService.isProviderInUse(id);
+
+        response.put("status", HttpStatus.OK.value());
+        response.put("inUse", inUse);
+
+        return ResponseEntity.ok(response);
     }
 }

@@ -16,12 +16,36 @@ import {
   InputLabel,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import { listProduct, deleteProduct, getInventories } from "../services/ProductService";
+import {
+  listProduct,
+  deleteProduct,
+  getInventories,
+  checkProductCanDelete
+} from "../services/ProductService";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [deletableProducts, setDeletableProducts] = useState({});
+
+  const checkCanDeleteProducts = async (productIds) => {
+    const deletabilityMap = {};
+
+    await Promise.all(
+      productIds.map(async (id) => {
+        try {
+          const response = await checkProductCanDelete(id);
+          deletabilityMap[id] = response.data.canDelete;
+        } catch (error) {
+          console.error(`Không thể kiểm tra khả năng xóa sản phẩm ${id}:`, error);
+          deletabilityMap[id] = false;
+        }
+      })
+    );
+
+    setDeletableProducts(deletabilityMap);
+  };
 
   const fetchProducts = async () => {
     try {
@@ -29,11 +53,10 @@ const ProductList = () => {
         listProduct(),
         getInventories()
       ]);
-  
+
       const products = productRes.data.data;
       const inventories = inventoryRes.data.data;
-  
-      // Gán quantity cho mỗi product từ inventory
+
       const merged = products.map(product => {
         const inventory = inventories.find(inv => inv.productId === product.id);
         return {
@@ -41,14 +64,15 @@ const ProductList = () => {
           quantity: inventory ? inventory.quantity : 0
         };
       });
-  
+
       setProducts(merged);
       setFilteredProducts(merged);
+
+      await checkCanDeleteProducts(merged.map(p => p.id));
     } catch (error) {
       console.error(error);
     }
   };
-  
 
   useEffect(() => {
     fetchProducts();
@@ -56,11 +80,22 @@ const ProductList = () => {
 
   const handleDelete = async (id) => {
     try {
+      const checkResponse = await checkProductCanDelete(id);
+      if (!checkResponse.data.canDelete) {
+        alert("Sản phẩm này không thể xóa vì đang được sử dụng.");
+        return;
+      }
+
+      if (!window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
+        return;
+      }
+
       await deleteProduct(id);
       console.log("Product deleted successfully.");
       fetchProducts();
     } catch (error) {
       console.error("Error deleting product:", error);
+      alert("Không thể xóa sản phẩm. Lỗi: " + (error.response?.data?.message || error.message));
     }
   };
 
@@ -76,7 +111,6 @@ const ProductList = () => {
       );
     }
   };
-
 
   return (
     <Box sx={{ p: 2, backgroundColor: "#fff", borderRadius: 2 }}>
@@ -155,6 +189,7 @@ const ProductList = () => {
                       marginTop: 30,
                       resizeMode: "contain",
                     }}
+                    alt={product.name}
                   />
                 </TableCell>
 
@@ -170,15 +205,18 @@ const ProductList = () => {
                   >
                     Cập nhật
                   </Button>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    size="small"
-                    sx={{ mb: 7 }}
-                    onClick={() => handleDelete(product.id)}
-                  >
-                    Xóa
-                  </Button>
+
+                  {deletableProducts[product.id] && (
+                    <Button
+                      variant="contained"
+                      color="error"
+                      size="small"
+                      sx={{ mb: 7, width: "100px" }}
+                      onClick={() => handleDelete(product.id)}
+                    >
+                      Xóa
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))}

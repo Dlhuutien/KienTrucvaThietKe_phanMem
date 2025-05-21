@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 
 import iuh.fit.se.models.entities.PurchaseDetail;
 import iuh.fit.se.models.repositories.PurchaseDetailRepository;
+import iuh.fit.se.services.CartService;
 import iuh.fit.se.services.PurchaseDetailService;
 
 import org.modelmapper.ModelMapper;
@@ -30,6 +31,8 @@ public class PurchaseDetailServiceImpl implements PurchaseDetailService {
 
     @Autowired
     private PurchaseDetailRepository purchaseDetailRepository;
+
+    private CartService cartService;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -103,20 +106,17 @@ public class PurchaseDetailServiceImpl implements PurchaseDetailService {
 
                 System.out.println("Saving PurchaseDetail: " + purchaseDetail);
                 PurchaseDetail savedPurchaseDetail = purchaseDetailRepository.save(purchaseDetail);
-                
-                // Gọi API tới inventory-service để cập nhật tồn kho
+
                 InventoryDTO inventoryDTO = InventoryDTO.builder()
-                    .productId(product.getId())
-                    .quantity(purchaseDetailDTO.getQuantity()) // cộng thêm
-                    .build();
+                        .productId(product.getId())
+                        .quantity(purchaseDetailDTO.getQuantity())
+                        .build();
 
                 restTemplate.postForEntity(
-                    apiGatewayUrl + "/inventory",
-                    inventoryDTO,
-                    Void.class
-                );
-                
-                // Cập nhật giá sản phẩm
+                        apiGatewayUrl + "/inventory",
+                        inventoryDTO,
+                        Void.class);
+
                 ProductDTO updateProductPrice = ProductDTO.builder()
                         .id(product.getId())
                         .purchasePrice(purchaseDetailDTO.getPurchasePrice())
@@ -124,11 +124,10 @@ public class PurchaseDetailServiceImpl implements PurchaseDetailService {
                         .build();
 
                 restTemplate.put(
-                	    apiGatewayUrl + "/api/products/" + product.getId() + "/price" +
-                	    "?purchasePrice=" + purchaseDetailDTO.getPurchasePrice() +
-                	    "&salePrice=" + purchaseDetailDTO.getSalePrice(),
-                	    null
-                	);
+                        apiGatewayUrl + "/api/products/" + product.getId() + "/price" +
+                                "?purchasePrice=" + purchaseDetailDTO.getPurchasePrice() +
+                                "&salePrice=" + purchaseDetailDTO.getSalePrice(),
+                        null);
                 return convertToDTO(savedPurchaseDetail);
             }
             throw new RuntimeException("Product not found by name");
@@ -182,18 +181,16 @@ public class PurchaseDetailServiceImpl implements PurchaseDetailService {
 
             PurchaseDetail savedUpdatedDetail = purchaseDetailRepository.save(updatedDetail);
 
-            // Nếu quantity thay đổi thì cập nhật lại inventory
             if (quantityDiff != 0) {
                 InventoryDTO inventoryDTO = InventoryDTO.builder()
                         .productId(product.getId())
-                        .quantity(quantityDiff) // có thể âm hoặc dương
+                        .quantity(quantityDiff)
                         .build();
 
                 restTemplate.postForEntity(
                         apiGatewayUrl + "/inventory",
                         inventoryDTO,
-                        Void.class
-                );
+                        Void.class);
             }
 
             return convertToDTO(savedUpdatedDetail);
@@ -233,5 +230,26 @@ public class PurchaseDetailServiceImpl implements PurchaseDetailService {
                 HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
                 });
         return response.getBody();
+    }
+
+    @Override
+    public long countByProviderId(int providerId) {
+        return purchaseDetailRepository.countByProviderId(providerId);
+    }
+
+    @Override
+    public boolean isProductUsed(int productId) {
+        long purchaseCount = purchaseDetailRepository.countByProductId(productId);
+        if (purchaseCount > 0) {
+            return true;
+        }
+
+        try {
+            long cartUsageCount = cartService.countProductUsageInCarts(productId);
+            return cartUsageCount > 0;
+        } catch (Exception e) {
+            System.err.println("Không thể kiểm tra sử dụng sản phẩm trong giỏ hàng: " + e.getMessage());
+            return false;
+        }
     }
 }
