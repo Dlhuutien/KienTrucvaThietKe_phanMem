@@ -1,7 +1,5 @@
 package iuh.fit.se.models.entities;
 
-import org.springframework.data.redis.core.RedisHash;
-
 import iuh.fit.se.models.enums.OS;
 import iuh.fit.se.models.enums.RAM;
 import iuh.fit.se.models.enums.ROM;
@@ -14,7 +12,6 @@ import lombok.*;
 @Table(name = "phone")
 @NoArgsConstructor
 @AllArgsConstructor
-@RedisHash("Phone")
 public class Phone extends Product {
 	@Enumerated(EnumType.STRING)
 	private OS os;
