@@ -8,6 +8,8 @@ import Home from "./pages/Home";
 import Category from "./pages/Category";
 import Product_detail from "./pages/Product_details";
 import ShoppingCart from "./pages/ShoppingCart";
+import PaymentSuccess from './pages/PaymentSuccess';
+import PaymentCancel from './pages/PaymentCancel';
 import { useEffect } from "react";
 import OrderHistory from './pages/OrderHistory';
 
@@ -35,6 +37,8 @@ function App() {
         <Route path="/products/:productId" element={<Product_detail />} />
         <Route path="/cart" element={<ShoppingCart />} />
         <Route path="/order-history" element={<OrderHistory />} />
+        <Route path="/payment/success" element={<PaymentSuccess />} />
+        <Route path="/payment-cancel" element={<PaymentCancel />} />
       </Routes>
       <Footer />
     </BrowserRouter>
