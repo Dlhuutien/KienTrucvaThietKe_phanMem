@@ -1,5 +1,13 @@
 version: "3.9"
 services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - my-network
+
   mariadb:
     image: mariadb:10.5
     container_name: mariadb
@@ -27,12 +35,7 @@ services:
     ports:
       - "8085:8085"
     depends_on:
-      - mariadb
       - eureka-server
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/authdb?createDatabaseIfNotExist=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
     networks:
       - my-network
 
@@ -54,6 +57,8 @@ services:
     ports:
       - "5000:5000"
     depends_on:
+      - mariadb
+      - redis
       - eureka-server
     networks:
       - my-network
@@ -75,7 +80,11 @@ services:
     container_name: order-service
     ports:
       - "8082:8082"
+    environment:
+      - SPRING_REDIS_HOST=redis
     depends_on:
+      - mariadb
+      - redis
       - eureka-server
     networks:
       - my-network
@@ -108,14 +117,19 @@ services:
     container_name: api-gateway
     ports:
       - "8000:8000"
+    environment:
+      - SPRING_REDIS_HOST=redis
     depends_on:
+      - redis
       - eureka-server
     networks:
       - my-network
 
 networks:
   my-network:
+    name: my-network
     driver: bridge
+
 # Chạy Docker
 # docker-compose up --build
 

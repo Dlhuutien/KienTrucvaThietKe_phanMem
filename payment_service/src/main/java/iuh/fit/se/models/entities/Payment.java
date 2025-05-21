@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import iuh.fit.se.models.enums.PaymentMethod;
 import iuh.fit.se.models.enums.PaymentStatus;
 
 @Data
@@ -30,6 +29,7 @@ public class Payment {
     private BigDecimal amount;
 
     @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 
     @Column(name = "session_id", nullable = false)

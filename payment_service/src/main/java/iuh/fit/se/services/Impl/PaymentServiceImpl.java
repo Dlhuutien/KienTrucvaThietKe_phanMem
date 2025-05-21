@@ -38,6 +38,8 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public String createCheckoutSession(int userId) {
         try {
+            System.out.println("Tạo checkout session cho userId: " + userId);
+
             // Lấy giỏ hàng PENDING của user qua API Gateway
             ResponseEntity<Map<String, Object>> cartResponse = restTemplate.exchange(
                     apiGatewayUrl + "/cart/user/" + userId,
@@ -57,8 +59,10 @@ public class PaymentServiceImpl implements PaymentService {
                 throw new RuntimeException("User chưa có giỏ hàng PENDING");
             }
 
-            int cartId = ((Number) cart.get("id")).intValue(); 
+            int cartId = ((Number) cart.get("id")).intValue();
             BigDecimal totalAmount = new BigDecimal(cart.get("totalDue").toString());
+
+            System.out.println("Tìm thấy giỏ hàng ID: " + cartId + " với tổng tiền: " + totalAmount);
 
             // Tạo phiên Stripe session
             Stripe.apiKey = stripeSecretKey;
@@ -82,11 +86,13 @@ public class PaymentServiceImpl implements PaymentService {
                     .setMode(SessionCreateParams.Mode.PAYMENT)
                     .setSuccessUrl("http://localhost:3000/payment/success?session_id={CHECKOUT_SESSION_ID}")
                     .setCancelUrl("http://localhost:3000/payment/cancel")
-                    .putMetadata("cart_id", String.valueOf(cartId)) 
+                    .putMetadata("cart_id", String.valueOf(cartId))
                     .build();
 
             Session session = Session.create(params);
+            System.out.println("Đã tạo Stripe session với ID: " + session.getId());
 
+            // Tạo bản ghi payment mới với trạng thái PENDING
             Payment payment = Payment.builder()
                     .userId(userId)
                     .amount(totalAmount)
@@ -94,104 +100,81 @@ public class PaymentServiceImpl implements PaymentService {
                     .sessionId(session.getId())
                     .createdTime(LocalDateTime.now())
                     .build();
-            paymentRepository.save(payment);
+
+            Payment savedPayment = paymentRepository.save(payment);
+            System.out.println(
+                    "Đã lưu payment với ID: " + savedPayment.getId() + ", status: " + savedPayment.getStatus());
 
             return session.getUrl();
         } catch (Exception e) {
+            System.err.println("Lỗi khi tạo checkout session: " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException("Error creating checkout session: " + e.getMessage(), e);
         }
     }
 
-//    @Override
-//    public void updatePaymentStatus(String sessionId, PaymentStatus status) {
-//        Payment payment = paymentRepository.findBySessionId(sessionId)
-//                .orElseThrow(() -> new RuntimeException("Payment session not found"));
-//
-//        payment.setStatus(status);
-//        if (status == PaymentStatus.COMPLETED) {
-//        	payment.setCompletedTime(LocalDateTime.now());
-//
-//            // Lấy cartId từ Stripe session metadata
-//            try {
-//                Stripe.apiKey = stripeSecretKey;
-//                Session session = Session.retrieve(sessionId);
-//                String cartId = session.getMetadata().get("cart_id");
-//
-//                // Cập nhật trạng thái giỏ hàng thông qua API Gateway
-//                String url = apiGatewayUrl + "/cart/" + cartId + "/update-state";
-//                Map<String, String> request = new HashMap<>();
-//                request.put("state", "COMPLETED");
-//
-//                restTemplate.put(url, request);
-//            } catch (Exception e) {
-//                throw new RuntimeException("Thanh toán xong nhưng không cập nhật được giỏ hàng: " + e.getMessage(), e);
-//            }
-//        }
-//
-//        paymentRepository.save(payment);
-//    }
-    
- // Trong PaymentServiceImpl.java
-
     @Override
     public void updatePaymentStatus(String sessionId, PaymentStatus status) {
-        Payment payment = paymentRepository.findBySessionId(sessionId)
-                .orElseThrow(() -> new RuntimeException("Payment session not found"));
+        System.out.println("Bắt đầu cập nhật trạng thái thanh toán cho session: " + sessionId + " thành " + status);
 
+        Payment payment = paymentRepository.findBySessionId(sessionId)
+                .orElseThrow(() -> new RuntimeException("Payment session not found: " + sessionId));
+
+        System.out.println(
+                "Tìm thấy payment với ID: " + payment.getId() + ", trạng thái hiện tại: " + payment.getStatus());
+
+        // Cập nhật trạng thái payment
         payment.setStatus(status);
+
         if (status == PaymentStatus.COMPLETED) {
             payment.setCompletedTime(LocalDateTime.now());
+            System.out.println("Đặt thời gian hoàn thành: " + payment.getCompletedTime());
 
             try {
+                // Lấy cartId từ Stripe session
                 Stripe.apiKey = stripeSecretKey;
                 Session session = Session.retrieve(sessionId);
                 String cartId = session.getMetadata().get("cart_id");
 
-                // Cập nhật trạng thái giỏ hàng thông qua API Gateway
+                if (cartId == null || cartId.isEmpty()) {
+                    throw new RuntimeException("Không tìm thấy Cart ID trong metadata của session");
+                }
+
+                System.out.println("Cập nhật trạng thái giỏ hàng: " + cartId);
+
+                // Cập nhật trạng thái giỏ hàng thành COMPLETED
                 String updateCartUrl = apiGatewayUrl + "/cart/" + cartId + "/update-state";
                 Map<String, String> cartRequest = new HashMap<>();
                 cartRequest.put("state", "COMPLETED");
-                restTemplate.put(updateCartUrl, cartRequest);
 
-                // Trừ kho (inventory)
-                String getCartDetailsUrl = apiGatewayUrl + "/cart/detail/" + cartId;
-                ResponseEntity<Map<String, Object>> cartDetailResponse = restTemplate.exchange(
-                    getCartDetailsUrl,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<Map<String, Object>>() {}
-                );
-
-                if (!cartDetailResponse.getStatusCode().is2xxSuccessful() || cartDetailResponse.getBody() == null) {
-                    throw new RuntimeException("Không thể lấy chi tiết giỏ hàng để cập nhật tồn kho");
+                try {
+                    System.out.println("Gọi API cập nhật giỏ hàng: " + updateCartUrl);
+                    restTemplate.put(updateCartUrl, cartRequest);
+                    System.out.println("Đã cập nhật thành công giỏ hàng " + cartId + " sang trạng thái COMPLETED");
+                } catch (Exception restEx) {
+                    System.err.println("Lỗi khi gọi API cập nhật giỏ hàng: " + restEx.getMessage());
+                    restEx.printStackTrace();
+                    throw restEx;
                 }
-
-                // Duyệt qua từng sản phẩm và trừ số lượng
-                var cartDetails = (Iterable<Map<String, Object>>) cartDetailResponse.getBody().get("data");
-                for (Map<String, Object> item : cartDetails) {
-                    int productId = (int) item.get("productId");
-                    int quantity = (int) item.get("quantity");
-
-                    String inventoryUrl = apiGatewayUrl + "/inventory/reduce-quantity";
-                    Map<String, Object> inventoryRequest = new HashMap<>();
-                    inventoryRequest.put("productId", productId);
-                    inventoryRequest.put("quantity", quantity);
-
-                    restTemplate.postForEntity(inventoryUrl, inventoryRequest, Void.class);
-                }
-
             } catch (Exception e) {
-                throw new RuntimeException("Thanh toán xong nhưng lỗi khi cập nhật cart hoặc inventory: " + e.getMessage(), e);
+                System.err.println("Lỗi khi cập nhật trạng thái giỏ hàng: " + e.getMessage());
+                e.printStackTrace();
+                throw new RuntimeException(
+                        "Thanh toán thành công nhưng không cập nhật được trạng thái giỏ hàng: " + e.getMessage(), e);
             }
         }
 
-        paymentRepository.save(payment);
-    }
-    
-    @Override
-    public Payment getPaymentBySessionId(String sessionId) {
-        return paymentRepository.findBySessionId(sessionId)
-                .orElseThrow(() -> new RuntimeException("Payment not found"));
+        // Lưu payment với trạng thái mới
+        Payment savedPayment = paymentRepository.save(payment);
+        System.out.println("Đã lưu payment với trạng thái mới: " + savedPayment.getStatus());
     }
 
+    @Override
+    public Payment getPaymentBySessionId(String sessionId) {
+        System.out.println("Tìm kiếm payment với sessionId: " + sessionId);
+        Payment payment = paymentRepository.findBySessionId(sessionId)
+                .orElseThrow(() -> new RuntimeException("Payment not found with sessionId: " + sessionId));
+        System.out.println("Đã tìm thấy payment với ID: " + payment.getId() + ", status: " + payment.getStatus());
+        return payment;
+    }
 }
