@@ -15,10 +15,12 @@ import iuh.fit.se.services.ProductService;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -153,6 +155,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Transactional
 	@Override
+	@CachePut(value = "products", key = "#id")
 	public ProductDTO updateProductDTO(int id, ProductDTO productDTO) {
 		Product product = findProductById(id);
 
@@ -208,6 +211,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Transactional(readOnly = true)
 	@Override
+	@Cacheable(value = "products", key = "#id")
 	public ProductDTO findProductDTOById(int id) {
 		Product product = productRepository.findById(id)
 				.orElseThrow(() -> new ItemNotFoundException("Product id = " + id + " is not found"));
@@ -217,6 +221,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	@Transactional
+	@CacheEvict(value = "products", key = "#id")
 	public boolean delete(int id) {
 		this.findProductById(id);
 		productRepository.deleteById(id);

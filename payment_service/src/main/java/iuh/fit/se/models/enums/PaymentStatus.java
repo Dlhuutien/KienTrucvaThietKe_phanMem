@@ -15,4 +15,13 @@ public enum PaymentStatus {
     public String getValue() {
         return value;
     }
+
+    public static PaymentStatus fromValue(String value) {
+        for (PaymentStatus status : PaymentStatus.values()) {
+            if (status.getValue().equalsIgnoreCase(value)) {
+                return status;
+            }
+        }
+        throw new IllegalArgumentException("Invalid PaymentStatus value: " + value);
+    }
 }

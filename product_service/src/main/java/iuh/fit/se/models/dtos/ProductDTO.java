@@ -1,5 +1,6 @@
 package iuh.fit.se.models.dtos;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import iuh.fit.se.models.enums.*;
@@ -15,7 +16,8 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDTO {
+public class ProductDTO implements Serializable {
+	private static final long serialVersionUID = 1L;
 	// dto attribute
 	// Giảm giá
 	private BigDecimal discountedPrice;
@@ -32,19 +34,19 @@ public class ProductDTO {
 	@NotBlank(message = "URL ảnh không được để trống")
 	@Pattern(regexp = "^data:image/(jpeg|jpg|png|gif|webp);base64,.+$", message = "URL ảnh phải có định dạng .jpg, .jpeg, .png hoặc .gif dưới dạng base64")
 	private String url;
-	
+
 	@NotNull(message = "Thương hiệu không được để trống")
 	private Brand brand;
-	
-    @NotNull(message = "Danh mục sản phẩm không được để trống")
+
+	@NotNull(message = "Danh mục sản phẩm không được để trống")
 	private Category category;
-    
-    @Min(value = 0, message = "Giá bán phải lớn hơn hoặc bằng 0")
-    @Digits(integer = 19, fraction = 0, message = "Giá nhập tối đa 19 chữ số và không có phần thập phân")
+
+	@Min(value = 0, message = "Giá bán phải lớn hơn hoặc bằng 0")
+	@Digits(integer = 19, fraction = 0, message = "Giá nhập tối đa 19 chữ số và không có phần thập phân")
 	private BigDecimal salePrice;
-    
-    @Min(value = 0, message = "Giá mua phải lớn hơn hoặc bằng 0")
-    @Digits(integer = 19, fraction = 0, message = "Giá bán tối đa 19 chữ số và không có phần thập phân")
+
+	@Min(value = 0, message = "Giá mua phải lớn hơn hoặc bằng 0")
+	@Digits(integer = 19, fraction = 0, message = "Giá bán tối đa 19 chữ số và không có phần thập phân")
 	private BigDecimal purchasePrice;
 
 	// earphone attribute
