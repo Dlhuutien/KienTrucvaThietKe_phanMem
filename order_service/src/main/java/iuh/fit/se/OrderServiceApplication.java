@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableCaching
+// @EnableCaching
 public class OrderServiceApplication {
 
 	public static void main(String[] args) {

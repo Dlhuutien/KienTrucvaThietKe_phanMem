@@ -16,8 +16,8 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDTO implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class ProductDTO{
+	// private static final long serialVersionUID = 1L;
 	// dto attribute
 	// Giảm giá
 	private BigDecimal discountedPrice;

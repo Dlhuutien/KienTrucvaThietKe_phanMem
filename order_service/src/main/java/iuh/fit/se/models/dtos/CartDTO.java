@@ -12,8 +12,8 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CartDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class CartDTO{
+    // private static final long serialVersionUID = 1L;
     private int cartId;
     private int id;
     private int userId;

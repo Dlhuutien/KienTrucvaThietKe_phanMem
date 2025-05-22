@@ -211,7 +211,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Transactional(readOnly = true)
 	@Override
-	@Cacheable(value = "products", key = "#id")
+	// @Cacheable(value = "products", key = "#id")
 	public ProductDTO findProductDTOById(int id) {
 		Product product = productRepository.findById(id)
 				.orElseThrow(() -> new ItemNotFoundException("Product id = " + id + " is not found"));
@@ -221,7 +221,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	@Transactional
-	@CacheEvict(value = "products", key = "#id")
+	// @CacheEvict(value = "products", key = "#id")
 	public boolean delete(int id) {
 		this.findProductById(id);
 		productRepository.deleteById(id);

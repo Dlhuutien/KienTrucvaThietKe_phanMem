@@ -14,8 +14,8 @@ import lombok.*;
 @Table(name = "cart_detail")
 @NoArgsConstructor
 @AllArgsConstructor
-public class CartDetail implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class CartDetail {
+	// private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;

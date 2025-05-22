@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableCaching
+// @EnableCaching
 public class ProductServiceApplication {
 
 	public static void main(String[] args) {

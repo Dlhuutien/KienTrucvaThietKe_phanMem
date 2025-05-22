@@ -70,7 +70,7 @@ public class CartServiceImpl implements CartService {
 
 	@Transactional
 	@Override
-	@CacheEvict(value = "cartByUserId", key = "#cartDTO.userId")
+	// @CacheEvict(value = "cartByUserId", key = "#cartDTO.userId")
 	public CartDTO save(CartDTO cartDTO) {
 		// Kiểm tra user tồn tại qua API Gateway
 		ResponseEntity<Map<String, Object>> userResponse = restTemplate.exchange(
@@ -257,7 +257,7 @@ public class CartServiceImpl implements CartService {
 		cartRepository.save(cart);
 	}
 
-	@Cacheable(value = "cartByUserId", key = "#userId")
+	// @Cacheable(value = "cartByUserId", key = "#userId")
 	@Override
 	@Transactional(readOnly = true)
 	public CartDTO findPendingCartByUserId(int userId) {
