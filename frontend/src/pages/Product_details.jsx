@@ -81,6 +81,8 @@ const Product_detail = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [rateLimitOpen, setRateLimitOpen] = useState(false);
+  const [snackbarErrorOpen, setSnackbarErrorOpen] = useState(false);
+  const [snackbarErrorMessage, setSnackbarErrorMessage] = useState("");
 
   useEffect(() => {
     if (productId) {
@@ -172,11 +174,13 @@ const Product_detail = () => {
       };
 
       await createCart(cartDTO);
-
-      setSnackbarOpen(true); // show snackbar thành công
+      setSnackbarOpen(true); // Hiển thị thông báo thành công
     } catch (error) {
-      console.error("Lỗi khi thêm vào giỏ hàng:", error);
-      message.error("Thêm vào giỏ hàng thất bại.");
+      const backendMsg =
+        error?.response?.data?.message ||
+        "Đã có lỗi xảy ra, vui lòng thử lại sau.";
+      setSnackbarErrorMessage(backendMsg);
+      setSnackbarErrorOpen(true);
     } finally {
       setAddCartLoading(false);
     }
@@ -699,6 +703,20 @@ const Product_detail = () => {
           sx={{ width: "100%" }}
         >
           Bạn đã gọi quá 5 lần trong 1 phút. Vui lòng chờ rồi thử lại!
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={snackbarErrorOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarErrorOpen(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setSnackbarErrorOpen(false)}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {snackbarErrorMessage}
         </Alert>
       </Snackbar>
     </Box>

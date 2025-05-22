@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableCaching
+@EnableRetry
 public class OrderServiceApplication {
 
 	public static void main(String[] args) {
