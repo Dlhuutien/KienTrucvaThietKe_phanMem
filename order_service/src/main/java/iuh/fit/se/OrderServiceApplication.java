@@ -32,10 +32,9 @@ public class OrderServiceApplication {
 	public RestTemplate restTemplate() {
 		RestTemplate restTemplate = new RestTemplate();
 
-		// Thiết lập timeout cho RestTemplate
 		SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-		requestFactory.setConnectTimeout(5000); // 3 giây
-		requestFactory.setReadTimeout(5000); // 3 giây
+		requestFactory.setConnectTimeout(3000);
+		requestFactory.setReadTimeout(3000);
 
 		restTemplate.setRequestFactory(requestFactory);
 

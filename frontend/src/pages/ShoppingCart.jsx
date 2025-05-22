@@ -22,7 +22,7 @@ import {
   deleteCartDetail,
 } from "../services/AddCartDetailService";
 import { useNavigate } from "react-router-dom";
-import { createPayment } from "../services/PaymentService"; 
+import { createPayment } from "../services/PaymentService";
 
 const formatCurrency = (value) => {
   return new Intl.NumberFormat("vi-VN", {
@@ -35,7 +35,7 @@ const ShoppingCart = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [openModal, setOpenModal] = useState(false);
-  
+
 
   useEffect(() => {
     loadCart();
@@ -92,9 +92,9 @@ const ShoppingCart = () => {
       message.error("Bạn cần đăng nhập để thanh toán.");
       return;
     }
-  
+
     const totalAmount = products.reduce((total, p) => total + p.totalPrice, 0);
-  
+
     const paymentData = {
       userId: parseInt(userId),
       amount: totalAmount,
@@ -102,7 +102,7 @@ const ShoppingCart = () => {
       successUrl: "http://localhost:3000/payment-success",
       cancelUrl: "http://localhost:3000/payment-cancel",
     };
-  
+
     try {
       const response = await createPayment(paymentData);
       // window.location.href = response.data.paymentUrl; // Redirect đến trang thanh toán Stripe

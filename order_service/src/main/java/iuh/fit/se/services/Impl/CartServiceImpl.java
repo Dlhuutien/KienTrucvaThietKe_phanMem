@@ -1,6 +1,7 @@
 package iuh.fit.se.services.Impl;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,15 +14,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import iuh.fit.se.models.dtos.CartDTO;
@@ -50,6 +49,12 @@ public class CartServiceImpl implements CartService {
 	@Autowired
 	private RestTemplate restTemplate;
 
+	@Autowired
+	private RedisTemplate<String, Object> redisTemplate;
+
+	@Autowired
+	private ProductServiceClient productServiceClient;
+
 	@Value("${api_gateway.url}")
 	private String apiGatewayUrl;
 
@@ -75,140 +80,31 @@ public class CartServiceImpl implements CartService {
 		return cartRepository.findAll().stream().map(this::convertToCartDTO).collect(Collectors.toList());
 	}
 
-	// @Transactional
-	// @Override
-	// public CartDTO save(CartDTO cartDTO) {
-	// //Kiểm tra id User
-	// ResponseEntity<Map<String, Object>> userResponse = restTemplate.exchange(
-	// apiGatewayUrl + "/userProfiles/" + cartDTO.getUserId(),
-	// HttpMethod.GET,
-	// null,
-	// new ParameterizedTypeReference<Map<String, Object>>() {}
-	// );
-	//
-	// if (!userResponse.getStatusCode().is2xxSuccessful() || userResponse.getBody()
-	// == null) {
-	// throw new RuntimeException("Không thể kết nối tới user service hoặc dữ liệu
-	// rỗng");
-	// }
-	//
-	// Map<String, Object> userMap = userResponse.getBody();
-	// Map<String, Object> userData = (Map<String, Object>) userMap.get("data");
-	// if (userData == null) {
-	// throw new RuntimeException("Không tìm thấy người dùng với ID: " +
-	// cartDTO.getUserId());
-	// }
-	//
-	// //Kiểm tra user đã có cart trạng thái PENDING
-	// Cart cart = cartRepository.findByUserIdAndState(cartDTO.getUserId(),
-	// State.PENDING);
-	//
-	// if (cart == null) {
-	// // Nếu chưa, tạo cart
-	// cart = convertToCartEntity(cartDTO);
-	// cart.setCartDetails(new ArrayList<>());
-	// }
-	//
-	// //Xử lý cartDetails
-	// List<CartDetail> newCartDetails = new ArrayList<>();
-	// for (CartDetailDTO detailDTO : cartDTO.getCartDetails()) {
-	// // Kiểm tra sản phẩm
-	// ResponseEntity<Map<String, Object>> productResponse = restTemplate.exchange(
-	// apiGatewayUrl + "/api/products/" + detailDTO.getProductId(),
-	// HttpMethod.GET,
-	// null,
-	// new ParameterizedTypeReference<Map<String, Object>>() {}
-	// );
-	//
-	// if (!productResponse.getStatusCode().is2xxSuccessful() ||
-	// productResponse.getBody() == null) {
-	// throw new RuntimeException("Không thể kết nối tới product service hoặc dữ
-	// liệu rỗng");
-	// }
-	//
-	// Map<String, Object> productMap = productResponse.getBody();
-	// Map<String, Object> productData = (Map<String, Object>)
-	// productMap.get("data");
-	// if (productData == null) {
-	// throw new RuntimeException("Không tìm thấy sản phẩm với ID: " +
-	// detailDTO.getProductId());
-	// }
-	//
-	// CartDetail detail = convertToCartDetailEntity(detailDTO);
-	// detail.setCart(cart);
-	//
-	// if (productData.get("salePrice") != null) {
-	// BigDecimal salePrice = new
-	// BigDecimal(productData.get("salePrice").toString());
-	// detail.setPriceAtTransaction(salePrice);
-	// }
-	//
-	// newCartDetails.add(detail);
-	// }
-	//
-	// //Gộp cartDetails mới vào cart hiện tại
-	// if (cart.getCartDetails() == null) {
-	// cart.setCartDetails(new ArrayList<>());
-	// }
-	// cart.getCartDetails().addAll(newCartDetails);
-	//
-	// //Tính lại tổng tiền
-	// BigDecimal total = cart.getCartDetails().stream()
-	// .map(d ->
-	// d.getPriceAtTransaction().multiply(BigDecimal.valueOf(d.getQuantity())))
-	// .reduce(BigDecimal.ZERO, BigDecimal::add);
-	// cart.setTotalDue(total);
-	//
-	// //Lưu cart (có cascade sẽ lưu cả cartDetails mới)
-	// Cart savedCart = cartRepository.save(cart);
-	//
-	// //Trả về DTO
-	// CartDTO resultDTO = convertToCartDTO(savedCart);
-	// List<CartDetailDTO> detailDTOs = savedCart.getCartDetails().stream()
-	// .map(this::convertToCartDetailDTO)
-	// .collect(Collectors.toList());
-	// resultDTO.setCartDetails(detailDTOs);
-	//
-	// return resultDTO;
-	// }
-
-	@Retryable(value = { RestClientException.class, HttpServerErrorException.class,
-			RuntimeException.class }, maxAttempts = 5, backoff = @Backoff(delay = 3000, multiplier = 1.5))
+	@Retryable(value = { Exception.class }, maxAttempts = 5, backoff = @Backoff(delay = 3000, multiplier = 1.5))
 	public Map<String, Object> getProductById(int productId) {
 		logger.info("Đang thử gọi product-service cho productId: {}", productId);
 
-		try {
-			ResponseEntity<Map<String, Object>> productResponse = restTemplate.exchange(
-					apiGatewayUrl + "/api/products/" + productId,
-					HttpMethod.GET,
-					null,
-					new ParameterizedTypeReference<Map<String, Object>>() {
-					});
+		ResponseEntity<Map<String, Object>> productResponse = restTemplate.exchange(
+				apiGatewayUrl + "/api/products/" + productId,
+				HttpMethod.GET,
+				null,
+				new ParameterizedTypeReference<Map<String, Object>>() {
+				});
 
-			if (!productResponse.getStatusCode().is2xxSuccessful() || productResponse.getBody() == null) {
-				logger.error("Phản hồi không thành công hoặc body rỗng: {}", productResponse.getStatusCode());
-				throw new RuntimeException("Không thể kết nối tới product service hoặc dữ liệu rỗng");
-			}
-
-			Map<String, Object> productMap = productResponse.getBody();
-			Map<String, Object> productData = (Map<String, Object>) productMap.get("data");
-
-			if (productData == null) {
-				logger.error("Không tìm thấy dữ liệu sản phẩm với productId: {}", productId);
-				throw new RuntimeException("Không tìm thấy sản phẩm với ID: " + productId);
-			}
-
-			return productData;
-		} catch (HttpServerErrorException e) {
-			logger.error("Lỗi server từ API Gateway (sẽ retry): {} cho sản phẩm {}", e.getMessage(), productId);
-			throw e;
-		} catch (RestClientException e) {
-			logger.error("Lỗi kết nối tới API Gateway (sẽ retry): {} cho sản phẩm {}", e.getMessage(), productId);
-			throw e;
-		} catch (RuntimeException e) {
-			logger.error("Lỗi RuntimeException (sẽ retry): {} cho sản phẩm {}", e.getMessage(), productId);
-			throw e;
+		if (!productResponse.getStatusCode().is2xxSuccessful() || productResponse.getBody() == null) {
+			logger.error("Phản hồi không thành công hoặc body rỗng: {}", productResponse.getStatusCode());
+			throw new RuntimeException("Không thể kết nối tới product service hoặc dữ liệu rỗng");
 		}
+
+		Map<String, Object> productMap = productResponse.getBody();
+		Map<String, Object> productData = (Map<String, Object>) productMap.get("data");
+
+		if (productData == null) {
+			logger.error("Không tìm thấy dữ liệu sản phẩm với productId: {}", productId);
+			throw new RuntimeException("Không tìm thấy sản phẩm với ID: " + productId);
+		}
+
+		return productData;
 	}
 
 	@Transactional
@@ -248,34 +144,28 @@ public class CartServiceImpl implements CartService {
 			cart.setCartDetails(new ArrayList<>());
 		}
 
-		List<String> errors = new ArrayList<>();
 		for (CartDetailDTO detailDTO : cartDTO.getCartDetails()) {
 			int productId = detailDTO.getProductId();
 			int quantityToAdd = detailDTO.getQuantity();
 
-			try {
-				Map<String, Object> productData = getProductById(productId);
+			Map<String, Object> productData = productServiceClient.getProductById(productId);
 
-				CartDetail existingDetail = cart.getCartDetails().stream()
-						.filter(cd -> cd.getProductId() == productId)
-						.findFirst()
-						.orElse(null);
+			CartDetail existingDetail = cart.getCartDetails().stream()
+					.filter(cd -> cd.getProductId() == productId)
+					.findFirst()
+					.orElse(null);
 
-				if (existingDetail != null) {
-					existingDetail.setQuantity(existingDetail.getQuantity() + quantityToAdd);
-				} else {
-					CartDetail newDetail = CartDetail.builder()
-							.productId(productId)
-							.quantity(quantityToAdd)
-							.priceAtTransaction(new BigDecimal(productData.get("salePrice").toString()))
-							.cart(cart)
-							.build();
+			if (existingDetail != null) {
+				existingDetail.setQuantity(existingDetail.getQuantity() + quantityToAdd);
+			} else {
+				CartDetail newDetail = CartDetail.builder()
+						.productId(productId)
+						.quantity(quantityToAdd)
+						.priceAtTransaction(new BigDecimal(productData.get("salePrice").toString()))
+						.cart(cart)
+						.build();
 
-					cart.getCartDetails().add(newDetail);
-				}
-			} catch (Exception e) {
-				logger.error("Lỗi khi xử lý sản phẩm ID {}: {}", productId, e.getMessage());
-				errors.add("Không thể thêm sản phẩm ID " + productId + ": " + e.getMessage());
+				cart.getCartDetails().add(newDetail);
 			}
 		}
 
@@ -294,33 +184,10 @@ public class CartServiceImpl implements CartService {
 				.collect(Collectors.toList());
 		resultDTO.setCartDetails(detailDTOs);
 
-		if (!errors.isEmpty()) {
-			logger.warn("Đã xảy ra lỗi với một số sản phẩm: {}", errors);
-		}
+		String redisKey = "cartByUserId::" + savedCart.getUserId();
+		redisTemplate.opsForValue().set(redisKey, resultDTO, Duration.ofMinutes(10));
 
 		return resultDTO;
-	}
-
-	@Recover
-	public Map<String, Object> recover(RestClientException e, int productId) {
-		logger.error("Recover được gọi cho RestClientException - productId: {}, lỗi: {}", productId, e.getMessage());
-		throw new RuntimeException(
-				"Không thể kết nối tới product service sau nhiều lần thử với productId: " + productId);
-	}
-
-	@Recover
-	public Map<String, Object> recover(HttpServerErrorException e, int productId) {
-		logger.error("Recover được gọi cho HttpServerErrorException - productId: {}, lỗi: {}", productId,
-				e.getMessage());
-		throw new RuntimeException(
-				"Không thể kết nối tới product service sau nhiều lần thử với productId: " + productId);
-	}
-
-	@Recover
-	public Map<String, Object> recover(RuntimeException e, int productId) {
-		logger.error("Recover được gọi cho RuntimeException - productId: {}, lỗi: {}", productId, e.getMessage());
-		throw new RuntimeException(
-				"Không thể kết nối tới product service sau nhiều lần thử với productId: " + productId);
 	}
 
 	@Override
