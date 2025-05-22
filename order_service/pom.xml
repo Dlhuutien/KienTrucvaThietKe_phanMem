@@ -104,13 +104,11 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-loadbalancer</artifactId>
 		</dependency>
-
 		<!-- Spring Retry -->
 		<dependency>
 			<groupId>org.springframework.retry</groupId>
 			<artifactId>spring-retry</artifactId>
 		</dependency>
-
 		<!-- Enable annotation for retry -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
