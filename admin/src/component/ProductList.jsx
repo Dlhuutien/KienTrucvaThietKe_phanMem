@@ -145,8 +145,8 @@ const ProductList = () => {
               <TableCell>Số lượng</TableCell>
               <TableCell>Giá nhập</TableCell>
               <TableCell>Giá bán</TableCell>
-              <TableCell>Giảm giá (%)</TableCell>
-              <TableCell>Giá đã giảm</TableCell>
+              {/* <TableCell>Giảm giá (%)</TableCell>
+              <TableCell>Giá đã giảm</TableCell> */}
               <TableCell>URL</TableCell>
               <TableCell>Hành động</TableCell>
             </TableRow>
@@ -160,23 +160,20 @@ const ProductList = () => {
                 <TableCell>{product.category}</TableCell>
                 <TableCell>{product.quantity}</TableCell>
                 <TableCell>
-                  {product.purchasePrice.toLocaleString("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  })}
+                  {product.purchasePrice > 1
+                    ? product.purchasePrice.toLocaleString("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      })
+                    : "Chưa nhập hàng"}
                 </TableCell>
                 <TableCell>
-                  {product.salePrice.toLocaleString("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  })}
-                </TableCell>
-                <TableCell>{product.percentDiscount}%</TableCell>
-                <TableCell>
-                  {product.discountedPrice.toLocaleString("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  })}
+                  {product.salePrice > 1
+                    ? product.salePrice.toLocaleString("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      })
+                    : "Chưa nhập hàng"}
                 </TableCell>
                 <TableCell>
                   <img

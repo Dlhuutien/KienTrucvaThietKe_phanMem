@@ -34,7 +34,7 @@ const CustomerDetail = () => {
         textAlign: "center",
       }}
     >
-      <Box
+      {/* <Box
         sx={{
           width: 120,
           height: 120,
@@ -49,7 +49,7 @@ const CustomerDetail = () => {
           alt="Profile"
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
-      </Box>
+      </Box> */}
       <Typography variant="h6" sx={{ mt: 2, fontWeight: "bold" }}>
         {customer.fullName}
       </Typography>
