@@ -291,13 +291,14 @@ public class ProductServiceImpl implements ProductService {
 				Map<String, Object> responseBody = orderResponse.getBody();
 				if (responseBody != null && responseBody.containsKey("isUsed")
 						&& (Boolean) responseBody.get("isUsed")) {
-					return false;
+					return false; // Sản phẩm đang được sử dụng trong purchaseDetail
 				}
 			}
 		} catch (Exception e) {
 			System.err.println("Không thể kiểm tra sử dụng sản phẩm trong order-service: " + e.getMessage());
 		}
 
+		// Kiểm tra thêm trong inventory-service
 		try {
 			ResponseEntity<Map<String, Object>> inventoryResponse = restTemplate.exchange(
 					apiGatewayUrl + "/inventory/check-product-usage/" + id,
@@ -310,14 +311,14 @@ public class ProductServiceImpl implements ProductService {
 				Map<String, Object> responseBody = inventoryResponse.getBody();
 				if (responseBody != null && responseBody.containsKey("isUsed")
 						&& (Boolean) responseBody.get("isUsed")) {
-					return false;
+					return false; // Sản phẩm đang được sử dụng trong inventory
 				}
 			}
 		} catch (Exception e) {
 			System.err.println("Không thể kiểm tra sử dụng sản phẩm trong inventory-service: " + e.getMessage());
 		}
 
-		return true;
+		return true; // Sản phẩm có thể xóa
 	}
 
 }

@@ -32,6 +32,7 @@ public class PurchaseDetailServiceImpl implements PurchaseDetailService {
     @Autowired
     private PurchaseDetailRepository purchaseDetailRepository;
 
+    @Autowired
     private CartService cartService;
 
     @Autowired
@@ -241,12 +242,12 @@ public class PurchaseDetailServiceImpl implements PurchaseDetailService {
     public boolean isProductUsed(int productId) {
         long purchaseCount = purchaseDetailRepository.countByProductId(productId);
         if (purchaseCount > 0) {
-            return true;
+            return true; // Sản phẩm đã được sử dụng trong purchaseDetail
         }
 
         try {
             long cartUsageCount = cartService.countProductUsageInCarts(productId);
-            return cartUsageCount > 0;
+            return cartUsageCount > 0; // Kiểm tra thêm trong giỏ hàng
         } catch (Exception e) {
             System.err.println("Không thể kiểm tra sử dụng sản phẩm trong giỏ hàng: " + e.getMessage());
             return false;

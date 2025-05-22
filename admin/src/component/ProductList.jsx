@@ -14,13 +14,14 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Tooltip,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import {
   listProduct,
   deleteProduct,
   getInventories,
-  checkProductCanDelete
+  checkProductCanDelete,
 } from "../services/ProductService";
 
 const ProductList = () => {
@@ -51,24 +52,24 @@ const ProductList = () => {
     try {
       const [productRes, inventoryRes] = await Promise.all([
         listProduct(),
-        getInventories()
+        getInventories(),
       ]);
 
       const products = productRes.data.data;
       const inventories = inventoryRes.data.data;
 
-      const merged = products.map(product => {
-        const inventory = inventories.find(inv => inv.productId === product.id);
+      const merged = products.map((product) => {
+        const inventory = inventories.find((inv) => inv.productId === product.id);
         return {
           ...product,
-          quantity: inventory ? inventory.quantity : 0
+          quantity: inventory ? inventory.quantity : 0,
         };
       });
 
       setProducts(merged);
       setFilteredProducts(merged);
 
-      await checkCanDeleteProducts(merged.map(p => p.id));
+      await checkCanDeleteProducts(merged.map((p) => p.id));
     } catch (error) {
       console.error(error);
     }
@@ -82,7 +83,7 @@ const ProductList = () => {
     try {
       const checkResponse = await checkProductCanDelete(id);
       if (!checkResponse.data.canDelete) {
-        alert("Sản phẩm này không thể xóa vì đang được sử dụng.");
+        alert("Sản phẩm này không thể xóa vì đã được sử dụng trong đơn hàng.");
         return;
       }
 
@@ -91,10 +92,10 @@ const ProductList = () => {
       }
 
       await deleteProduct(id);
-      console.log("Product deleted successfully.");
+      console.log("Sản phẩm đã được xóa thành công.");
       fetchProducts();
     } catch (error) {
-      console.error("Error deleting product:", error);
+      console.error("Lỗi khi xóa sản phẩm:", error);
       alert("Không thể xóa sản phẩm. Lỗi: " + (error.response?.data?.message || error.message));
     }
   };
@@ -118,7 +119,6 @@ const ProductList = () => {
         Danh Sách Sản Phẩm
       </Typography>
 
-      {/* Filter by Category */}
       <FormControl fullWidth sx={{ mb: 2 }}>
         <InputLabel>Danh mục</InputLabel>
         <Select
@@ -134,7 +134,6 @@ const ProductList = () => {
         </Select>
       </FormControl>
 
-      {/* Product List */}
       <TableContainer component={Paper} style={{ maxHeight: 650 }}>
         <Table stickyHeader>
           <TableHead>
@@ -149,7 +148,7 @@ const ProductList = () => {
               <TableCell>Giảm giá (%)</TableCell>
               <TableCell>Giá đã giảm</TableCell>
               <TableCell>URL</TableCell>
-              <TableCell>Action</TableCell>
+              <TableCell>Hành động</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -179,7 +178,6 @@ const ProductList = () => {
                     currency: "VND",
                   })}
                 </TableCell>
-
                 <TableCell>
                   <img
                     src={product.url}
@@ -192,7 +190,6 @@ const ProductList = () => {
                     alt={product.name}
                   />
                 </TableCell>
-
                 <TableCell sx={{ display: "flex", mt: 10 }}>
                   <Button
                     component={Link}
@@ -205,13 +202,15 @@ const ProductList = () => {
                   >
                     Cập nhật
                   </Button>
-
                   {deletableProducts[product.id] && (
                     <Button
                       variant="contained"
                       color="error"
                       size="small"
-                      sx={{ mb: 7, width: "100px" }}
+                      sx={{
+                        mb: 7,
+                        width: "100px",
+                      }}
                       onClick={() => handleDelete(product.id)}
                     >
                       Xóa
