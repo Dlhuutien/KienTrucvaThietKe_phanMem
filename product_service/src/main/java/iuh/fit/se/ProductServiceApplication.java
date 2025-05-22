@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableCaching
+@EnableCaching
 public class ProductServiceApplication {
 
 	public static void main(String[] args) {
