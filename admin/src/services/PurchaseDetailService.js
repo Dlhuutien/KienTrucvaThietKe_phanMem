@@ -7,8 +7,13 @@ export const listPurchaseDetail = () => {
 }
 
 export const addPurchaseDetail = (purchaseDetail) => {
-    return axios.post(`${REST_API_BASE_URL}/purchaseDetail`, purchaseDetail);
+    return axios.post(`${REST_API_BASE_URL}/purchaseDetail`, purchaseDetail, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
 };
+
 
 export const updatePurchaseDetail = (id, purchaseDetail) => {
     return axios.put(`${REST_API_BASE_URL}/purchaseDetail/${id}`, purchaseDetail)

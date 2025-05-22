@@ -1,35 +1,72 @@
-# name: Run Full Docker Compose
-
-# on:
-#   push:
-#     branches: [deloy]
-#   workflow_dispatch:
-
-# jobs:
-#   docker:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout source
-#         uses: actions/checkout@v3
-
-#       - name: Run Docker Compose
-#         run: docker compose up -d --build
-
-#       - name: Check running containers
-#         run: docker ps
-name: Run Full Docker Compose
+name: Full Docker Deploy to Render
 
 on:
   push:
-    branches: [deloy]
-  workflow_dispatch:
+    branches:
+      - deloy
+    paths:
+      - '**'
 
 jobs:
-  docker:
+  build-and-push:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - name: auth-service
+            path: auth_service
+            render_key: RENDER_API_KEY
+            render_url: https://api.render.com/deploy/srv-d0kasr7fte5s738hh0l0
+          - name: eureka-server
+            path: eureka_server
+            render_key: RENDER_API_KEY_EUREKA
+            render_url: https://api.render.com/deploy/srv-d0le93buibrs73a85te0
+          - name: api-gateway
+            path: API-Gateway
+            render_key: RENDER_API_KEY_GATEWAY
+            render_url: https://api.render.com/deploy/srv-d0m0gcp5pdvs738penp0
+          - name: inventory-service
+            path: inventory_service
+            render_key: RENDER_API_KEY_INVENTORY
+            render_url: https://api.render.com/deploy/srv-d0m1hs95pdvs738qga60
+          - name: order-service
+            path: order_service
+            render_key: RENDER_API_KEY_ORDER
+            render_url: https://api.render.com/deploy/srv-d0m1ksidbo4c73cd4450
+          - name: payment-service
+            path: payment_service
+            render_key: RENDER_API_KEY_PAYMENT
+            render_url: https://api.render.com/deploy/srv-d0m1h1odl3ps73btqcgg
+          - name: product-service
+            path: product_service
+            render_key: RENDER_API_KEY_PRODUCT
+            render_url: https://api.render.com/deploy/srv-d0m1avidbo4c73ccppkg
+          - name: provider-service
+            path: provider_service
+            render_key: RENDER_API_KEY_PROVIDER
+            render_url: https://api.render.com/deploy/srv-d0m1j3ogjchc739epoi0
+          - name: user-service
+            path: user_service
+            render_key: RENDER_API_KEY_USER
+            render_url: https://api.render.com/deploy/srv-d0m1c1h5pdvs738qa3rg
+
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Build common-library if exists
+        run: |
+          if [ -f ./common-library/pom.xml ]; then
+            mvn clean install -f ./common-library/pom.xml -DskipTests
+          fi
+
+      - name: Build Java project
+        run: mvn clean package -f ./${{ matrix.service.path }}/pom.xml -DskipTests
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -40,15 +77,12 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Run Docker Compose
-        run: docker compose up -d --build
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.service.name }}:latest ./${{ matrix.service.path }}
 
-      - name: Wait for containers to be healthy
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ matrix.service.name }}:latest
+
+      - name: Deploy to Render
         run: |
-          # Ví dụ đợi 20s để container khởi động
-          sleep 20
-          # Kiểm tra trạng thái container (tùy chỉnh tên service nếu có)
-          docker ps
-
-      - name: Show logs (optional)
-        run: docker compose logs --tail=50
+          curl -X POST "${{ matrix.service.render_url }}?key=${{ secrets[ matrix.service.render_key ] }}"
