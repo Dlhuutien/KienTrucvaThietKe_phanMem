@@ -1,0 +1,19 @@
+name: Run Full Docker Compose
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Run Docker Compose
+        run: docker compose up -d --build
+
+      - name: Check running containers
+        run: docker ps
