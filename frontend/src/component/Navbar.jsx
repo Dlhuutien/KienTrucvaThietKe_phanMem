@@ -140,6 +140,7 @@ const Navbar = () => {
       >
         <Typography
           component={Link}
+          to='/aboutus'
           className="text"
           variant="h5"
           sx={{
