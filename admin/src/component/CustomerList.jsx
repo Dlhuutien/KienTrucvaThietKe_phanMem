@@ -100,7 +100,7 @@ const CustomerList = () => {
                   <TableCell>{customer.userState}</TableCell>
                   <TableCell>
                     <Box sx={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
-                      <Button
+                      {/* <Button
                         component={Link}
                         to={`/CapNhatKhachHang?id=${customer.id}`}
                         state={{ customerData: customer }}
@@ -109,7 +109,7 @@ const CustomerList = () => {
                         size="small"
                       >
                         Cập nhật
-                      </Button>
+                      </Button> */}
 
                       {/* Nút thay đổi trạng thái dựa theo userState */}
                       {customer.userState === "ACTIVE" && (
