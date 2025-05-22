@@ -86,7 +86,7 @@ const Navbar = () => {
           Danh Mục
         </Typography>
       </Box>
-      <Box
+      {/* <Box
         sx={{
           width: "170px",
           height: "60px",
@@ -117,7 +117,7 @@ const Navbar = () => {
         >
           Khuyến Mãi
         </Typography>
-      </Box>
+      </Box> */}
       <Box
         sx={{
           width: "170px",
@@ -151,7 +151,7 @@ const Navbar = () => {
           Giới Thiệu
         </Typography>
       </Box>
-      <Box
+      {/* <Box
         sx={{
           width: "170px",
           height: "60px",
@@ -181,7 +181,7 @@ const Navbar = () => {
         >
           Liên hệ
         </Typography>
-      </Box>
+      </Box> */}
     </Box>
   );
 };

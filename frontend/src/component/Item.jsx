@@ -55,7 +55,7 @@ const Item = ({
 />
 
 
-          {sale !== 0 && (
+          {/* {sale !== 0 && (
             <Box
               sx={{
                 position: "absolute",
@@ -73,7 +73,7 @@ const Item = ({
             >
               <Typography>{sale}%</Typography>
             </Box>
-          )}
+          )} */}
           <CardContent sx={{ width: 350 }}>
             <Typography
               className="product-name" // Add a class to identify the name
@@ -84,14 +84,14 @@ const Item = ({
             >
               {name}
             </Typography>{" "}
-            <Typography
+            {/* <Typography
               sx={{
                 textDecorationLine: "line-through",
                 color: "gray",
               }}
             >
               {old_price !== new_price && formatCurrency(old_price)}
-            </Typography>
+            </Typography> */}
             <Typography
               sx={{
                 color: "red",

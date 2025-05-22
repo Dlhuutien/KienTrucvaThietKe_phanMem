@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Button,
@@ -13,7 +13,7 @@ import {
   Rating,
   Modal,
   Snackbar,
-  Alert
+  Alert,
 } from "@mui/material";
 import { deepPurple } from "@mui/material/colors";
 import { useParams, Link as RouterLink } from "react-router-dom";
@@ -77,18 +77,31 @@ const Product_detail = () => {
   const [addCartLoading, setAddCartLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
+  // Thêm state cho snackbar thông báo lỗi giới hạn
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [rateLimitOpen, setRateLimitOpen] = useState(false);
 
   useEffect(() => {
     if (productId) {
       setIsLoading(true);
       getProductById(productId)
-        .then((response) => setProduct(response.data.data))
+        .then((response) => {
+          console.log(
+            "Product quantity from API:",
+            response.data.data.quantity
+          );
+          setProduct(response.data.data);
+        })
         .catch((error) => console.error("Error fetching product:", error))
         .finally(() => setIsLoading(false));
     }
   }, [productId]);
 
-  const handleIncrement = () => setQuantity((prevQuantity) => prevQuantity + 1);
+  const handleIncrement = () => {
+    setQuantity((prev) => prev + 1);
+  };
+
   const handleDecrement = () =>
     setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1));
 
@@ -112,13 +125,40 @@ const Product_detail = () => {
   const formatCurrency = (value) =>
     value ? new Intl.NumberFormat("vi-VN").format(value) + " VND" : "0 VND";
 
+  // Dùng useRef để lưu thời gian bắt đầu và đếm số lần gọi, không render lại component khi thay đổi
+  const apiCallCount = useRef(0);
+  const apiCallStartTime = useRef(null);
+
   const handleAddToCart = async () => {
     const userId = localStorage.getItem("userId");
     if (userId == null) {
       setOpenModal(true);
       return;
     }
-  
+
+    // Khởi tạo thời gian bắt đầu nếu chưa có
+    if (!apiCallStartTime.current) {
+      apiCallStartTime.current = Date.now();
+      apiCallCount.current = 0;
+    }
+
+    const now = Date.now();
+    // Nếu đã qua hơn 1 phút thì reset bộ đếm và thời gian bắt đầu
+    if (now - apiCallStartTime.current > 60000) {
+      apiCallStartTime.current = now;
+      apiCallCount.current = 0;
+    }
+
+    // Kiểm tra số lần gọi API trong 1 phút
+    if (apiCallCount.current >= 5) {
+      // Hiện thông báo giới hạn
+      setRateLimitOpen(true);
+      return;
+    }
+
+    // Tăng số lần gọi API
+    apiCallCount.current += 1;
+
     try {
       setAddCartLoading(true);
       const cartDTO = {
@@ -130,10 +170,10 @@ const Product_detail = () => {
           },
         ],
       };
-  
+
       await createCart(cartDTO);
-  
-      setSnackbarOpen(true); // show snackbar
+
+      setSnackbarOpen(true); // show snackbar thành công
     } catch (error) {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
       message.error("Thêm vào giỏ hàng thất bại.");
@@ -241,16 +281,16 @@ const Product_detail = () => {
           <h1>{product.name}</h1>
 
           <Box sx={{ display: "flex", mt: 1 }}>
-            <Typography
+            {/* <Typography
               sx={{ textDecorationLine: "line-through", color: "gray" }}
             >
               {product.discountedPrice !== product.salePrice &&
                 formatCurrency(product.salePrice)}
-            </Typography>
+            </Typography> */}
             <Typography
               sx={{ color: "red", mr: 2, fontWeight: "700", fontSize: 20 }}
             >
-              {formatCurrency(product.discountedPrice)}
+              {formatCurrency(product.salePrice)}
             </Typography>
           </Box>
           <Box
@@ -630,23 +670,39 @@ const Product_detail = () => {
             </Button>
           </Box>
         </Box>
-      </Modal>;
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={3000}
+      </Modal>
+      ;
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
           onClose={() => setSnackbarOpen(false)}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          severity="success"
+          sx={{ width: "100%" }}
         >
-          <Alert
-            onClose={() => setSnackbarOpen(false)}
-            severity="success"
-            sx={{ width: "100%" }}
-          >
-            Sản phẩm đã được thêm vào giỏ hàng!
-          </Alert>
-        </Snackbar>
-    </Box>  
-);
+          Sản phẩm đã được thêm vào giỏ hàng!
+        </Alert>
+      </Snackbar>
+      {/* Snackbar thông báo giới hạn rate limit */}
+      <Snackbar
+        open={rateLimitOpen}
+        autoHideDuration={3000}
+        onClose={() => setRateLimitOpen(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setRateLimitOpen(false)}
+          severity="warning"
+          sx={{ width: "100%" }}
+        >
+          Bạn đã gọi quá 5 lần trong 1 phút. Vui lòng chờ rồi thử lại!
+        </Alert>
+      </Snackbar>
+    </Box>
+  );
 };
 
 export default Product_detail;
