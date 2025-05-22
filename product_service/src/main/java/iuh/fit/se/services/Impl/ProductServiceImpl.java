@@ -3,6 +3,7 @@ package iuh.fit.se.services.Impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import iuh.fit.se.exceptions.ItemNotFoundException;
@@ -15,12 +16,16 @@ import iuh.fit.se.services.ProductService;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -30,8 +35,14 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	private DiscountService discountService;
 
+	@Value("${api_gateway.url}")
+	private String apiGatewayUrl;
+
 	@Autowired
 	ModelMapper modelMapper;
+
+	@Autowired
+	private RestTemplate restTemplate;
 
 	@Autowired
 	private PhoneRepository phoneRepository;
@@ -42,7 +53,6 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	private EarphoneRepository earphoneRepository;
 
-	// write convertToEntity and convertToDTO
 	private Product convertToEntity(ProductDTO productDTO) {
 		Product product = modelMapper.map(productDTO, Product.class);
 		return product;
@@ -83,7 +93,6 @@ public class ProductServiceImpl implements ProductService {
 	private ProductDTO convertToDTO(Product product) {
 		ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
 
-		// Tính giá giảm giá từ discountService
 		productDTO.setDiscountedPrice(discountService.calculateDiscountedPrice(product));
 
 		BigDecimal salePrice = productDTO.getSalePrice();
@@ -265,4 +274,51 @@ public class ProductServiceImpl implements ProductService {
 
 		productRepository.save(product);
 	}
+
+	@Override
+	public boolean canDelete(int id) {
+		Product product = findProductById(id);
+
+		try {
+			ResponseEntity<Map<String, Object>> orderResponse = restTemplate.exchange(
+					apiGatewayUrl + "/purchaseDetail/check-product-usage/" + id,
+					org.springframework.http.HttpMethod.GET,
+					null,
+					new ParameterizedTypeReference<Map<String, Object>>() {
+					});
+
+			if (orderResponse.getStatusCode().is2xxSuccessful()) {
+				Map<String, Object> responseBody = orderResponse.getBody();
+				if (responseBody != null && responseBody.containsKey("isUsed")
+						&& (Boolean) responseBody.get("isUsed")) {
+					return false; // Sản phẩm đang được sử dụng trong purchaseDetail
+				}
+			}
+		} catch (Exception e) {
+			System.err.println("Không thể kiểm tra sử dụng sản phẩm trong order-service: " + e.getMessage());
+		}
+
+		// Kiểm tra thêm trong inventory-service
+		try {
+			ResponseEntity<Map<String, Object>> inventoryResponse = restTemplate.exchange(
+					apiGatewayUrl + "/inventory/check-product-usage/" + id,
+					org.springframework.http.HttpMethod.GET,
+					null,
+					new ParameterizedTypeReference<Map<String, Object>>() {
+					});
+
+			if (inventoryResponse.getStatusCode().is2xxSuccessful()) {
+				Map<String, Object> responseBody = inventoryResponse.getBody();
+				if (responseBody != null && responseBody.containsKey("isUsed")
+						&& (Boolean) responseBody.get("isUsed")) {
+					return false; // Sản phẩm đang được sử dụng trong inventory
+				}
+			}
+		} catch (Exception e) {
+			System.err.println("Không thể kiểm tra sử dụng sản phẩm trong inventory-service: " + e.getMessage());
+		}
+
+		return true; // Sản phẩm có thể xóa
+	}
+
 }

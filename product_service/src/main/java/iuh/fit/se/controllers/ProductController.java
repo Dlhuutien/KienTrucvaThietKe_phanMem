@@ -86,7 +86,6 @@ public class ProductController {
 		}
 	}
 
-	// update
 	@PutMapping("/products/{id}")
 	public ResponseEntity<Map<String, Object>> updateProduct(@PathVariable int id,
 			@Valid @RequestBody ProductDTO productDTO, BindingResult bindingResult) {
@@ -108,6 +107,14 @@ public class ProductController {
 		Map<String, Object> response = new LinkedHashMap<>();
 
 		try {
+			boolean canDelete = productService.canDelete(id);
+
+			if (!canDelete) {
+				response.put("status", HttpStatus.BAD_REQUEST.value());
+				response.put("message", "Không thể xóa sản phẩm này vì nó đang được sử dụng");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+			}
+
 			boolean isDeleted = productService.delete(id);
 			if (isDeleted) {
 				response.put("status", HttpStatus.OK.value());
@@ -120,7 +127,7 @@ public class ProductController {
 			}
 		} catch (Exception e) {
 			response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-			response.put("message", "Error occurred while deleting the product");
+			response.put("message", "Error occurred while deleting the product: " + e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 		}
 	}
@@ -139,15 +146,31 @@ public class ProductController {
 		List<String> productNames = productService.getAllProductNames();
 		return ResponseEntity.ok(productNames);
 	}
-	
+
 	@PutMapping("/api/products/{id}/price")
 	public ResponseEntity<?> updateProductPrice(
-		@PathVariable int id,
-		@RequestParam(required = false) BigDecimal purchasePrice,
-		@RequestParam(required = false) BigDecimal salePrice
-	) {
+			@PathVariable int id,
+			@RequestParam(required = false) BigDecimal purchasePrice,
+			@RequestParam(required = false) BigDecimal salePrice) {
 		productService.updatePrice(id, purchasePrice, salePrice);
 		return ResponseEntity.ok(Map.of("message", "Cập nhật giá thành công"));
 	}
 
+	@GetMapping("/products/{id}/can-delete")
+	public ResponseEntity<Map<String, Object>> canDeleteProduct(@PathVariable int id) {
+		Map<String, Object> response = new LinkedHashMap<>();
+		try {
+			boolean canDelete = productService.canDelete(id);
+			response.put("status", HttpStatus.OK.value());
+			response.put("canDelete", canDelete);
+			if (!canDelete) {
+				response.put("message", "Không thể xóa sản phẩm này vì nó đang được sử dụng");
+			}
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		} catch (Exception e) {
+			response.put("status", HttpStatus.NOT_FOUND.value());
+			response.put("message", e.getMessage());
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+		}
+	}
 }

@@ -21,3 +21,7 @@ export const deleteProvider = (id) => {
 export const checkEmailUnique = (email, providerId) => {
     return axios.get(`${REST_API_BASE_URL}/providers/check-email?email=${email}&providerId=${providerId}`);
 };
+
+export const checkProviderInUse = (id) => {
+    return axios.get(`${REST_API_BASE_URL}/providers/${id}/check-in-use`);
+};

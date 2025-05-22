@@ -165,12 +165,21 @@ const AddPurchaseDetail = () => {
       return;
     }
 
-    console.log("Data being sent:", JSON.stringify(purchaseDetail));
+    const dataToSend = {
+      productName: purchaseDetail.productName,
+      providerName: purchaseDetail.providerName,
+      purchasePrice: parseFloat(purchaseDetail.purchasePrice),
+      salePrice: parseFloat(purchaseDetail.salePrice),
+      quantity: parseInt(purchaseDetail.quantity),
+      createdTime: purchaseDetail.created_time
+    };
+
+    console.log("Data being sent:", JSON.stringify(dataToSend));
 
     setIsSubmitting(true);
     try {
       console.log("Before API call");
-      const response = await addPurchaseDetail(purchaseDetail);
+      const response = await addPurchaseDetail(dataToSend);
       console.log("API response:", response);
       if (response.status === 201) {
         setSnackbar({

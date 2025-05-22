@@ -5,7 +5,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.client.RestTemplate;
@@ -13,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableCaching
+@EnableRetry
 public class OrderServiceApplication {
 
 	public static void main(String[] args) {
@@ -25,8 +29,18 @@ public class OrderServiceApplication {
 	}
 
 	@Bean
+	@LoadBalanced
 	public RestTemplate restTemplate() {
-		return new RestTemplate();
+		RestTemplate restTemplate = new RestTemplate();
+
+		// Thiết lập timeout cho RestTemplate
+		SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+		requestFactory.setConnectTimeout(5000); // 3 giây
+		requestFactory.setReadTimeout(5000); // 3 giây
+
+		restTemplate.setRequestFactory(requestFactory);
+
+		return restTemplate;
 	}
 
 	@Bean

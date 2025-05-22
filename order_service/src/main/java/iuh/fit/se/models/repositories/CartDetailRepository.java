@@ -9,9 +9,11 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import iuh.fit.se.models.entities.CartDetail;
 
 @RepositoryRestResource(collectionResourceRel = "cartDetails", path = "cartDetails")
-public interface CartDetailRepository  extends JpaRepository<CartDetail, Integer> {
+public interface CartDetailRepository extends JpaRepository<CartDetail, Integer> {
 	@Modifying
 	@Query("DELETE FROM CartDetail cd WHERE cd.id = :id")
 	void deleteCartDetailByIdDirect(@Param("id") int id);
+
+	long countByProductId(int productId);
 
 }

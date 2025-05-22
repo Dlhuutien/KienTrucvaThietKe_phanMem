@@ -14,41 +14,66 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Tooltip,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import { listProduct, deleteProduct, getInventories } from "../services/ProductService";
+import {
+  listProduct,
+  deleteProduct,
+  getInventories,
+  checkProductCanDelete,
+} from "../services/ProductService";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [deletableProducts, setDeletableProducts] = useState({});
+
+  const checkCanDeleteProducts = async (productIds) => {
+    const deletabilityMap = {};
+
+    await Promise.all(
+      productIds.map(async (id) => {
+        try {
+          const response = await checkProductCanDelete(id);
+          deletabilityMap[id] = response.data.canDelete;
+        } catch (error) {
+          console.error(`Không thể kiểm tra khả năng xóa sản phẩm ${id}:`, error);
+          deletabilityMap[id] = false;
+        }
+      })
+    );
+
+    setDeletableProducts(deletabilityMap);
+  };
 
   const fetchProducts = async () => {
     try {
       const [productRes, inventoryRes] = await Promise.all([
         listProduct(),
-        getInventories()
+        getInventories(),
       ]);
-  
+
       const products = productRes.data.data;
       const inventories = inventoryRes.data.data;
-  
-      // Gán quantity cho mỗi product từ inventory
-      const merged = products.map(product => {
-        const inventory = inventories.find(inv => inv.productId === product.id);
+
+      const merged = products.map((product) => {
+        const inventory = inventories.find((inv) => inv.productId === product.id);
         return {
           ...product,
-          quantity: inventory ? inventory.quantity : 0
+          quantity: inventory ? inventory.quantity : 0,
         };
       });
-  
+
       setProducts(merged);
       setFilteredProducts(merged);
+
+      await checkCanDeleteProducts(merged.map((p) => p.id));
     } catch (error) {
       console.error(error);
     }
   };
-  
 
   useEffect(() => {
     fetchProducts();
@@ -56,11 +81,22 @@ const ProductList = () => {
 
   const handleDelete = async (id) => {
     try {
+      const checkResponse = await checkProductCanDelete(id);
+      if (!checkResponse.data.canDelete) {
+        alert("Sản phẩm này không thể xóa vì đã được sử dụng trong đơn hàng.");
+        return;
+      }
+
+      if (!window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
+        return;
+      }
+
       await deleteProduct(id);
-      console.log("Product deleted successfully.");
+      console.log("Sản phẩm đã được xóa thành công.");
       fetchProducts();
     } catch (error) {
-      console.error("Error deleting product:", error);
+      console.error("Lỗi khi xóa sản phẩm:", error);
+      alert("Không thể xóa sản phẩm. Lỗi: " + (error.response?.data?.message || error.message));
     }
   };
 
@@ -77,14 +113,12 @@ const ProductList = () => {
     }
   };
 
-
   return (
     <Box sx={{ p: 2, backgroundColor: "#fff", borderRadius: 2 }}>
       <Typography variant="h4" fontWeight={700} mb={2}>
         Danh Sách Sản Phẩm
       </Typography>
 
-      {/* Filter by Category */}
       <FormControl fullWidth sx={{ mb: 2 }}>
         <InputLabel>Danh mục</InputLabel>
         <Select
@@ -100,7 +134,6 @@ const ProductList = () => {
         </Select>
       </FormControl>
 
-      {/* Product List */}
       <TableContainer component={Paper} style={{ maxHeight: 650 }}>
         <Table stickyHeader>
           <TableHead>
@@ -115,7 +148,7 @@ const ProductList = () => {
               {/* <TableCell>Giảm giá (%)</TableCell>
               <TableCell>Giá đã giảm</TableCell> */}
               <TableCell>URL</TableCell>
-              <TableCell>Action</TableCell>
+              <TableCell>Hành động</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -142,14 +175,6 @@ const ProductList = () => {
                       })
                     : "Chưa nhập hàng"}
                 </TableCell>
-                {/* <TableCell>{product.percentDiscount}%</TableCell> */}
-                {/* <TableCell>
-                  {product.discountedPrice.toLocaleString("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  })}
-                </TableCell> */}
-
                 <TableCell>
                   <img
                     src={product.url}
@@ -159,9 +184,9 @@ const ProductList = () => {
                       marginTop: 30,
                       resizeMode: "contain",
                     }}
+                    alt={product.name}
                   />
                 </TableCell>
-
                 <TableCell sx={{ display: "flex", mt: 10 }}>
                   <Button
                     component={Link}
@@ -174,15 +199,20 @@ const ProductList = () => {
                   >
                     Cập nhật
                   </Button>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    size="small"
-                    sx={{ mb: 7 }}
-                    onClick={() => handleDelete(product.id)}
-                  >
-                    Xóa
-                  </Button>
+                  {deletableProducts[product.id] && (
+                    <Button
+                      variant="contained"
+                      color="error"
+                      size="small"
+                      sx={{
+                        mb: 7,
+                        width: "100px",
+                      }}
+                      onClick={() => handleDelete(product.id)}
+                    >
+                      Xóa
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))}

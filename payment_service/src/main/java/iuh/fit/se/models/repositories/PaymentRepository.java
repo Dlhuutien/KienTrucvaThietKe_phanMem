@@ -9,7 +9,5 @@ import iuh.fit.se.models.entities.Payment;
 
 // @RepositoryRestResource(collectionResourceRel = "payment", path = "payments")
 public interface PaymentRepository extends JpaRepository<Payment, Integer> {
-    Optional<Payment> findByStripePaymentId(String stripePaymentId);
-
     Optional<Payment> findBySessionId(String sessionId);
 }

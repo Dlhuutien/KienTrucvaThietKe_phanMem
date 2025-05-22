@@ -35,9 +35,6 @@ public class Payment {
     @Column(name = "session_id", nullable = false)
     private String sessionId;
 
-    @Column(name = "stripe_payment_id")
-    private String stripePaymentId;
-
     @Column(name = "created_time", nullable = false)
     private LocalDateTime createdTime;
 
