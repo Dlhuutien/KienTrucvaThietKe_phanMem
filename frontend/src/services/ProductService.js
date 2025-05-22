@@ -111,7 +111,7 @@ export const searchProductSale = () => {
 
 export const searchProduct = (searchTerm) => {
   const searchQuery = `?searchTerm=${encodeURIComponent(searchTerm)}`;
-  return axios.get(`http://localhost:5000/search${searchQuery}`);
+  return axios.get(`http://localhost:8000/search${searchQuery}`);
 };
 
 export const getProductById = (productId) => {

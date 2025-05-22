@@ -12,6 +12,8 @@ import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentCancel from './pages/PaymentCancel';
 import { useEffect } from "react";
 import OrderHistory from './pages/OrderHistory';
+import Chatbox from './pages/Chatbox';
+import AboutUs from './pages/AboutUs';
 
 function App() {
   useEffect(() => {
@@ -39,6 +41,8 @@ function App() {
         <Route path="/order-history" element={<OrderHistory />} />
         <Route path="/payment/success" element={<PaymentSuccess />} />
         <Route path="/payment-cancel" element={<PaymentCancel />} />
+        <Route path='/aboutus' element={<AboutUs />}/>
+        <Route path='/chatbox' element={<Chatbox />}/>
       </Routes>
       <Footer />
     </BrowserRouter>
