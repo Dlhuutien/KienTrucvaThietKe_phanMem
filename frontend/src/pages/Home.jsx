@@ -163,7 +163,7 @@ const Home = () => {
               color: "red",
             }}
           >
-            SẢN PHẨM MỚI
+            SẢN PHẨM
           </Typography>
           <Divider
             sx={{
@@ -188,7 +188,7 @@ const Home = () => {
             <Item
               name={item.name}
               image={item.url}//change to item.url when have
-              new_price={item.purchasePrice}
+              new_price={item.salePrice}
               old_price={item.salePrice}
               sale={item.percentDiscount}
               id={item.id}
@@ -196,7 +196,7 @@ const Home = () => {
             />
           ))}
       </Box>
-      <Box
+      {/* <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
@@ -243,7 +243,7 @@ const Home = () => {
               key={index}
             />
           ))}
-      </Box>
+      </Box> */}
     </Box>
   );
 };

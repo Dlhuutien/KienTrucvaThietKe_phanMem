@@ -241,16 +241,16 @@ const Product_detail = () => {
           <h1>{product.name}</h1>
 
           <Box sx={{ display: "flex", mt: 1 }}>
-            <Typography
+            {/* <Typography
               sx={{ textDecorationLine: "line-through", color: "gray" }}
             >
               {product.discountedPrice !== product.salePrice &&
                 formatCurrency(product.salePrice)}
-            </Typography>
+            </Typography> */}
             <Typography
               sx={{ color: "red", mr: 2, fontWeight: "700", fontSize: 20 }}
             >
-              {formatCurrency(product.discountedPrice)}
+              {formatCurrency(product.salePrice)}
             </Typography>
           </Box>
           <Box
