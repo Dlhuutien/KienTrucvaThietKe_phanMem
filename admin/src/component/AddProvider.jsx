@@ -11,11 +11,16 @@ import {
   FormHelperText,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
-import { addProvider, updateProvider, checkEmailUnique } from "../services/ProviderService";
+import {
+  addProvider,
+  updateProvider,
+  checkEmailUnique,
+} from "../services/ProviderService";
 
 const AddProvider = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [provider, setProvider] = useState({
     id: "",
@@ -141,6 +146,7 @@ const AddProvider = () => {
 
   const handleSubmit = async () => {
     if (!validate()) return;
+    setIsSubmitting(true);
 
     if (provider.email) {
       try {
@@ -151,6 +157,7 @@ const AddProvider = () => {
             ...prev,
             email: "Email này đã tồn tại.",
           }));
+          setIsSubmitting(false);
           return;
         }
       }
@@ -167,6 +174,8 @@ const AddProvider = () => {
       if (err.response && err.response.data) {
         setErrors(err.response.data);
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -239,16 +248,23 @@ const AddProvider = () => {
               </MenuItem>
             ))}
           </Select>
-          <FormHelperText>{errors.origin ? `* ${errors.origin}` : ""}</FormHelperText>
+          <FormHelperText>
+            {errors.origin ? `* ${errors.origin}` : ""}
+          </FormHelperText>
         </FormControl>
 
         <Button
           variant="contained"
           color="primary"
           onClick={handleSubmit}
+          disabled={isSubmitting}
           sx={{ mt: 2, ml: 50 }}
         >
-          {provider.id ? "Cập nhật Nhà Cung Cấp" : "Thêm Nhà Cung Cấp"}
+          {isSubmitting
+            ? "Đang xử lý..."
+            : provider.id
+            ? "Cập nhật Nhà Cung Cấp"
+            : "Thêm Nhà Cung Cấp"}
         </Button>
       </form>
     </Box>

@@ -14,6 +14,7 @@ import { addProduct, updateProduct } from "../services/ProductService";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const AddProduct = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
   const location = useLocation();
   const [product, setProduct] = useState({
@@ -21,9 +22,6 @@ const AddProduct = () => {
     name: "",
     brand: "",
     url: "",
-    // quantity: "",
-    // purchasePrice: "1",
-    // salePrice: "1",
     //phone
     chip: "",
     os: null,
@@ -199,6 +197,7 @@ const AddProduct = () => {
 
   const handleSubmit = async () => {
     if (!validate()) return;
+    setIsSubmitting(true);
     try {
       let response;
       if (product.id) {
@@ -214,6 +213,8 @@ const AddProduct = () => {
         "Error occurred:",
         error.response ? error.response.data : error.message
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -293,40 +294,6 @@ const AddProduct = () => {
             </Typography>
           )}
         </FormControl>
-
-        {/* Số lượng */}
-        {/* <TextField
-          label="Số lượng"
-          name="quantity"
-          value={product.quantity}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 2 }}
-          type="number"
-        /> */}
-
-        {/* Giá nhập */}
-        {/* <TextField
-          label="Giá nhập"
-          name="purchasePrice"
-          value={product.purchasePrice}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 2 }}
-          type="number"
-        /> */}
-
-        {/* Giá bán */}
-        {/* <TextField
-          label="Giá bán"
-          name="salePrice"
-          value={product.salePrice}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 2 }}
-          type="number"
-        /> */}
-
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           {product.url && (
             <Box
@@ -642,9 +609,14 @@ const AddProduct = () => {
           variant="contained"
           color="primary"
           onClick={handleSubmit}
+          disabled={isSubmitting}
           sx={{ mt: 2, ml: 50 }}
         >
-          {product.id ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
+          {isSubmitting
+            ? "Đang xử lý..."
+            : product.id
+            ? "Cập nhật sản phẩm"
+            : "Thêm sản phẩm"}
         </Button>
       </form>
     </Box>
