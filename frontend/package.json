@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@chatscope/chat-ui-kit-react": "^2.1.1",
+    "@chatscope/chat-ui-kit-styles": "^1.4.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.4.6",
@@ -17,7 +19,6 @@
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.2.0",
     "react-scripts": "5.0.1",
-    "react-simple-chatbot": "^0.6.1",
     "styled-components": "^4.4.1",
     "web-vitals": "^2.1.4"
   },

@@ -4,7 +4,6 @@ INSERT INTO provider (address, email, name, origin) VALUES
     ('123 Main St, Cityville', 'provider1@example.com', 'Provider One', 1),
     ('456 Market Ave, Townsville', 'provider2@example.com', 'Provider Two', 2),
     ('789 Industrial Rd, Metropolis', 'provider3@example.com', 'Provider Three', 3);
-
 -- productdb
 USE productdb;
 INSERT INTO product (id, brand, category, name, purchase_price, sale_price, url) VALUES
@@ -64,4 +63,3 @@ INSERT INTO inventories (product_id, quantity, created_at, updated_at) VALUES
 	(8, 60, NOW(), NOW()),
 	(9, 70, NOW(), NOW()),
 	(10, 35, NOW(), NOW());
-paymentdbpaymentscart
