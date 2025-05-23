@@ -155,7 +155,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Transactional
 	@Override
-	@CachePut(value = "products", key = "#id")
+	// @CachePut(value = "products", key = "#id")
 	public ProductDTO updateProductDTO(int id, ProductDTO productDTO) {
 		Product product = findProductById(id);
 
