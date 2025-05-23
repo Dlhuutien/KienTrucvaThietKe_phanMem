@@ -10,6 +10,9 @@ const Navbar = () => {
   const handleCategoryClick = () => {
     navigate("/category");
   };
+  const handleChatboxClick = () => {
+    navigate("/chatbox");
+  };
   return (
     <Box
       sx={{
@@ -35,7 +38,7 @@ const Navbar = () => {
             backgroundColor: "#6495ED",
             borderRadius: 2,
             boxShadow: "0px 6px 15px white",
-            p:1,
+            p: 1,
             "& .text": {
               color: "black",
             },
@@ -67,7 +70,7 @@ const Navbar = () => {
             backgroundColor: "#6495ED",
             borderRadius: 2,
             boxShadow: "0px 6px 15px white",
-            p:1,
+            p: 1,
             "& .text": {
               color: "black",
             },
@@ -130,7 +133,7 @@ const Navbar = () => {
             backgroundColor: "#6495ED",
             borderRadius: 2,
             boxShadow: "0px 6px 15px white",
-            p:1,
+            p: 1,
             "& .text": {
               color: "black",
             },
@@ -140,13 +143,13 @@ const Navbar = () => {
       >
         <Typography
           component={Link}
-          to='/aboutus'
+          to="/aboutus"
           className="text"
           variant="h5"
           sx={{
             color: "#fff",
             fontWeight: "bold",
-            textDecoration: 'none'
+            textDecoration: "none",
           }}
         >
           Giới Thiệu
@@ -183,6 +186,41 @@ const Navbar = () => {
           Liên hệ
         </Typography>
       </Box> */}
+      <Box
+        onClick={handleChatboxClick}
+        sx={{
+          width: "170px",
+          height: "60px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          mr: 5,
+          "&:hover": {
+            backgroundColor: "#6495ED",
+            borderRadius: 2,
+            boxShadow: "0px 6px 15px white",
+            p: 1,
+            "& .text": {
+              color: "black",
+            },
+            cursor: "pointer",
+          },
+        }}
+      >
+        <Typography
+          component={Link}
+          to="/chatbox"
+          className="text"
+          variant="h5"
+          sx={{
+            color: "#fff",
+            fontWeight: "bold",
+            textDecoration: "none",
+          }}
+        > 
+          AI
+        </Typography>
+      </Box>
     </Box>
   );
 };

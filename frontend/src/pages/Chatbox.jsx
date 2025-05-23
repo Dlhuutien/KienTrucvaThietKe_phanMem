@@ -1,166 +1,173 @@
 import React, { useState, useEffect } from "react";
+import {
+  MainContainer,
+  ChatContainer,
+  MessageList,
+  Message,
+  MessageInput,
+  TypingIndicator,
+} from "@chatscope/chat-ui-kit-react";
+import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import { processUserQuery } from "../services/ProductService";
-import ChatBot from "react-simple-chatbot";
-import { ThemeProvider } from "styled-components";
 
 const ChatBox = () => {
-  // Tùy chỉnh giao diện của chatbot
-  const theme = {
-    background: "#f5f8fb",
-    headerBgColor: "#64b5f6",
-    headerFontColor: "#fff",
-    headerFontSize: "16px",
-    botBubbleColor: "#64b5f6",
-    botFontColor: "#fff",
-    userBubbleColor: "#fff",
-    userFontColor: "#4a4a4a",
-  };
+  const [messages, setMessages] = useState([
+    { message: "Chào Quý Khách! Bạn cần hỗ trợ gì hôm nay?", sender: "bot" },
+    {
+      message:
+        "Bạn có thể hỏi những câu như:\n" +
+        "- Điện thoại giá từ 5 triệu đến 10 triệu\n" +
+        "- Mới nhất theo hãng Apple\n" +
+        "- Hỗ trợ khác hàng\n",
+      sender: "bot",
+    },
+  ]);
+  const [isTyping, setIsTyping] = useState(false);
+  const [answers, setAnswers] = useState({});
 
-  // State để lưu câu trả lời
-  const [answer_1, setAnswer1] = useState("");
-  const [answer_2, setAnswer2] = useState("");
-  const [answer_3, setAnswer3] = useState("");
-  const [answer_4, setAnswer4] = useState("");
-  const [isDataLoaded, setIsDataLoaded] = useState(false); // Track if data is loaded
-
-  // Fetch answers when component is loaded
+  // Load sẵn một số câu trả lời để xử lý nhanh
   useEffect(() => {
     const fetchAnswers = async () => {
       try {
-        // Giả sử bạn có một API hoặc hàm lấy dữ liệu cho các câu trả lời
-        const response_1 = await processUserQuery(
-          "Điện thoại giá từ 5 triệu đến 10 triệu"
-        );
-        const response_2 = await processUserQuery(
-          "Điện thoại giá từ 10 triệu đến 20 triệu"
-        );
-        const response_3 = await processUserQuery("mới nhất theo hãng APPLE");
-        const response_4 = await processUserQuery("mới nhất theo hãng SAMSUNG");
+        const [res1, res2, res3, res4] = await Promise.all([
+          processUserQuery("Điện thoại giá từ 5 triệu đến 10 triệu"),
+          processUserQuery("Điện thoại giá từ 10 triệu đến 20 triệu"),
+          processUserQuery("mới nhất theo hãng APPLE"),
+          processUserQuery("mới nhất theo hãng SAMSUNG"),
+        ]);
 
-        // Set dữ liệu cho các câu trả lời
-        setAnswer1(response_1);
-        setAnswer2(response_2);
-        setAnswer3(response_3);
-        setAnswer4(response_4);
-
-        // Đánh dấu là dữ liệu đã được tải
-        setIsDataLoaded(true);
-      } catch (error) {
-        console.error("Error fetching answers:", error.message);
-        setIsDataLoaded(true); // Data is loaded even if there's an error
+        setAnswers({
+          price_5_10: res1,
+          price_10_20: res2,
+          brand_apple: res3,
+          brand_samsung: res4,
+        });
+      } catch (err) {
+        console.error("Lỗi khi preload dữ liệu:", err);
       }
     };
 
     fetchAnswers();
-  }, []); // Chạy một lần khi component được mount
+  }, []);
 
-  // Các bước của chatbot
-  const steps = [
-    {
-      id: "1",
-      message: "Chào Quý Khách! Bạn cần hỗ trợ gì hôm nay?",
-      trigger: "2",
-    },
-    {
-      id: "2",
-      options: [
-        { value: "priceRange", label: "Tìm kiếm theo mức giá", trigger: "3.1" },
-        {
-          value: "latestByBrand",
-          label: "Mẫu mới nhất theo hãng",
-          trigger: "3.2",
-        },
-        { value: "support", label: "Hỗ trợ kỹ thuật", trigger: "5.5" },
-      ],
-    },
-    {
-      id: "3.1",
-      message: "Nhập mức giá.",
-      trigger: "4.2",
-    },
-    {
-      id: "3.2",
-      message: "Nhập tên hãng bạn muốn tìm mẫu mới nhất.",
-      trigger: "4.1",
-    },
-    {
-      id: "4.1",
-      options: [
-        { label: "Apple", trigger: "5.1" },
-        { label: "Samsung", trigger: "5.2" },
-      ],
-    },
-    {
-      id: "4.2",
-      options: [
-        { label: "Từ 5 đến 10 triệu", trigger: "5.3" },
-        { label: "Từ 10 đến 20 triệu", trigger: "5.4" },
-      ],
-    },
-    {
-      id: "5.5",
-      message:
-        "Chúng tôi hiện tại chưa hỗ trợ kỹ thuật. Vui lòng liên hệ qua email hoặc điện thoại.",
-        trigger: "6", // Điều hướng đến bước hiển thị phản hồi
-    },
-    {
-      id: "5.1",
-      message: () => {
-        return `${answer_1}`;
-      },
-      trigger: "6", // Điều hướng đến bước hiển thị phản hồi
-    },
-    {
-      id: "5.2",
-      message: () => {
-        return `${answer_2}`;
-      },
-      trigger: "6", // Điều hướng đến bước hiển thị phản hồi
-    },
-    {
-      id: "5.3",
-      message: () => {
-        return `${answer_3}`;
-      },
-      trigger: "6", // Điều hướng đến bước hiển thị phản hồi
-    },
-    {
-      id: "5.4",
-      message: () => {
-        return `${answer_4}`;
-      },
-      trigger: "6", // Điều hướng đến bước hiển thị phản hồi
-    },
-    {
-      id: "6",
-      message: "Bạn cần giúp gì khác không?",
-      trigger: "2", // Điều hướng đến bước hiển thị phản hồi
-    },
-  ];
+  // Tạo phản hồi của bot theo input
+  const getBotResponse = async (input) => {
+    const lower = input.toLowerCase();
 
-  // Chỉ hiển thị ChatBot khi dữ liệu đã được tải
-  if (!isDataLoaded) {
-    return <div>Đang tải dữ liệu...</div>;
-  }
+    // Match theo mức giá cụ thể
+    const priceBelowMatch = lower.match(/(dưới|<)\s*(\d+)[^\d]?triệu/);
+    const priceAboveMatch = lower.match(/(trên|>|\btrên\b)\s*(\d+)[^\d]?triệu/);
+    const categoryMap = {
+      "điện thoại": "PHONE",
+      "cáp sạc": "CHARGING_CABLE",
+      "sạc dự phòng": "POWER_BANK",
+      "tai nghe": "EARPHONE",
+    };
+
+    const foundCategory = Object.keys(categoryMap).find((key) =>
+      lower.includes(key)
+    );
+
+    const brandMatch = lower.match(/\btất cả sản phẩm (.*)/);
+
+    // Trả về từ cache nếu khớp
+    if (lower.includes("5 đến 10"))
+      return answers.price_5_10 || "Đang xử lý...";
+    if (lower.includes("10 đến 20"))
+      return answers.price_10_20 || "Đang xử lý...";
+    if (lower.includes("apple")) return answers.brand_apple || "Đang xử lý...";
+    if (lower.includes("samsung"))
+      return answers.brand_samsung || "Đang xử lý...";
+
+    // Dưới mức giá
+    if (priceBelowMatch) {
+      const price = priceBelowMatch[2];
+      return await processUserQuery(`Tìm sản phẩm dưới ${price} triệu`);
+    }
+
+    // Trên mức giá
+    if (priceAboveMatch) {
+      const price = priceAboveMatch[2];
+      return await processUserQuery(`Tìm sản phẩm trên ${price} triệu`);
+    }
+
+    // Theo loại sản phẩm
+    if (foundCategory) {
+      const categoryEnum = categoryMap[foundCategory];
+      return await processUserQuery(`Tìm theo loại sản phẩm ${categoryEnum}`);
+    }
+
+    // Liệt kê theo hãng
+    if (brandMatch) {
+      const brand = brandMatch[1];
+      return await processUserQuery(`Tất cả sản phẩm theo hãng ${brand}`);
+    }
+
+    // Một số câu hỗ trợ khác
+    if (lower.includes("tư vấn") || lower.includes("liên hệ")) {
+      return "Vui lòng gọi hotline 1900-1234 hoặc gửi email đến support@temg.vn để được hỗ trợ.";
+    }
+
+    if (lower.includes("hỗ trợ")) {
+      return "Hiện tại hệ thống chưa hỗ trợ kỹ thuật trực tiếp qua chat. Vui lòng liên hệ qua hotline 1900-1234 hoặc gửi email đến support@temg.vn để được hỗ trợ.";
+    }
+
+    // Không khớp gì thì gửi backend xử lý
+    try {
+      return await processUserQuery(input);
+    } catch (err) {
+      console.error("Lỗi xử lý tại backend:", err);
+      return "Đã xảy ra lỗi khi xử lý yêu cầu. Vui lòng thử lại sau.";
+    }
+  };
+
+  // Xử lý khi người dùng gửi tin nhắn
+  const handleSend = async (userInput) => {
+    const userMessage = { message: userInput, sender: "user" };
+    setMessages((prev) => [...prev, userMessage]);
+    setIsTyping(true);
+
+    const botReply = await getBotResponse(userInput);
+    setMessages((prev) => [...prev, { message: botReply, sender: "bot" }]);
+    setIsTyping(false);
+  };
 
   return (
     <div
       style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        padding: "10px",
-        boxSizing: "border-box",
+        position: "relative",
+        height: "80vh",
+        width: "100%",
+        maxWidth: "600px",
+        margin: "auto",
       }}
     >
-      <ThemeProvider theme={theme}>
-        <ChatBot
-          speechSynthesis={{ enable: true, lang: "vn" }}
-          steps={steps}
-          headerTitle="Liên hệ hỗ trợ"
-        />
-      </ThemeProvider>
+      <MainContainer>
+        <ChatContainer>
+          <MessageList
+            typingIndicator={
+              isTyping ? <TypingIndicator content="Đang gõ..." /> : null
+            }
+          >
+            {messages.map((msg, i) => (
+              <Message
+                key={i}
+                model={{
+                  message: msg.message,
+                  sentTime: "now",
+                  sender: msg.sender,
+                  direction: msg.sender === "user" ? "outgoing" : "incoming",
+                }}
+              />
+            ))}
+          </MessageList>
+          <MessageInput
+            placeholder="Nhập câu hỏi..."
+            onSend={handleSend}
+            attachButton={false}
+          />
+        </ChatContainer>
+      </MainContainer>
     </div>
   );
 };
