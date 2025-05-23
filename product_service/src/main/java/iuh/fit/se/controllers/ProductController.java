@@ -173,4 +173,114 @@ public class ProductController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 		}
 	}
+	
+	// http://localhost:8000/api/products/page?pageNo=1&size=2&sortBy=name&sortDirection=asc
+    @GetMapping("/products/page")
+    public ResponseEntity<Map<String, Object>> getList(
+            @RequestParam(defaultValue = "0", required = false) int pageNo,
+            @RequestParam(defaultValue = "20", required = false) int size,
+            @RequestParam(defaultValue = "id", required = false) String sortBy,
+            @RequestParam(defaultValue = "ASC", required = false) String sortDirection) {
+        Page<ProductDTO> products = productService.findAllWithPaging(pageNo, size, sortBy, sortDirection);
+        Map<String, Object> response = new LinkedHashMap<String, Object>();
+        response.put("data", products);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+    
+    @GetMapping("products/category")
+    public ResponseEntity<Map<String,Object>> searchProductByCategory(
+            @RequestParam(value = "name", required = true) String category) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("status", HttpStatus.OK.value());
+        response.put("data", productService.findByCategory(category));
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/products/phone/filter")
+    public ResponseEntity<Map<String, Object>> searchPhoneWithFilter(
+            @RequestParam(required = false) String ramList,
+            @RequestParam(required = false) String romList,
+            @RequestParam(required = false) String chipList,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice) {
+        List<String> ramListParam = (ramList != null) ? Arrays.asList(ramList.split(",")) : null;
+        List<String> romListParam = (romList != null) ? Arrays.asList(romList.split(",")) : null;
+        List<String> chipListParam = (chipList != null) ? Arrays.asList(chipList.split(",")) : null;
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("status", HttpStatus.OK.value());
+        response.put("data", productService.findPhoneDTOWithFilter2(ramListParam, romListParam, chipListParam, minPrice, maxPrice));
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/products/earphone/filter")
+    public ResponseEntity<Map<String, Object>> searchEarPhoneWithFilter(
+            @RequestParam(required = false) String connectTypeList,
+            @RequestParam(required = false) String brandList,
+            @RequestParam(required = false) String other,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice
+    ) {
+        List<String> connectTypeParam = (connectTypeList != null) ? Arrays.asList(connectTypeList.split(",")) : null;
+        List<String> brandListParam = (brandList != null) ? Arrays.asList(brandList.split(",")) : null;
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("status", HttpStatus.OK.value());
+        response.put("data", productService.findEarphoneDTOWithFilter2(connectTypeParam,
+                brandListParam, other, minPrice, maxPrice));
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/products/cable/filter")
+    public ResponseEntity<Map<String, Object>> searchCableWithFilter(
+            @RequestParam(required = false) String cableTypeList,
+            @RequestParam(required = false) String lengthList,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice
+    ) {
+        List<String> cableTypeListParam = (cableTypeList != null) ? Arrays.asList(cableTypeList.split(",")) : null;
+        List<String> lengthListParam = (lengthList != null) ? Arrays.asList(lengthList.split(",")) : null;
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("status", HttpStatus.OK.value());
+        response.put("data", productService.findChargingCableDTOWithFilter2(cableTypeListParam,
+                lengthListParam, minPrice, maxPrice));
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/products/powerBank/filter")
+    public ResponseEntity<Map<String, Object>> searchPowerBankWithFilter(
+            @RequestParam(required = false) String inputList,
+            @RequestParam(required = false) String outputList,
+            @RequestParam(required = false) String capacityList,
+            @RequestParam(required = false) String batteryGreaterList,
+            @RequestParam(required = false) String batteryLessList,
+            @RequestParam(required = false) Integer capacity,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice
+    ) {
+        int number = (capacity != null) ? capacity : 0;
+        List<String> inputListParam = (inputList != null) ? Arrays.asList(inputList.split(",")) : null;
+        List<String> outputListParam = (outputList != null) ? Arrays.asList(outputList.split(",")) : null;
+        List<Integer> capacityListParam = (capacityList != null) ?
+                Arrays.stream(capacityList.split(","))
+                        .map(Integer::parseInt)
+                        .toList() : null;
+        List<Integer> batteryGreaterListParam = (batteryGreaterList != null) ?
+                Arrays.stream(batteryGreaterList.split(","))
+                        .map(Integer::parseInt)
+                        .toList() : null;
+        List<Integer> batteryLessListParam = (batteryLessList != null) ?
+                Arrays.stream(batteryLessList.split(","))
+                        .map(Integer::parseInt)
+                        .toList() : null;
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("status", HttpStatus.OK.value());
+        response.put("data", productService.findPowerBankDTOWithFilter2(inputListParam,
+                outputListParam, capacityListParam, number, batteryGreaterListParam,
+                batteryLessListParam, minPrice, maxPrice));
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+    
+ 
+
+
+
 }

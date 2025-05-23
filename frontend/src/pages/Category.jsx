@@ -1105,14 +1105,14 @@ const Category = () => {
             </ListItemButton>
             <Collapse in={openPhone} timeout="auto" unmountOnExit>
               <List>
-                <ListItemButton sx={{ pl: 4 }}>
+                {/* <ListItemButton sx={{ pl: 4 }}>
                   <ListItemIcon></ListItemIcon>
                   <ListItemText>NEW</ListItemText>
-                </ListItemButton>
-                <ListItemButton sx={{ pl: 4 }} onClick={handleButtonSale}>
+                </ListItemButton> */}
+                {/* <ListItemButton sx={{ pl: 4 }} onClick={handleButtonSale}>
                   <ListItemIcon></ListItemIcon>
                   <ListItemText sx={{ color: "red" }}>ƯU ĐÃI</ListItemText>
-                </ListItemButton>
+                </ListItemButton> */}
                 <ListItemButton
                   sx={{ pl: 4 }}
                   onClick={() => handleButtonBrand("iphone")}

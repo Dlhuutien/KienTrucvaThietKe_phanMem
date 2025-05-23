@@ -320,5 +320,104 @@ public class ProductServiceImpl implements ProductService {
 
 		return true; // Sản phẩm có thể xóa
 	}
+	
+	  // Get all products with paging
+    @Transactional(readOnly = true)
+    @Override
+    public Page<ProductDTO> findAllWithPaging(int pageNo, int pageSize, String sortBy, String sortDirection) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        return productRepository.findAll(pageable).map(this::convertToDTO);
+    }
+    
+    @Transactional(readOnly = true)
+    @Override
+    public List<ProductDTO> findByCategory(String category) {
+        return productRepository.findProductByCategory(Category.valueOf(category.toUpperCase()))
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+    
+    @Override
+    public List<ProductDTO> findPhoneDTOWithFilter2(List<String> ramList, List<String> romList, List<String> chipList, BigDecimal minPrice, BigDecimal maxPrice) {
+        List<ProductDTO> productDTOList = productRepository.findPhoneWithFilters(ramList, romList, minPrice, maxPrice, Category.PHONE)
+                .stream()
+                .map(this::convertToDTO)
+                .toList();
+        if(chipList != null && !chipList.isEmpty()) {
+            productDTOList = productDTOList.stream()
+                    .filter((pDTO -> chipList.stream()
+                            .anyMatch(chip -> pDTO.getChip().contains(chip))))
+                    .toList();
+        }
+        return productDTOList;
+    }
+
+    @Override
+    public List<ProductDTO> findEarphoneDTOWithFilter2(List<String> connectionTypeList, List<String> brandList,
+                                                       String other, BigDecimal minPrice, BigDecimal maxPrice) {
+
+        return  productRepository.findEarPhoneWithFilters(connectionTypeList, brandList, other, minPrice, maxPrice, Category.EARPHONE)
+                .stream()
+                .map(this::convertToDTO)
+                .toList();
+    }
+    
+    @Override
+    public List<ProductDTO> findChargingCableDTOWithFilter2(List<String> cableTypeList, List<String> lengthList, BigDecimal minPrice, BigDecimal maxPrice) {
+        List<ProductDTO> list =  productRepository.findCableWithFilters(cableTypeList, minPrice, maxPrice, Category.CHARGING_CABLE)
+                .stream()
+                .map(this::convertToDTO)
+                .toList();
+        System.out.println(list);
+        if(lengthList != null) {
+            if(lengthList.contains("100") && lengthList.contains("200"))
+                return list;
+            else if(lengthList.contains("100"))
+                return list.stream()
+                        .filter(p -> p.getLength() <= 100)
+                        .toList();
+            else
+                return list.stream()
+                        .filter(p -> p.getLength() >= 100 && p.getLength() <= 200)
+                        .toList();
+        }
+        return list;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<ProductDTO> findPowerBankDTOWithFilter2(
+            List<String> inputList, List<String> outList, List<Integer> capacityList, int capacity,
+            List<Integer> batteryGreaterList, List<Integer> batteryLessList,
+            BigDecimal minPrice, BigDecimal maxPrice) {
+
+        List<ProductDTO> list = productRepository.findPowerBankWithFilters(inputList, outList, capacityList, capacity, minPrice, maxPrice, Category.POWER_BANK)
+                .stream()
+                .map(this::convertToDTO)
+                .toList();
+        List<ProductDTO> tempList = new ArrayList<>();
+        if(batteryGreaterList != null && !batteryGreaterList.isEmpty() &&
+                batteryLessList != null && !batteryLessList.isEmpty()) {
+
+            for(int i = 0; i < batteryGreaterList.size(); i++) {
+                final int less = batteryLessList.get(i);
+                final int greater = batteryGreaterList.get(i);
+                tempList.addAll(list
+                        .stream()
+                        .filter(p -> p.getFastCharging() >= less && p.getFastCharging() <= greater)
+                        .toList());
+            }
+            return tempList;
+        }
+        return list;
+    }
+  
+
+
+
+
 
 }
